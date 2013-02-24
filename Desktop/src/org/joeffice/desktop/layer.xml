@@ -3,28 +3,54 @@
 <filesystem>
   <folder name="Menu">
     <folder name="Help">
+      <file name="org-netbeans-modules-autoupdate-ui-actions-CheckForUpdatesAction.shadow_hidden"/>
             <file name="shortcuts.xml_hidden"/>
-        </folder>
-        <file name="Spacer.instance">
+    </folder>
+    <file name="Spacer.instance">
       <attr name="instanceCreate" methodvalue="javax.swing.Box.createHorizontalGlue"/>
       <attr name="position" intvalue="9005"/>
     </file>
     <folder name="View">
-            <file name="org-netbeans-core-actions-LogAction.shadow_hidden"/>
-        </folder>
-        <folder name="Window">
-            <folder name="Other">
-                <file name="ReporterResultAction.shadow_hidden"/>
-            </folder>
-            <file name="Output_hidden"/>
-            <file name="Web_hidden"/>
-        </folder>
-        <file name="org-netbeans-modules-quicksearch-QuickSearchAction.shadow">
+      <file name="org-netbeans-core-actions-LogAction.shadow_hidden"/>
+    </folder>
+    <folder name="Window">
+      <folder name="Other">
+        <file name="ReporterResultAction.shadow_hidden"/>
+      </folder>
+      <file name="Output_hidden"/>
+      <file name="Web_hidden"/>
+    </folder>
+    <file name="org-netbeans-modules-quicksearch-QuickSearchAction.shadow">
       <attr name="originalFile" stringvalue="Actions/Edit/org-netbeans-modules-quicksearch-QuickSearchAction.instance"/>
       <attr name="position" intvalue="9010"/>
     </file>
   </folder>
-    <folder name="Toolbars">
-        <file name="Standard.xml" url="Standard.xml"/>
+  <folder name="Toolbars">
+    <folder name="File">
+      <file name="org-netbeans-modules-openfile-OpenFileAction.shadow">
+        <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-NewFile.instance"/>
+      </file>
+      <file name="org-netbeans-modules-openfile-OpenFileAction.shadow">
+        <attr name="originalFile" stringvalue="Actions/System/org-netbeans-modules-openfile-OpenFileAction.instance"/>
+      </file>
     </folder>
+    <folder name="Memory">
+            <file name="org-netbeans-modules-profiler-actions-SelfSamplerAction.shadow_hidden"/>
+        </folder>
+        <file name="Standard.xml" url="Standard.xml"/>
+  </folder>
+  <folder name="Shortcuts">
+    <file name="D-O.shadow">
+      <attr name="originalFile" stringvalue="Actions/System/org-netbeans-modules-openfile-OpenFileAction.instance"/>
+    </file>
+    <file name="D-X.shadow">
+      <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-CutAction.instance"/>
+    </file>
+    <file name="D-C.shadow">
+      <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-CopyAction.instance"/>
+    </file>
+    <file name="D-V.shadow">
+      <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-PasteAction.instance"/>
+    </file>
+  </folder>
 </filesystem>
