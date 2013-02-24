@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.joeffice.desktop;
 
 import java.beans.PropertyChangeListener;
@@ -11,15 +7,20 @@ import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
+/**
+ * This class contains the setting controlor for the application appearance settings.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @OptionsPanelController.SubRegistration(
-        location = "General",
-        displayName = "#AdvancedOption_DisplayName_Mainoptions",
-        keywords = "#AdvancedOption_Keywords_Mainoptions",
-        keywordsCategory = "General/Mainoptions")
-@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_Mainoptions=Main options", "AdvancedOption_Keywords_Mainoptions=main options option general"})
-public final class MainoptionsOptionsPanelController extends OptionsPanelController {
+        location = "Advanced",
+        displayName = "#AdvancedOption_DisplayName_Appearance",
+        keywords = "#AdvancedOption_Keywords_Appearance",
+        keywordsCategory = "Advanced/Appearance")
+@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_Appearance=Appearance", "AdvancedOption_Keywords_Appearance=appearance,look,feel,language,langue,taal,idioma,lengua,aspect"})
+public final class AppearanceOptionsPanelController extends OptionsPanelController {
 
-    private MainoptionsPanel panel;
+    private AppearancePanel panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
@@ -61,9 +62,9 @@ public final class MainoptionsOptionsPanelController extends OptionsPanelControl
         pcs.removePropertyChangeListener(l);
     }
 
-    private MainoptionsPanel getPanel() {
+    private AppearancePanel getPanel() {
         if (panel == null) {
-            panel = new MainoptionsPanel(this);
+            panel = new AppearancePanel(this);
         }
         return panel;
     }

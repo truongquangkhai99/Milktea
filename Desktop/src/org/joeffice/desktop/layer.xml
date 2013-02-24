@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+  <folder name="Menu">
+    <folder name="Help">
+            <file name="shortcuts.xml_hidden"/>
+        </folder>
+        <file name="Spacer.instance">
+      <attr name="instanceCreate" methodvalue="javax.swing.Box.createHorizontalGlue"/>
+      <attr name="position" intvalue="9005"/>
+    </file>
+    <folder name="View">
+            <file name="org-netbeans-core-actions-LogAction.shadow_hidden"/>
+        </folder>
+        <folder name="Window">
+            <folder name="Other">
+                <file name="ReporterResultAction.shadow_hidden"/>
+            </folder>
+            <file name="Output_hidden"/>
+            <file name="Web_hidden"/>
+        </folder>
+        <file name="org-netbeans-modules-quicksearch-QuickSearchAction.shadow">
+      <attr name="originalFile" stringvalue="Actions/Edit/org-netbeans-modules-quicksearch-QuickSearchAction.instance"/>
+      <attr name="position" intvalue="9010"/>
+    </file>
+  </folder>
+    <folder name="Toolbars">
+        <file name="Standard.xml" url="Standard.xml"/>
+    </folder>
+</filesystem>

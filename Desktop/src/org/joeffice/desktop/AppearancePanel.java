@@ -1,14 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.joeffice.desktop;
 
-final class MainoptionsPanel extends javax.swing.JPanel {
+/**
+ * The panel showing the appearance settings.
+ *
+ * @author Anthony Goubard - Japplis
+ */
+final class AppearancePanel extends javax.swing.JPanel {
 
-    private final MainoptionsOptionsPanelController controller;
+    private final AppearanceOptionsPanelController controller;
 
-    MainoptionsPanel(MainoptionsOptionsPanelController controller) {
+    AppearancePanel(AppearanceOptionsPanelController controller) {
         this.controller = controller;
         initComponents();
         // TODO listen to changes in form fields and call controller.changed()
@@ -24,13 +25,13 @@ final class MainoptionsPanel extends javax.swing.JPanel {
         languageLabel = new javax.swing.JLabel();
         languageCombo = new javax.swing.JComboBox();
         lookAndFeelLabel = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        lookAndFeelCombo = new javax.swing.JComboBox();
 
-        org.openide.awt.Mnemonics.setLocalizedText(languageLabel, org.openide.util.NbBundle.getMessage(MainoptionsPanel.class, "MainoptionsPanel.languageLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(languageLabel, org.openide.util.NbBundle.getMessage(AppearancePanel.class, "AppearancePanel.languageLabel.text")); // NOI18N
 
         languageCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "English", "Français", "Español", "Nederlands" }));
 
-        org.openide.awt.Mnemonics.setLocalizedText(lookAndFeelLabel, org.openide.util.NbBundle.getMessage(MainoptionsPanel.class, "MainoptionsPanel.lookAndFeelLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lookAndFeelLabel, org.openide.util.NbBundle.getMessage(AppearancePanel.class, "AppearancePanel.lookAndFeelLabel.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -42,7 +43,7 @@ final class MainoptionsPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lookAndFeelLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(lookAndFeelCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(languageLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -59,7 +60,7 @@ final class MainoptionsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lookAndFeelLabel)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lookAndFeelCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(102, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -89,9 +90,9 @@ final class MainoptionsPanel extends javax.swing.JPanel {
         return true;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox languageCombo;
     private javax.swing.JLabel languageLabel;
+    private javax.swing.JComboBox lookAndFeelCombo;
     private javax.swing.JLabel lookAndFeelLabel;
     // End of variables declaration//GEN-END:variables
 }
