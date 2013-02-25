@@ -10,7 +10,7 @@ import java.util.Vector;
 import org.netbeans.modules.editor.NbEditorDocument;
 
 
-public class DocxDocument extends NbEditorDocument {
+public class DocxDocument extends DefaultStyledDocument {
 
     public int DOCUMENT_WIDTH = -1;
     /**
@@ -21,8 +21,32 @@ public class DocxDocument extends NbEditorDocument {
     /**
      * Constructs a word document.
      */
-    public DocxDocument() {
+    /* For NbDocument public DocxDocument() {
         super("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    }*/
+
+    public DocxDocument(Content c, StyleContext styles) {
+        super(c, styles);
+    }
+
+    /**
+     * Constructs a styled document with the default content
+     * storage implementation and a shared set of styles.
+     *
+     * @param styles The styles.
+     */
+    public DocxDocument(StyleContext styles) {
+        this(new GapContent(BUFFER_SIZE_DEFAULT), styles);
+    }
+
+    /**
+     * Constructs a default styled document.  This buffers
+     * input content by a size of BUFFER_SIZE_DEFAULT
+     * and has a style context that is scoped by the lifetime
+     * of the document and is not shared with other documents.
+     */
+    public DocxDocument() {
+        this(new GapContent(BUFFER_SIZE_DEFAULT), new StyleContext());
     }
 
     /**

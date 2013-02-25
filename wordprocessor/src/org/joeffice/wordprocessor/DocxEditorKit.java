@@ -16,7 +16,7 @@ import org.netbeans.modules.editor.NbEditorKit;
  *
  * @author  Stanislav Lapitsky
  */
-public class DocxEditorKit extends NbEditorKit {
+public class DocxEditorKit extends StyledEditorKit {
 
     /**
      * Create a copy of the editor kit.  This

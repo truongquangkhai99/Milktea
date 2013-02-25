@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.text.BadLocationException;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -89,7 +90,7 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
     }
 
     private JEditorPane createEditorPane() {
-        JEditorPane editor = new JEditorPane();
+        JEditorPane editor = new JTextPane();
         editor.setEditorKit(new DocxEditorKit());
         return editor;
     }

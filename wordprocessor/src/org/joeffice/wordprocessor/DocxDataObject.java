@@ -104,7 +104,7 @@ public class DocxDataObject extends MultiDataObject implements CookieSet.Factory
 
     public DocxDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException {
         super(pf, loader);
-        registerEditor("application/vnd.openxmlformats-officedocument.wordprocessingml.document", true);
+        registerEditor("application/vnd.openxmlformats-officedocument.wordprocessingml.document", false);
         CookieSet cookies = getCookieSet();
         cookies.add(DocxOpenSupport.class, this);
         cookies.add(DocxSaveCookie.class, this);
@@ -121,11 +121,6 @@ public class DocxDataObject extends MultiDataObject implements CookieSet.Factory
         }
     }
 
-    /*void editorInitialized(MyEditor ed) {
-        Opener op = getLookup().lookup(Opener.class);
-        op.editor = ed;
-    }*/
-
     @Override
     protected Node createNodeDelegate() {
         return new DocxDataNode(this, getLookup());
@@ -134,18 +129,6 @@ public class DocxDataObject extends MultiDataObject implements CookieSet.Factory
     @Override
     public Lookup getLookup() {
         return getCookieSet().getLookup();
-    }
-
-    @MultiViewElement.Registration(
-            displayName = "#LBL_Docx_EDITOR",
-            iconBase = "org/joeffice/wordprocessor/wordp-16.png",
-            mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED,
-            preferredID = "Docx",
-            position = 1000)
-    @Messages("LBL_Docx_EDITOR=Source")
-    public static MultiViewEditorElement createEditor(Lookup lkp) {
-        return new MultiViewEditorElement(lkp);
     }
 
     @Override

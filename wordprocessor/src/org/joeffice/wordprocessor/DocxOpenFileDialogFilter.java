@@ -7,7 +7,8 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * Add .docx to the open dialog choices.
- *
+ * Not working at the moment.
+ * 
  * @author Anthony Goubard - Japplis
  */
 //@ServiceProvider(service = FileFilter.class, path=FileFilterSupport.FILE_FILTER_LOOKUP_PATH)
