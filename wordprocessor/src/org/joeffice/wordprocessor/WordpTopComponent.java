@@ -5,13 +5,24 @@
 package org.joeffice.wordprocessor;
 
 import java.awt.BorderLayout;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.text.BadLocationException;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.CloneableTopComponent;
 
 /**
  * Top component which displays the docx documents.
@@ -34,25 +45,65 @@ import org.openide.util.NbBundle.Messages;
     "CTL_WordpTopComponent=Word processor Window",
     "HINT_WordpTopComponent=This is a Word processor window"
 })
-public final class WordpTopComponent extends TopComponent implements LookupListener {
+public final class WordpTopComponent extends CloneableTopComponent implements LookupListener {
+
+    private JEditorPane wordProcessor;
 
     public WordpTopComponent() {
+    }
+
+    public WordpTopComponent(DocxDataObject dataObject) {
+        init(dataObject);
+    }
+
+    private void init() {
         initComponents();
         setName(Bundle.CTL_WordpTopComponent());
         setToolTipText(Bundle.HINT_WordpTopComponent());
+    }
 
+    private void init(DocxDataObject dataObject) {
+        init();
+        FileObject docxFileObject = dataObject.getPrimaryFile();
+        String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
+        setToolTipText(fileDisplayName);
+        loadDocument(docxFileObject);
     }
 
     /**
      * This method is called from within the constructor to initialize the form.
      */
     private void initComponents() {
-
         setLayout(new BorderLayout());
+        JToolBar wordProcessingToolbar = createToolbar();
+        wordProcessor = createEditorPane();
+        JScrollPane editorScrollPane = new JScrollPane(wordProcessor);
+
+        add(wordProcessingToolbar, BorderLayout.NORTH);
+        add(editorScrollPane);
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
+    private JToolBar createToolbar() {
+        JToolBar editorToolbar = new JToolBar();
+        return editorToolbar;
+    }
+
+    private JEditorPane createEditorPane() {
+        JEditorPane editor = new JEditorPane();
+        editor.setEditorKit(new DocxEditorKit());
+        return editor;
+    }
+
+    private void loadDocument(FileObject docxFileObject) {
+        File docxFile = FileUtil.toFile(docxFileObject);
+        try (FileInputStream docxIS = new FileInputStream(docxFile)) {
+            wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
+        } catch (IOException|BadLocationException ex) {
+            Exceptions.attachMessage(ex, "Failed to load: " + docxFile.getAbsolutePath());
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
     @Override
     public void componentOpened() {
         // TODO add custom code on component opening

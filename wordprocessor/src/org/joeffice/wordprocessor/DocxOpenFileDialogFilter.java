@@ -2,8 +2,8 @@ package org.joeffice.wordprocessor;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
-import org.netbeans.modules.openide.filesystems.FileFilterSupport;
-import org.openide.util.lookup.ServiceProvider;
+//import org.netbeans.modules.openide.filesystems.FileFilterSupport;
+//import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Add .docx to the open dialog choices.
