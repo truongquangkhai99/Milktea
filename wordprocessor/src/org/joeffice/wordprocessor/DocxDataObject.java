@@ -4,18 +4,14 @@
  */
 package org.joeffice.wordprocessor;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import org.joeffice.wordprocessor.writer.DocxWriter;
-import org.netbeans.core.spi.multiview.MultiViewElement;
-import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
-import org.openide.cookies.OpenCookie;
 import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -26,11 +22,14 @@ import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.TopComponent;
 
+/**
+ * The DataObject for docx documents.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @Messages({
     "LBL_Docx_LOADER=Files of Docx"
 })
@@ -97,6 +96,7 @@ import org.openide.windows.TopComponent;
 })
 public class DocxDataObject extends MultiDataObject implements CookieSet.Factory {
 
+    // The document currently edited
     private Document content;
 
     private DocxOpenSupport opener;
@@ -148,6 +148,10 @@ public class DocxDataObject extends MultiDataObject implements CookieSet.Factory
         return null;
     }
 
+    /**
+     * Cookie invoked when the file is saved.
+     * Note that if the file is not edited, no save cookie is in the cookies set.
+     */
     private class DocxSaveCookie implements SaveCookie {
 
         @Override

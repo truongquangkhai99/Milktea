@@ -18,6 +18,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -35,7 +36,7 @@ import org.openide.windows.CloneableTopComponent;
         preferredID = "WordpTopComponent",
         iconBase="org/joeffice/wordprocessor/wordp-16.png",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS)
-@TopComponent.Registration(mode = "editor", openAtStartup = true)
+@TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.wordprocessor.WordpTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
@@ -57,18 +58,13 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
         init(dataObject);
     }
 
-    private void init() {
-        initComponents();
-        setName(Bundle.CTL_WordpTopComponent());
-        setToolTipText(Bundle.HINT_WordpTopComponent());
-    }
-
     private void init(DocxDataObject dataObject) {
-        init();
+        initComponents();
         FileObject docxFileObject = dataObject.getPrimaryFile();
         String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
         setToolTipText(fileDisplayName);
-        loadDocument(docxFileObject);
+        setName(docxFileObject.getName());
+        loadDocument(dataObject);
     }
 
     /**
@@ -95,10 +91,11 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
         return editor;
     }
 
-    private void loadDocument(FileObject docxFileObject) {
-        File docxFile = FileUtil.toFile(docxFileObject);
+    private void loadDocument(DocxDataObject docxDataObject) {
+        File docxFile = FileUtil.toFile(docxDataObject.getPrimaryFile());
         try (FileInputStream docxIS = new FileInputStream(docxFile)) {
             wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
+            docxDataObject.setContent(wordProcessor.getDocument());
         } catch (IOException|BadLocationException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + docxFile.getAbsolutePath());
             Exceptions.printStackTrace(ex);

@@ -9,7 +9,11 @@ import java.awt.*;
 import java.util.Vector;
 import org.netbeans.modules.editor.NbEditorDocument;
 
-
+/**
+ * This is the document for the JEditorPane.
+ * 
+ * @author  Stanislav Lapitsky
+ */
 public class DocxDocument extends DefaultStyledDocument {
 
     public int DOCUMENT_WIDTH = -1;
