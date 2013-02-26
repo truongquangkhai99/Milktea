@@ -88,7 +88,9 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>org.joeffice.spreadsheet</package>
+            </public-packages>
         </data>
     </configuration>
 </project>

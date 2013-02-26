@@ -7,7 +7,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
- *
+ * The POI cell renderer.
+ * 
  * @author Anthony Goubard - Japplis
  */
 public class CellRenderer extends DefaultTableCellRenderer {

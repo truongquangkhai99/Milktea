@@ -6,7 +6,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
- *
+ * The POI sheet table model.
+ * 
  * @author Anthony Goubard - Japplis
  */
 public class SheetTableModel extends AbstractTableModel {

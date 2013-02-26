@@ -23,7 +23,7 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.windows.CloneableTopComponent;
 
 /**
- * Top component which displays something.
+ * Top component which displays the toolbar and the sheets tab panel.
  */
 @ConvertAsProperties(
         dtd = "-//org.joeffice.spreadsheet//Spreadsheet//EN",
