@@ -2,7 +2,6 @@ package org.joeffice.spreadsheet.renderer;
 
 import java.awt.Color;
 import java.awt.Component;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -38,19 +37,12 @@ public class CellRenderer extends DefaultTableCellRenderer {
         } else if (type == Cell.CELL_TYPE_BOOLEAN) {
         } else if (type == Cell.CELL_TYPE_FORMULA) {
         }
-        short foregroundIndex = cell.getCellStyle().getFillForegroundColor();
-        if (foregroundIndex > 0) {
-            HSSFColor xlsColor = HSSFColor.getIndexHash().get(foregroundIndex);
-            if (xlsColor != null) {
-                setForeground(Color.decode(xlsColor.getHexString()));
-            }
-        }
         short backgroundIndex = cell.getCellStyle().getFillBackgroundColor();
-        if (backgroundIndex > 0) {
-            HSSFColor xlsColor = HSSFColor.getIndexHash().get(backgroundIndex);
-            if (xlsColor != null) {
-                setBackground(Color.decode(xlsColor.getHexString()));
-            }
+        Color backgroundColor = shortToColor(backgroundIndex);
+        if (backgroundColor != null) {
+            setBackground(backgroundColor);
+        } else {
+            setBackground(Color.WHITE);
         }
         short fontIndex = cell.getCellStyle().getFontIndex();
         if (fontIndex > 0) {
@@ -67,7 +59,25 @@ public class CellRenderer extends DefaultTableCellRenderer {
             if (xlsFont.getUnderline() > Font.U_NONE) {
                 // no underline in fonts
             }
+            short fontColorIndex = xlsFont.getColor();
+            Color fontColor = shortToColor(fontColorIndex);
+            if (fontColor != null) {
+                setForeground(fontColor);
+            } else {
+                setForeground(Color.BLACK);
+            }
             setFont(font);
         }
+    }
+
+    private Color shortToColor(short xlsColorIndex) {
+        if (xlsColorIndex > 0) {
+            HSSFColor xlsColor = HSSFColor.getIndexHash().get(new Integer(xlsColorIndex));
+            if (xlsColor != null) {
+                short[] rgb = xlsColor.getTriplet();
+                return new Color(rgb[0], rgb[1], rgb[2]);
+            }
+        }
+        return null;
     }
 }

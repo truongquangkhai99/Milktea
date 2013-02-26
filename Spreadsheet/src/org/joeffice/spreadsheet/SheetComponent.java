@@ -11,7 +11,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.joeffice.spreadsheet.renderer.CellRenderer;
 import org.joeffice.spreadsheet.rows.JScrollPaneAdjuster;
@@ -25,6 +27,9 @@ import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
  * @author Anthony Goubard - Japplis
  */
 public class SheetComponent extends JPanel {
+
+    public static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
+    public static final int UNIT_OFFSET_LENGTH = 7;
 
     private JLayeredPane layers;
     private JTable rowHeaders;
@@ -60,8 +65,18 @@ public class SheetComponent extends JPanel {
         // table.setDefaultEditor(Cell.class, editor);
         int columnsCount = sheetTableModel.getColumnCount();
         for (int i = 0; i < columnsCount; i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(new CellRenderer());
-            table.getColumnModel().getColumn(i).setCellEditor(editor);
+            TableColumn tableColumn = table.getColumnModel().getColumn(i);
+            tableColumn.setCellRenderer(new CellRenderer());
+            tableColumn.setCellEditor(editor);
+            int widthUnits = sheet.getColumnWidth(i);
+            tableColumn.setWidth(widthUnitsToPixel(widthUnits));
+        }
+        int rowCount = sheetTableModel.getRowCount();
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            Row row = sheet.getRow(rowIndex);
+            if (row != null) {
+                table.setRowHeight(rowIndex, (int) sheet.getRow(rowIndex).getHeightInPoints());
+            }
         }
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.setAutoscrolls(true);
@@ -132,5 +147,15 @@ public class SheetComponent extends JPanel {
         // NB you must use new Integer() - the int version is a different method
         layers.add(table, new Integer(DEFAULT_LAYER), 0);
         return layers;
+    }
+
+    // From http://apache-poi.1045710.n5.nabble.com/Excel-Column-Width-Unit-Converter-pixels-excel-column-width-units-td2301481.html
+    public static int widthUnitsToPixel(int widthUnits) {
+        int pixels = (widthUnits / EXCEL_COLUMN_WIDTH_FACTOR) * UNIT_OFFSET_LENGTH;
+
+        int offsetWidthUnits = widthUnits % EXCEL_COLUMN_WIDTH_FACTOR;
+        pixels += Math.round((float) offsetWidthUnits / ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
+
+        return pixels;
     }
 }

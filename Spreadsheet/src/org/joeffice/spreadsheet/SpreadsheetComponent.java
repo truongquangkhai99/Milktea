@@ -4,6 +4,8 @@ import static javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT;
 
 import java.awt.BorderLayout;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -12,9 +14,10 @@ import org.apache.poi.ss.usermodel.Workbook;
  *
  * @author Anthony Goubard - Japplis
  */
-public class SpreadsheetComponent extends JPanel {
+public class SpreadsheetComponent extends JPanel implements ChangeListener {
 
     private JTabbedPane sheets;
+    private Workbook workbook;
 
     public SpreadsheetComponent() {
         initComponents();
@@ -23,10 +26,12 @@ public class SpreadsheetComponent extends JPanel {
     public void initComponents() {
         setLayout(new BorderLayout());
         sheets = new JTabbedPane(JTabbedPane.BOTTOM, SCROLL_TAB_LAYOUT);
+        sheets.addChangeListener(this);
         add(sheets);
     }
 
     public void load(Workbook workbook) {
+        this.workbook = workbook;
         int numberOfSheets = workbook.getNumberOfSheets();
         for (int i = 0; i < numberOfSheets; i++) {
             Sheet sheet = workbook.getSheetAt(i);
@@ -34,5 +39,11 @@ public class SpreadsheetComponent extends JPanel {
             JPanel sheetPanel = new SheetComponent(sheet);
             sheets.addTab(sheetName, sheetPanel);
         }
+        sheets.setSelectedIndex(workbook.getActiveSheetIndex());
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent ce) {
+        workbook.setActiveSheet(sheets.getSelectedIndex());
     }
 }
