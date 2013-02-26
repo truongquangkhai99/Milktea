@@ -14,7 +14,9 @@ import javax.swing.table.TableCellEditor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.joeffice.spreadsheet.renderer.CellRenderer;
-import org.joeffice.spreadsheet.renderer.RowHeadersRenderer;
+import org.joeffice.spreadsheet.rows.JScrollPaneAdjuster;
+import org.joeffice.spreadsheet.rows.JTableRowHeaderResizer;
+import org.joeffice.spreadsheet.rows.RowHeadersRenderer;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
 
 /**
@@ -42,6 +44,8 @@ public class SheetComponent extends JPanel {
         rowHeaders = createRowHeaders(sheetTable);
         scrolling.setRowHeaderView(rowHeaders);
         scrolling.setCorner(UPPER_LEFT_CORNER, rowHeaders.getTableHeader());
+        new JTableRowHeaderResizer(scrolling).setEnabled(true);
+        new JScrollPaneAdjuster(scrolling);
 
         setLayout(new BorderLayout());
         add(scrolling);
@@ -51,8 +55,18 @@ public class SheetComponent extends JPanel {
         SheetTableModel sheetTableModel = new SheetTableModel(sheet);
         JTable table = new JTable(sheetTableModel);
         table.setDefaultRenderer(Cell.class, new CellRenderer());
-        TableCellEditor editor = new DefaultCellEditor(new JTextField());
-        table.setDefaultEditor(Cell.class, editor);
+        //TableCellEditor editor = new DefaultCellEditor(new JTextField());
+        TableCellEditor editor = new org.joeffice.spreadsheet.editor.CellEditor();
+        // table.setDefaultEditor(Cell.class, editor);
+        int columnsCount = sheetTableModel.getColumnCount();
+        for (int i = 0; i < columnsCount; i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(new CellRenderer());
+            table.getColumnModel().getColumn(i).setCellEditor(editor);
+        }
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        table.setAutoscrolls(true);
+        table.setDragEnabled(true);
+        table.setFillsViewportHeight(true);
         return table;
     }
 
@@ -68,6 +82,11 @@ public class SheetComponent extends JPanel {
             public String getColumnName(int column) {
                 return "";
             }
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
 
         JTable rowHeaders = new JTable(rowTableModel);
@@ -79,7 +98,9 @@ public class SheetComponent extends JPanel {
         d.width = rowHeaders.getPreferredSize().width;
         rowHeaders.setPreferredScrollableViewportSize(d);
         rowHeaders.setRowHeight(sheetTable.getRowHeight());
-        rowHeaders.setDefaultRenderer(String.class, new RowHeadersRenderer());
+        rowHeaders.setDefaultRenderer(String.class, new RowHeadersRenderer()); // This doesn't work!
+        rowHeaders.getColumnModel().getColumn(0).setCellRenderer(new RowHeadersRenderer());
+        rowHeaders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JTableHeader corner = rowHeaders.getTableHeader();
         corner.setReorderingAllowed(false);
