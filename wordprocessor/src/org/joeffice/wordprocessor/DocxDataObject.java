@@ -104,7 +104,6 @@ public class DocxDataObject extends MultiDataObject implements CookieSet.Factory
 
     public DocxDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException {
         super(pf, loader);
-        registerEditor("application/vnd.openxmlformats-officedocument.wordprocessingml.document", false);
         CookieSet cookies = getCookieSet();
         cookies.add(DocxOpenSupport.class, this);
         cookies.add(DocxSaveCookie.class, this);
