@@ -9,7 +9,6 @@ import javax.swing.text.Document;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.ViewFactory;
 import java.io.*;
-import org.netbeans.modules.editor.NbEditorKit;
 
 /**
  * This is the implementation of editing functionality.

@@ -7,11 +7,10 @@ import javax.swing.text.*;
 import javax.swing.undo.UndoableEdit;
 import java.awt.*;
 import java.util.Vector;
-import org.netbeans.modules.editor.NbEditorDocument;
 
 /**
  * This is the document for the JEditorPane.
- * 
+ *
  * @author  Stanislav Lapitsky
  */
 public class DocxDocument extends DefaultStyledDocument {

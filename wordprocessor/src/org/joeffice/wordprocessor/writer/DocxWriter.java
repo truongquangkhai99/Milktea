@@ -53,9 +53,9 @@ public class DocxWriter {
      * @exception	IOException occure when writing is failed.
      */
     public void write (String fileName) throws IOException {
-        FileOutputStream out=new FileOutputStream(fileName);
-        write(out,0,document.getLength());
-        out.close();
+        try (FileOutputStream out=new FileOutputStream(fileName)) {
+            write(out,0,document.getLength());
+        }
     }
 
     /**
@@ -229,7 +229,7 @@ public class DocxWriter {
         if (contentText.length()<=0 ) {
             return;
         }
-        
+
         R r=new R();
         r.setRPr(createRPr(leaf));
         Text text=new Text();
@@ -238,7 +238,7 @@ public class DocxWriter {
 
         content.add(r);
     }
-    
+
     protected RPr createRPr(Element leaf) {
         RPr rPr=new RPr();
         if (StyleConstants.isBold(leaf.getAttributes())) {
@@ -343,7 +343,7 @@ public class DocxWriter {
         content.add(tbl);
         for (int i=0; i<rc; i++) {
             Element row=table.getElement(i);
-            
+
             writeRow(row,tbl.getContent());
         }
     }
@@ -407,7 +407,7 @@ public class DocxWriter {
 
         TcMar tcMar = fillCellMargins();
         tcPr.setTcMar(tcMar);
-        
+
         content.add(tc);
 
         writeContent(cell,cell.getStartOffset(),cell.getEndOffset()-cell.getStartOffset(), tc.getContent());
