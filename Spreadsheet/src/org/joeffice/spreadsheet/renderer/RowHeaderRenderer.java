@@ -13,7 +13,7 @@ public class RowHeaderRenderer extends JToggleButton implements TableCellRendere
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        setText("" + row);
+        setText("bla " + value);
         return this;
     }
 }

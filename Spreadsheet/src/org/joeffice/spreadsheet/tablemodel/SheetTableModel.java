@@ -58,4 +58,25 @@ public class SheetTableModel extends AbstractTableModel {
         }
     }
 
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return true;
+    }
+
+    @Override
+    public void setValueAt(Object newValue, int rowIndex, int columnIndex) {
+        System.out.println("value " + newValue.getClass().getSimpleName());
+        Row row = sheet.getRow(rowIndex);
+        Cell cell = null;
+        if (row != null) {
+            cell = row.getCell(columnIndex);
+            if (cell == null) {
+                cell = row.createCell(columnIndex);
+            }
+        } else {
+            row = sheet.createRow(rowIndex);
+            cell = row.createCell(columnIndex);
+        }
+        cell.setCellValue((String) newValue);
+    }
 }

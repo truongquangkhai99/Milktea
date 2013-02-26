@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -76,6 +77,8 @@ public class SpreadsheetComponent extends JPanel {
         SheetTableModel sheetTableModel = new SheetTableModel(sheet);
         JTable table = new JTable(sheetTableModel);
         table.setDefaultRenderer(Cell.class, new CellRenderer());
+        TableCellEditor editor = new DefaultCellEditor(new JTextField());
+        table.setDefaultEditor(Cell.class, editor);
         return table;
     }
 
