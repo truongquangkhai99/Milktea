@@ -69,7 +69,7 @@ public class SheetComponent extends JPanel {
             tableColumn.setCellRenderer(new CellRenderer());
             tableColumn.setCellEditor(editor);
             int widthUnits = sheet.getColumnWidth(i);
-            tableColumn.setWidth(widthUnitsToPixel(widthUnits));
+            tableColumn.setPreferredWidth(widthUnitsToPixel(widthUnits));
         }
         int rowCount = sheetTableModel.getRowCount();
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {

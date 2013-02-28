@@ -8,10 +8,11 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JToolBar;
-import javax.swing.text.BadLocationException;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -104,7 +105,6 @@ public final class SpreadsheetTopComponent extends CloneableTopComponent {
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
     }
 
     void writeProperties(java.util.Properties p) {

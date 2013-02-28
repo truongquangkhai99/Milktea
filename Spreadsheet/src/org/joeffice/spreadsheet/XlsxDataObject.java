@@ -141,6 +141,11 @@ public class XlsxDataObject extends MultiDataObject implements CookieSet.Factory
         return null;
     }
 
+    @Override
+    protected int associateLookup() {
+        return 1;
+    }
+
     /**
      * Cookie invoked when the file is saved.
      * Note that if the file is not edited, no save cookie is in the cookies set.
