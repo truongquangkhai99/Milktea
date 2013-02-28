@@ -58,6 +58,7 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
     }
 
     public WordpTopComponent(DocxDataObject dataObject) {
+        this.docxDataObject = dataObject;
         init(dataObject);
     }
 
@@ -120,7 +121,7 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
     public boolean canClose() {
         int answer = OfficeUIUtils.checkSaveBeforeClosing(docxDataObject, this);
         boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
-        if (canClose) {
+        if (canClose && docxDataObject != null) {
             docxDataObject.setContent(null);
         }
         return canClose;
