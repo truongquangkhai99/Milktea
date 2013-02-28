@@ -7,9 +7,6 @@ package org.joeffice.presentation;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import javax.swing.JOptionPane;
-import javax.swing.text.Document;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -25,7 +22,6 @@ import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
-import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
 @Messages({

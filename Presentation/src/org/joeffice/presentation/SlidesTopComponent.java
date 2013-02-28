@@ -5,17 +5,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.swing.*;
+
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+
 import org.joeffice.desktop.OfficeUIUtils;
+
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
-import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.CloneableTopComponent;
@@ -32,7 +33,7 @@ import org.openide.windows.CloneableTopComponent;
         persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.presentation.SlidesTopComponent")
-/*@ActionReference(path = "Menu/Window")*/
+@ActionReference(path = "Menu/Window")
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_SlidesAction",
         preferredID = "SlidesTopComponent")
@@ -101,6 +102,7 @@ public final class SlidesTopComponent extends CloneableTopComponent {
                 slidesHolder.add(slideComp);
                 slidesHolder.add(new JSeparator(JSeparator.HORIZONTAL));
             }
+            pptxDataObject.setContent(null);
         } catch (IOException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + pptxFile.getAbsolutePath());
             Exceptions.printStackTrace(ex);
@@ -116,7 +118,7 @@ public final class SlidesTopComponent extends CloneableTopComponent {
     public boolean canClose() {
         int answer = OfficeUIUtils.checkSaveBeforeClosing(pptxDataObject, this);
         boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
-        if (canClose) {
+        if (canClose && pptxDataObject != null) {
             pptxDataObject.setContent(null);
         }
         return canClose;
