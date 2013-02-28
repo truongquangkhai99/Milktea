@@ -113,7 +113,7 @@ public final class SpreadsheetTopComponent extends CloneableTopComponent {
     public boolean canClose() {
         int answer = OfficeUIUtils.checkSaveBeforeClosing(xlsxDataObject, this);
         boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
-        if (canClose) {
+        if (canClose && xlsxDataObject != null) {
             xlsxDataObject.setContent(null);
         }
         return canClose;
