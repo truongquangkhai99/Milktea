@@ -16,6 +16,9 @@ public class OfficeUIUtils {
 
     @NbBundle.Messages({"MSG_SAVE_BEFORE_CLOSE=Save before closing?"})
     public static int checkSaveBeforeClosing(DataObject dataObject, TopComponent component) {
+        if (dataObject == null) {
+            return JOptionPane.NO_OPTION;
+        }
         SaveCookie saveCookie = dataObject.getCookie(SaveCookie.class);
         if (saveCookie != null) {
             String question = NbBundle.getMessage(OfficeUIUtils.class, "MSG_SAVE_BEFORE_CLOSE");
