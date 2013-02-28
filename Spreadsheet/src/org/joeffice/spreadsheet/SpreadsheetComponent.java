@@ -18,12 +18,14 @@ public class SpreadsheetComponent extends JPanel implements ChangeListener {
 
     private JTabbedPane sheets;
     private Workbook workbook;
+    private SpreadsheetTopComponent spreadsheetAndToolbar;
 
-    public SpreadsheetComponent() {
+    public SpreadsheetComponent(SpreadsheetTopComponent spreadsheetAndToolbar) {
+        this.spreadsheetAndToolbar = spreadsheetAndToolbar;
         initComponents();
     }
 
-    public void initComponents() {
+    private void initComponents() {
         setLayout(new BorderLayout());
         sheets = new JTabbedPane(JTabbedPane.BOTTOM, SCROLL_TAB_LAYOUT);
         sheets.addChangeListener(this);
@@ -36,10 +38,14 @@ public class SpreadsheetComponent extends JPanel implements ChangeListener {
         for (int i = 0; i < numberOfSheets; i++) {
             Sheet sheet = workbook.getSheetAt(i);
             String sheetName = workbook.getSheetName(i);
-            JPanel sheetPanel = new SheetComponent(sheet);
+            JPanel sheetPanel = new SheetComponent(sheet, this);
             sheets.addTab(sheetName, sheetPanel);
         }
         sheets.setSelectedIndex(workbook.getActiveSheetIndex());
+    }
+
+    public SpreadsheetTopComponent getSpreadsheetAndToolbar() {
+        return spreadsheetAndToolbar;
     }
 
     @Override
