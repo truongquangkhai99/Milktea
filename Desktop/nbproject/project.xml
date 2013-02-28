@@ -187,7 +187,9 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>org.joeffice.desktop</package>
+            </public-packages>
         </data>
     </configuration>
 </project>
