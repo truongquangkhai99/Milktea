@@ -49,7 +49,7 @@ public final class SlidesTopComponent extends CloneableTopComponent {
     private JPanel slidesHolder;
 
     public SlidesTopComponent() {
-        init();
+        System.out.println("init from ");
     }
 
     public SlidesTopComponent(PptxDataObject pptxDataObject) {
