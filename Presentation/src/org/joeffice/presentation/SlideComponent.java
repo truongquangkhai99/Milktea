@@ -25,8 +25,11 @@ public class SlideComponent extends JPanel {
 
     private XSLFSlide slide;
 
-    public SlideComponent(XSLFSlide slide) {
+    private SlidesTopComponent slidesComponent;
+
+    public SlideComponent(XSLFSlide slide, SlidesTopComponent slidesComponent) {
         this.slide = slide;
+        this.slidesComponent = slidesComponent;
         initComponent();
     }
 
@@ -42,14 +45,18 @@ public class SlideComponent extends JPanel {
         }
         XSLFTextShape[] textShapes = slide.getPlaceholders();
         for (XSLFTextShape textShape : textShapes) {
-            ShapeComponent shapeComponent = new ShapeComponent(textShape);
+            ShapeComponent shapeComponent = new ShapeComponent(textShape, this);
             //JComponent shapeComponent = new JLabel(textShape.getText());
             add(shapeComponent);
         }
         XSLFShape[] shapes = slide.getShapes();
         for (XSLFShape shape : shapes) {
-            ShapeComponent shapeComponent = new ShapeComponent(shape);
+            ShapeComponent shapeComponent = new ShapeComponent(shape, this);
             add(shapeComponent);
         }
+    }
+
+    public SlidesTopComponent getSlidesComponent() {
+        return slidesComponent;
     }
 }

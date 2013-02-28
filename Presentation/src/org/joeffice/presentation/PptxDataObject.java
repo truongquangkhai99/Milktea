@@ -7,6 +7,7 @@ package org.joeffice.presentation;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import javax.swing.JOptionPane;
 import javax.swing.text.Document;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -24,6 +25,7 @@ import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
 @Messages({
@@ -92,9 +94,8 @@ import org.openide.util.NbBundle.Messages;
 })
 public class PptxDataObject extends MultiDataObject implements CookieSet.Factory {
 
-    // The presentation currently edited
-    private XMLSlideShow  content;
-
+    // The presentation currently edited (null if not edited yet)
+    private XMLSlideShow content;
     private PptxOpenSupport opener;
     private PptxSaveCookie saver;
 
@@ -149,8 +150,7 @@ public class PptxDataObject extends MultiDataObject implements CookieSet.Factory
     }
 
     /**
-     * Cookie invoked when the file is saved.
-     * Note that if the file is not edited, no save cookie is in the cookies set.
+     * Cookie invoked when the file is saved. Note that if the file is not edited, no save cookie is in the cookies set.
      */
     private class PptxSaveCookie implements SaveCookie {
 
@@ -163,7 +163,7 @@ public class PptxDataObject extends MultiDataObject implements CookieSet.Factory
                 setContent(null);
             }
             File pptxFile = FileUtil.toFile(getPrimaryFile());
-            try (FileOutputStream pptxOutputStream  = new FileOutputStream(pptxFile)) {
+            try (FileOutputStream pptxOutputStream = new FileOutputStream(pptxFile)) {
                 presentation.write(pptxOutputStream);
             }
         }

@@ -4,20 +4,18 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.joeffice.desktop.OfficeUIUtils;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
+import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.CloneableTopComponent;
@@ -31,10 +29,10 @@ import org.openide.windows.CloneableTopComponent;
 @TopComponent.Description(
         preferredID = "SlidesTopComponent",
         iconBase = "org/joeffice/presentation/presentation-16.png",
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+        persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.presentation.SlidesTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
+/*@ActionReference(path = "Menu/Window")*/
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_SlidesAction",
         preferredID = "SlidesTopComponent")
@@ -46,6 +44,7 @@ import org.openide.windows.CloneableTopComponent;
 public final class SlidesTopComponent extends CloneableTopComponent {
 
     private PptxDataObject pptxDataObject;
+    private XMLSlideShow presentation;
     private JPanel slidesHolder;
 
     public SlidesTopComponent() {
@@ -63,6 +62,7 @@ public final class SlidesTopComponent extends CloneableTopComponent {
         String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
         setToolTipText(fileDisplayName);
         setName(docxFileObject.getName());
+
         loadDocument();
     }
 
@@ -92,13 +92,12 @@ public final class SlidesTopComponent extends CloneableTopComponent {
     private void loadDocument() {
         File pptxFile = FileUtil.toFile(pptxDataObject.getPrimaryFile());
         try (FileInputStream fis = new FileInputStream(pptxFile)) {
-            XMLSlideShow presentation = new XMLSlideShow(fis);
-            pptxDataObject.setContent(presentation);
+            presentation = new XMLSlideShow(fis);
 
             // Add the slides
             XSLFSlide[] slides = presentation.getSlides();
             for (XSLFSlide slide : slides) {
-                SlideComponent slideComp = new SlideComponent(slide);
+                SlideComponent slideComp = new SlideComponent(slide, this);
                 slidesHolder.add(slideComp);
                 slidesHolder.add(new JSeparator(JSeparator.HORIZONTAL));
             }
@@ -114,8 +113,25 @@ public final class SlidesTopComponent extends CloneableTopComponent {
     }
 
     @Override
+    public boolean canClose() {
+        int answer = OfficeUIUtils.checkSaveBeforeClosing(pptxDataObject, this);
+        boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
+        if (canClose) {
+            pptxDataObject.setContent(null);
+        }
+        return canClose;
+    }
+
+    @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+    }
+
+    public void setModified(boolean modified) {
+        if (modified) {
+            pptxDataObject.setContent(presentation);
+        } else {
+            pptxDataObject.setContent(null);
+        }
     }
 
     void writeProperties(java.util.Properties p) {
