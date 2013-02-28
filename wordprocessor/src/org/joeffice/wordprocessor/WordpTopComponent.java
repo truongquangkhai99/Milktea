@@ -8,17 +8,16 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import javax.swing.JEditorPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.JToolBar;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import org.joeffice.desktop.OfficeUIUtils;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
-import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -35,10 +34,10 @@ import org.openide.windows.CloneableTopComponent;
 @TopComponent.Description(
         preferredID = "WordpTopComponent",
         iconBase="org/joeffice/wordprocessor/wordp-16.png",
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+        persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.wordprocessor.WordpTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
+/*@ActionReference(path = "Menu/Window")*/
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_WordpAction",
         preferredID = "WordpTopComponent")
@@ -47,9 +46,13 @@ import org.openide.windows.CloneableTopComponent;
     "CTL_WordpTopComponent=Word processor Window",
     "HINT_WordpTopComponent=This is a Word processor window"
 })
-public final class WordpTopComponent extends CloneableTopComponent implements LookupListener {
+public final class WordpTopComponent extends CloneableTopComponent implements LookupListener, DocumentListener {
 
     private JEditorPane wordProcessor;
+
+    private Document document;
+
+    private DocxDataObject docxDataObject;
 
     public WordpTopComponent() {
     }
@@ -95,7 +98,8 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
         File docxFile = FileUtil.toFile(docxDataObject.getPrimaryFile());
         try (FileInputStream docxIS = new FileInputStream(docxFile)) {
             wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
-            docxDataObject.setContent(wordProcessor.getDocument());
+            document = wordProcessor.getDocument();
+            document.addDocumentListener(this);
         } catch (IOException|BadLocationException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + docxFile.getAbsolutePath());
             Exceptions.printStackTrace(ex);
@@ -110,6 +114,24 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
+    }
+
+    @Override
+    public boolean canClose() {
+        int answer = OfficeUIUtils.checkSaveBeforeClosing(docxDataObject, this);
+        boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
+        if (canClose) {
+            docxDataObject.setContent(null);
+        }
+        return canClose;
+    }
+
+    public void setModified(boolean modified) {
+        if (modified) {
+            docxDataObject.setContent(document);
+        } else {
+            docxDataObject.setContent(null);
+        }
     }
 
     void writeProperties(java.util.Properties p) {
@@ -127,5 +149,20 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
     @Override
     public void resultChanged(LookupEvent le) {
 
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent de) {
+        changedUpdate(de);
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent de) {
+        changedUpdate(de);
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent de) {
+        setModified(true);
     }
 }
