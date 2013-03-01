@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.joeffice.desktop.file.OfficeDataObject;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -88,7 +89,7 @@ import org.openide.util.NbBundle.Messages;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class PptxDataObject extends MultiDataObject implements CookieSet.Factory {
+public class PptxDataObject extends OfficeDataObject implements CookieSet.Factory {
 
     // The presentation currently edited (null if not edited yet)
     private XMLSlideShow content;
@@ -114,16 +115,6 @@ public class PptxDataObject extends MultiDataObject implements CookieSet.Factory
     }
 
     @Override
-    protected Node createNodeDelegate() {
-        return new PptxDataNode(this, getLookup());
-    }
-
-    @Override
-    public Lookup getLookup() {
-        return getCookieSet().getLookup();
-    }
-
-    @Override
     public <T extends Node.Cookie> T createCookie(Class<T> type) {
         if (type.isAssignableFrom(PptxOpenSupport.class)) {
             if (opener == null) {
@@ -138,11 +129,6 @@ public class PptxDataObject extends MultiDataObject implements CookieSet.Factory
             return (T) saver;
         }
         return null;
-    }
-
-    @Override
-    protected int associateLookup() {
-        return 1;
     }
 
     /**
