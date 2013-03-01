@@ -5,8 +5,6 @@
 package org.joeffice.wordprocessor;
 
 import java.io.IOException;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import org.joeffice.wordprocessor.writer.DocxWriter;
 import org.openide.awt.ActionID;
@@ -131,6 +129,11 @@ public class DocxDataObject extends MultiDataObject implements CookieSet.Factory
     }
 
     @Override
+    protected int associateLookup() {
+        return 1;
+    }
+
+    @Override
     public <T extends Node.Cookie> T createCookie(Class<T> type) {
         if (type.isAssignableFrom(DocxOpenSupport.class)) {
             if (opener == null) {
@@ -145,11 +148,6 @@ public class DocxDataObject extends MultiDataObject implements CookieSet.Factory
             return (T) saver;
         }
         return null;
-    }
-
-    @Override
-    protected int associateLookup() {
-        return 1;
     }
 
     /**

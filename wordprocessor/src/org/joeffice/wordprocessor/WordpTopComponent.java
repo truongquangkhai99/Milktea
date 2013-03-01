@@ -113,11 +113,6 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
     }
 
     @Override
-    public void componentClosed() {
-        // TODO add custom code on component closing
-    }
-
-    @Override
     public boolean canClose() {
         int answer = OfficeUIUtils.checkSaveBeforeClosing(docxDataObject, this);
         boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
@@ -125,6 +120,11 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
             docxDataObject.setContent(null);
         }
         return canClose;
+    }
+
+    @Override
+    public void componentClosed() {
+        // TODO add custom code on component closing
     }
 
     public void setModified(boolean modified) {
