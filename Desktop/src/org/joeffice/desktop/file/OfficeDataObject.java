@@ -8,7 +8,8 @@ import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 /**
- *
+ * Generic data object for the office documents.
+ * 
  * @author Anthony Goubard - Japplis
  */
 public class OfficeDataObject extends MultiDataObject {
@@ -31,5 +32,4 @@ public class OfficeDataObject extends MultiDataObject {
     protected int associateLookup() {
         return 1;
     }
-
 }

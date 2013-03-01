@@ -2,8 +2,9 @@ package org.joeffice.desktop;
 
 import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
-import org.openide.cookies.CloseCookie;
 import org.openide.cookies.SaveCookie;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
@@ -44,5 +45,31 @@ public class OfficeUIUtils {
             Exceptions.printStackTrace(ex);
         }
         return answer;
+    }
+
+    /**
+     * String utility method that changes TEST_NAME to Test Name
+     *
+     * @param technicalName the technical name (e.g. a database table name)
+     * @return the display name
+     */
+    public static String toDisplayable(String technicalName) {
+        String noUnderscoreName = technicalName.replace('_', ' ');
+        StringTokenizer wordsIterator = new StringTokenizer(noUnderscoreName, " ");
+
+        StringBuilder displayableName = new StringBuilder(technicalName.length());
+        boolean hasNextWord = wordsIterator.hasMoreTokens();
+        while (hasNextWord) {
+            String nextWord = wordsIterator.nextToken();
+            if (nextWord.toUpperCase().equals(nextWord) && nextWord.length() > 1) {
+                nextWord = nextWord.charAt(0) + nextWord.substring(1, nextWord.length()).toLowerCase();
+            }
+            displayableName.append(nextWord);
+            hasNextWord = wordsIterator.hasMoreTokens();
+            if (hasNextWord) {
+                displayableName.append(' ');
+            }
+        }
+        return displayableName.toString();
     }
 }
