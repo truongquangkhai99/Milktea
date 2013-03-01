@@ -189,6 +189,7 @@
             </module-dependencies>
             <public-packages>
                 <package>org.joeffice.desktop</package>
+                <package>org.joeffice.desktop.file</package>
             </public-packages>
         </data>
     </configuration>

@@ -1,7 +1,9 @@
 package org.joeffice.desktop;
 
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import javax.swing.JOptionPane;
+import org.openide.cookies.CloseCookie;
 import org.openide.cookies.SaveCookie;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
@@ -19,19 +21,28 @@ public class OfficeUIUtils {
         if (dataObject == null) {
             return JOptionPane.NO_OPTION;
         }
-        SaveCookie saveCookie = dataObject.getCookie(SaveCookie.class);
-        if (saveCookie != null) {
+
+        boolean isModified = dataObject.isModified();
+        int answer = JOptionPane.NO_OPTION;
+        if (isModified) {
             String question = NbBundle.getMessage(OfficeUIUtils.class, "MSG_SAVE_BEFORE_CLOSE");
-            int answer = JOptionPane.showConfirmDialog(component, question, question, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            answer = JOptionPane.showConfirmDialog(component, question, question, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer == JOptionPane.YES_OPTION) {
                 try {
+                    SaveCookie saveCookie = dataObject.getCookie(SaveCookie.class);
                     saveCookie.save();
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
-            return answer;
         }
-        return JOptionPane.NO_OPTION;
+
+        // This seams to get rid of the data object from the memory, otherwise reopening the file would open the one in memory
+        try {
+            dataObject.setValid(false);
+        } catch (PropertyVetoException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return answer;
     }
 }
