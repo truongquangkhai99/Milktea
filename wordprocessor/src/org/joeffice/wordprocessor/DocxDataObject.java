@@ -6,6 +6,7 @@ package org.joeffice.wordprocessor;
 
 import java.io.IOException;
 import javax.swing.text.Document;
+import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.wordprocessor.writer.DocxWriter;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -16,7 +17,6 @@ import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
-import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
@@ -92,7 +92,7 @@ import org.openide.util.NbBundle.Messages;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class DocxDataObject extends MultiDataObject implements CookieSet.Factory {
+public class DocxDataObject extends OfficeDataObject implements CookieSet.Factory {
 
     // The document currently edited
     private Document content;
@@ -116,21 +116,6 @@ public class DocxDataObject extends MultiDataObject implements CookieSet.Factory
             setModified(false);
             getCookieSet().remove(saver);
         }
-    }
-
-    @Override
-    protected Node createNodeDelegate() {
-        return new DocxDataNode(this, getLookup());
-    }
-
-    @Override
-    public Lookup getLookup() {
-        return getCookieSet().getLookup();
-    }
-
-    @Override
-    protected int associateLookup() {
-        return 1;
     }
 
     @Override
