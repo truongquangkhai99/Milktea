@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.joeffice.desktop.file.OfficeDataObject;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -88,7 +89,7 @@ import org.openide.util.NbBundle.Messages;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class XlsxDataObject extends MultiDataObject implements CookieSet.Factory {
+public class XlsxDataObject extends OfficeDataObject implements CookieSet.Factory {
 
     // The document currently edited
     private Workbook content;
@@ -115,16 +116,6 @@ public class XlsxDataObject extends MultiDataObject implements CookieSet.Factory
     }
 
     @Override
-    protected Node createNodeDelegate() {
-        return new XlsxDataNode(this, getLookup());
-    }
-
-    @Override
-    public Lookup getLookup() {
-        return getCookieSet().getLookup();
-    }
-
-    @Override
     public <T extends Node.Cookie> T createCookie(Class<T> type) {
         if (type.isAssignableFrom(XlsxOpenSupport.class)) {
             if (opener == null) {
@@ -139,11 +130,6 @@ public class XlsxDataObject extends MultiDataObject implements CookieSet.Factory
             return (T) saver;
         }
         return null;
-    }
-
-    @Override
-    protected int associateLookup() {
-        return 1;
     }
 
     /**
