@@ -6,6 +6,9 @@ package org.joeffice.database;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -13,7 +16,7 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
-import org.joeffice.desktop.OfficeUIUtils;
+import org.joeffice.desktop.ui.OfficeUIUtils;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -48,18 +51,18 @@ import org.openide.windows.CloneableTopComponent;
 public final class JDBCTopComponent extends CloneableTopComponent {
 
     private H2DataObject h2DataObject;
-    private JTabbedPane tables;
-    private Connection dbConnection;
+    private transient JTabbedPane tables;
+    private transient Connection dbConnection;
 
     public JDBCTopComponent() {
     }
 
     public JDBCTopComponent(H2DataObject h2DataObject) {
-        this.h2DataObject = h2DataObject;
-        init();
+        init(h2DataObject);
     }
 
-    private void init() {
+    private void init(H2DataObject h2DataObject) {
+        this.h2DataObject = h2DataObject;
         initComponents();
         FileObject docxFileObject = h2DataObject.getPrimaryFile();
         String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
@@ -99,11 +102,12 @@ public final class JDBCTopComponent extends CloneableTopComponent {
                 filePath = filePath.substring(0, filePath.length() - 6);
             }
             dbConnection = DriverManager.getConnection("jdbc:h2:" + filePath, "sa", "");
-            ResultSet rsTableNames = dbConnection.getMetaData().getTables(null, null, "%", new String[] {"TABLE"});
+            ResultSet rsTableNames = dbConnection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
             while (rsTableNames.next()) {
                 String nextTableName = rsTableNames.getString("TABLE_NAME");
                 TableComponent tableComp = new TableComponent(dbConnection, nextTableName);
-                tables.addTab(nextTableName, tableComp);
+                String tabLabel = OfficeUIUtils.toDisplayable(nextTableName);
+                tables.addTab(tabLabel, tableComp);
             }
         } catch (SQLException | ClassNotFoundException ex) {
             Exceptions.printStackTrace(ex);
@@ -133,6 +137,11 @@ public final class JDBCTopComponent extends CloneableTopComponent {
         }
     }
 
+    @Override
+    protected CloneableTopComponent createClonedObject() {
+        return new JDBCTopComponent(h2DataObject);
+    }
+
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
@@ -143,5 +152,18 @@ public final class JDBCTopComponent extends CloneableTopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        super.writeExternal(out);
+        out.writeObject(h2DataObject);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super.readExternal(in);
+        H2DataObject storedH2DataObject = (H2DataObject) in.readObject();
+        init(storedH2DataObject);
     }
 }

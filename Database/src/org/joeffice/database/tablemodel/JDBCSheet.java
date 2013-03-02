@@ -6,23 +6,22 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.joeffice.desktop.ui.OfficeUIUtils;
+
 import org.openide.util.Exceptions;
 
 /**
+ * TableModel representing one table of the database.
  *
  * @author Anthony Goubard - Japplis
  */
 public class JDBCSheet extends DefaultTableModel {
 
     public final static String BINARY_DATA_LABEL = "<binary data...>"; // No I18N
-
     private Connection conn;
     private String tableName;
-
     private ResultSetMetaData columnsMetaData;
 
     public JDBCSheet(Connection conn, String tableName) {
@@ -41,7 +40,7 @@ public class JDBCSheet extends DefaultTableModel {
 
             columnsMetaData = tableData.getMetaData();
 
-            // TODO not go throw the whole table
+            // TODO not go through the whole table
             while (tableData.next()) {
                 Object[] rowValues = new Object[columnsMetaData.getColumnCount()];
                 for (int columnIndex = 0; columnIndex < columnsMetaData.getColumnCount(); columnIndex++) {
@@ -110,7 +109,9 @@ public class JDBCSheet extends DefaultTableModel {
     @Override
     public String getColumnName(int column) {
         try {
-            return columnsMetaData.getColumnName(column + 1);
+            String columnName = columnsMetaData.getColumnName(column + 1);
+            String displayedName = OfficeUIUtils.toDisplayable(columnName);
+            return displayedName;
         } catch (SQLException ex) {
             return super.getColumnName(column);
         }
@@ -118,19 +119,21 @@ public class JDBCSheet extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        /*try {
-            return columnsMetaData.isReadOnly(column + 1);
+        boolean editable = false;
+        try {
+            editable = columnsMetaData.isWritable(column + 1)
+                    && columnsMetaData.getColumnType(column + 1) != Types.ROWID;
         } catch (SQLException ex) {
-            return false;
-        }*/
-        return true;
+            // Not editable
+        }
+        return editable;
     }
 
     @Override
     public void setValueAt(Object newValue, int row, int column) {
         try {
             int maxSize = columnsMetaData.getPrecision(column + 1);
-            if (newValue instanceof String && newValue.toString().length() >  maxSize) {
+            if (newValue instanceof String && newValue.toString().length() > maxSize) {
                 JOptionPane.showMessageDialog(null, "The text should be no longer than " + maxSize + " characters"); // NO I18N
                 return;
             }
@@ -145,35 +148,8 @@ public class JDBCSheet extends DefaultTableModel {
         try {
             String columnName = columnsMetaData.getColumnName(column + 1);
             String query = "update " + tableName + " set " + columnName + " = ?";
-            String conjonction = " where ";
-            for (int i = 0; i < columnsMetaData.getColumnCount(); i++) {
-                int columnType = columnsMetaData.getColumnType(i + 1);
-                switch (columnType) {
-                    case Types.CHAR:
-                    case Types.VARCHAR:
-                    case Types.LONGVARCHAR:
-                    case Types.NVARCHAR:
-                    case Types.LONGNVARCHAR:
-                        String columnValue = (String) getValueAt(row, i);
-                        if (i != column &&  columnValue != null && "".equals(columnValue)) {
-                            query += conjonction + columnsMetaData.getColumnName(i + 1) + " = '" + columnValue + "'";
-                            conjonction = " and ";
-                        }
-                        break;
-                    case Types.BIGINT:
-                    case Types.INTEGER:
-                    case Types.NUMERIC:
-                    case Types.ROWID:
-                    case Types.SMALLINT:
-                    case Types.TINYINT:
-                        Integer columnIntValue = (Integer) getValueAt(row, i);
-                        if (i != column &&  columnIntValue != null) {
-                            query += conjonction + columnsMetaData.getColumnName(i + 1) + " = " + columnIntValue + "";
-                            conjonction = " and ";
-                        }
-                        break;
-                }
-            }
+            String whereClause = findRowCriteria(column, row);
+            query += whereClause;
             PreparedStatement updateStmt = conn.prepareStatement(query);
             setStatementValue(updateStmt, column, newValue);
             int updatedRowsCount = updateStmt.executeUpdate();
@@ -181,6 +157,40 @@ public class JDBCSheet extends DefaultTableModel {
         } catch (SQLException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+
+    public String findRowCriteria(int updatedColumn, int row) throws SQLException {
+        String whereClause = "";
+        String conjunction = " where ";
+        for (int i = 0; i < columnsMetaData.getColumnCount(); i++) {
+            int columnType = columnsMetaData.getColumnType(i + 1);
+            switch (columnType) {
+                case Types.CHAR:
+                case Types.VARCHAR:
+                case Types.LONGVARCHAR:
+                case Types.NVARCHAR:
+                case Types.LONGNVARCHAR:
+                    String columnValue = (String) getValueAt(row, i);
+                    if (i != updatedColumn && columnValue != null && "".equals(columnValue)) {
+                        whereClause += conjunction + columnsMetaData.getColumnName(i + 1) + " = '" + columnValue + "'";
+                        conjunction = " and ";
+                    }
+                    break;
+                case Types.BIGINT:
+                case Types.INTEGER:
+                case Types.NUMERIC:
+                case Types.ROWID:
+                case Types.SMALLINT:
+                case Types.TINYINT:
+                    Integer columnIntValue = (Integer) getValueAt(row, i);
+                    if (i != updatedColumn && columnIntValue != null) {
+                        whereClause += conjunction + columnsMetaData.getColumnName(i + 1) + " = " + columnIntValue;
+                        conjunction = " and ";
+                    }
+                    break;
+            }
+        }
+        return whereClause;
     }
 
     public void setStatementValue(PreparedStatement updateStmt, int columnIndex, Object value) throws SQLException {

@@ -86,7 +86,7 @@ import org.openide.util.NbBundle.Messages;
 })
 public class H2DataObject extends OfficeDataObject implements CookieSet.Factory {
 
-    private DatabaseOpenSupport opener;
+    private transient DatabaseOpenSupport opener;
 
     public H2DataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
@@ -103,5 +103,10 @@ public class H2DataObject extends OfficeDataObject implements CookieSet.Factory 
             return (T) opener;
         }
         return null;
+    }
+
+    @Override
+    public void setContent(Object document) {
+        // Not editable, using auto-commit
     }
 }
