@@ -1,6 +1,5 @@
 package org.joeffice.presentation;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,18 +7,18 @@ import javax.swing.*;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.joeffice.desktop.file.OfficeDataObject;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 
-import org.joeffice.desktop.OfficeUIUtils;
+import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.CloneableTopComponent;
 
 /**
  * Top component which displays the toolbar and the presentation slides in edit mode.
@@ -42,56 +41,27 @@ import org.openide.windows.CloneableTopComponent;
     "CTL_SlidesTopComponent=Slides Window",
     "HINT_SlidesTopComponent=This is a Slides window"
 })
-public final class SlidesTopComponent extends CloneableTopComponent {
+public final class SlidesTopComponent extends OfficeTopComponent {
 
-    private PptxDataObject pptxDataObject;
     private XMLSlideShow presentation;
-    private JPanel slidesHolder;
 
     public SlidesTopComponent() {
-        System.out.println("init from ");
     }
 
-    public SlidesTopComponent(PptxDataObject pptxDataObject) {
-        this.pptxDataObject = pptxDataObject;
-        init();
+    public SlidesTopComponent(OfficeDataObject pptxDataObject) {
+        super(pptxDataObject);
     }
 
-    private void init() {
-        initComponents();
-        FileObject docxFileObject = pptxDataObject.getPrimaryFile();
-        String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
-        setToolTipText(fileDisplayName);
-        setName(docxFileObject.getName());
-
-        loadDocument();
-    }
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     */
-    private void initComponents() {
-        setLayout(new BorderLayout());
-        JToolBar presentationToolbar = createToolbar();
-        JComponent slidesHolder = createSlidesHolder();
-
-        add(presentationToolbar, BorderLayout.NORTH);
-        add(slidesHolder);
-    }
-
-    protected JToolBar createToolbar() {
-        JToolBar spreadsheetToolbar = new JToolBar();
-        return spreadsheetToolbar;
-    }
-
-    protected JComponent createSlidesHolder() {
-        slidesHolder = new JPanel();
+    @Override
+    protected JComponent createMainComponent() {
+        JPanel slidesHolder = new JPanel();
         slidesHolder.setLayout(new BoxLayout(slidesHolder, BoxLayout.Y_AXIS));
-        return new JScrollPane(slidesHolder);
+        return slidesHolder;
     }
 
-    private void loadDocument() {
-        File pptxFile = FileUtil.toFile(pptxDataObject.getPrimaryFile());
+    @Override
+    public void loadDocument() {
+        File pptxFile = FileUtil.toFile(getDataObject().getPrimaryFile());
         try (FileInputStream fis = new FileInputStream(pptxFile)) {
             presentation = new XMLSlideShow(fis);
 
@@ -99,40 +69,13 @@ public final class SlidesTopComponent extends CloneableTopComponent {
             XSLFSlide[] slides = presentation.getSlides();
             for (XSLFSlide slide : slides) {
                 SlideComponent slideComp = new SlideComponent(slide, this);
-                slidesHolder.add(slideComp);
-                slidesHolder.add(new JSeparator(JSeparator.HORIZONTAL));
+                getMainComponent().add(slideComp);
+                getMainComponent().add(new JSeparator(JSeparator.HORIZONTAL));
             }
-            pptxDataObject.setContent(null);
+            ((PptxDataObject) getDataObject()).setContent(null);
         } catch (IOException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + pptxFile.getAbsolutePath());
             Exceptions.printStackTrace(ex);
-        }
-    }
-
-    @Override
-    public void componentOpened() {
-        // TODO add custom code on component opening
-    }
-
-    @Override
-    public boolean canClose() {
-        int answer = OfficeUIUtils.checkSaveBeforeClosing(pptxDataObject, this);
-        boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
-        if (canClose && pptxDataObject != null) {
-            pptxDataObject.setContent(null);
-        }
-        return canClose;
-    }
-
-    @Override
-    public void componentClosed() {
-    }
-
-    public void setModified(boolean modified) {
-        if (modified) {
-            pptxDataObject.setContent(presentation);
-        } else {
-            pptxDataObject.setContent(null);
         }
     }
 

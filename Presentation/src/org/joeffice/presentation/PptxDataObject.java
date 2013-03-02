@@ -103,8 +103,9 @@ public class PptxDataObject extends OfficeDataObject implements CookieSet.Factor
         cookies.add(PptxSaveCookie.class, this);
     }
 
-    synchronized void setContent(XMLSlideShow document) {
-        this.content = document;
+    @Override
+    public synchronized void setContent(Object document) {
+        this.content = (XMLSlideShow) document;
         if (document != null) {
             setModified(true);
             getCookieSet().add(saver);

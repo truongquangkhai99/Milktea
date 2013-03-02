@@ -6,9 +6,12 @@ import static org.apache.poi.xslf.usermodel.TextAlign.RIGHT;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
@@ -31,13 +34,12 @@ import org.openide.util.Exceptions;
 public class ShapeComponent extends JPanel implements DocumentListener {
 
     private XSLFShape shape;
-
     private SlideComponent slideComponent;
 
     public ShapeComponent(XSLFShape shape, SlideComponent slideComponent) {
         this.shape = shape;
         this.slideComponent = slideComponent;
-        // for debug setBorder(BorderFactory.createLineBorder(Color.RED));
+        setBorder(BorderFactory.createLineBorder(Color.RED)); // for debug 
         setBounds(shape.getAnchor().getBounds());
         setOpaque(false);
         setLayout(new BorderLayout());
@@ -47,6 +49,13 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     private void initComponent() {
         if (shape instanceof XSLFTextShape) {
             handleTextShape((XSLFTextShape) shape);
+        } else {
+            BufferedImage img = new BufferedImage((int) shape.getAnchor().getWidth(), (int) shape.getAnchor().getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D graphics = img.createGraphics();
+            shape.draw(graphics);
+            graphics.dispose();
+            JLabel shapeLabel = new JLabel(new ImageIcon(img));
+            add(shapeLabel);
         }
         // else paintComponent should display the shape (but it doesn't work)
     }
@@ -165,7 +174,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         return ""; // No bullets
     }
 
-    @Override
+    /*@Override
     public void paintComponent(Graphics g) {
         // The draw and drawContent methods don't display anything
         if (shape instanceof XSLFTextShape) {
@@ -173,7 +182,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         } else {
             shape.draw((Graphics2D) g);
         }
-    }
+    }*/
 
     @Override
     public Dimension getPreferredSize() {
