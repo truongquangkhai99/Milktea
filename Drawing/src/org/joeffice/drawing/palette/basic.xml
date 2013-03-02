@@ -1,0 +1,12 @@
+<!DOCTYPE editor_palette_item PUBLIC
+ "-//NetBeans//Editor Palette Item 1.1//EN"
+ "http://www.netbeans.org/dtds/editor-palette-item-1_1.dtd">
+<editor_palette_item version="1.1">
+ <body></body>
+ <!--icon16 urlvalue="file:/E:/icon16.jpg"/>
+ <icon32 urlvalue="file:/E:/icon32.jpg"/-->
+ <inline-description>
+ <display-name>Basic shapes</display-name>
+ <tooltip>My Palette Item</tooltip>
+ </inline-description>
+</editor_palette_item>
