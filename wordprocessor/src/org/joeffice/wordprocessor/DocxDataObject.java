@@ -107,8 +107,9 @@ public class DocxDataObject extends OfficeDataObject implements CookieSet.Factor
         cookies.add(DocxSaveCookie.class, this);
     }
 
-    synchronized void setContent(Document document) {
-        this.content = document;
+    @Override
+    public synchronized void setContent(Object document) {
+        this.content = (Document) document;
         if (document != null) {
             setModified(true);
             getCookieSet().add(saver);

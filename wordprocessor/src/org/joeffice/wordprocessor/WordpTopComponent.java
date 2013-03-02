@@ -13,7 +13,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import org.joeffice.desktop.OfficeUIUtils;
+import org.joeffice.desktop.ui.OfficeTopComponent;
+import org.joeffice.desktop.ui.OfficeUIUtils;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.filesystems.FileObject;
@@ -108,11 +109,6 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
     }
 
     @Override
-    public void componentOpened() {
-        // TODO add custom code on component opening
-    }
-
-    @Override
     public boolean canClose() {
         int answer = OfficeUIUtils.checkSaveBeforeClosing(docxDataObject, this);
         boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
@@ -120,11 +116,6 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
             docxDataObject.setContent(null);
         }
         return canClose;
-    }
-
-    @Override
-    public void componentClosed() {
-        // TODO add custom code on component closing
     }
 
     public void setModified(boolean modified) {
