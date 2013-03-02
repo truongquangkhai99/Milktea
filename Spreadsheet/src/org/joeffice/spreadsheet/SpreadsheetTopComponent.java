@@ -13,7 +13,7 @@ import javax.swing.JToolBar;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.joeffice.desktop.OfficeUIUtils;
+import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;

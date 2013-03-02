@@ -104,8 +104,9 @@ public class XlsxDataObject extends OfficeDataObject implements CookieSet.Factor
         cookies.add(XlsxSaveCookie.class, this);
     }
 
-    synchronized void setContent(Workbook workbook) {
-        this.content = workbook;
+    @Override
+    public synchronized void setContent(Object workbook) {
+        this.content = (Workbook) workbook;
         if (workbook != null) {
             setModified(true);
             getCookieSet().add(saver);
