@@ -33,6 +33,8 @@
       <file name="Output_hidden"/>
       <file name="Web_hidden"/>
         <file name="org-joeffice-database-JDBCTopComponent.shadow_hidden"/>
+            <file name="org-joeffice-drawing-DrawingTopComponent.shadow_hidden"/>
+            <file name="org-joeffice-drawing-WidgetsPaletteTopComponent.shadow_hidden"/>
             <file name="org-joeffice-presentation-SlidesTopComponent.shadow_hidden"/>
             <file name="org-joeffice-spreadsheet-SpreadsheetTopComponent.shadow_hidden"/>
             <file name="org-joeffice-wordprocessor-WordpTopComponent.shadow_hidden"/>

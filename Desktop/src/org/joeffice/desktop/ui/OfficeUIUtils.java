@@ -1,4 +1,4 @@
-package org.joeffice.desktop;
+package org.joeffice.desktop.ui;
 
 import java.beans.PropertyVetoException;
 import java.io.IOException;

@@ -1,5 +1,6 @@
 package org.joeffice.desktop.file;
 
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
@@ -9,14 +10,16 @@ import org.openide.util.Lookup;
 
 /**
  * Generic data object for the office documents.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
-public class OfficeDataObject extends MultiDataObject {
+public abstract class OfficeDataObject extends MultiDataObject {
 
     public OfficeDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException {
         super(pf, loader);
     }
+
+    public abstract void setContent(Object document);
 
     @Override
     protected Node createNodeDelegate() {
