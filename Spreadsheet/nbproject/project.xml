@@ -23,6 +23,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.joeffice.swingx</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.settings</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -98,6 +106,7 @@
             </module-dependencies>
             <public-packages>
                 <package>org.joeffice.spreadsheet</package>
+                <package>org.joeffice.spreadsheet.rows</package>
             </public-packages>
         </data>
     </configuration>

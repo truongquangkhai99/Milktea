@@ -41,8 +41,6 @@ public class CellRenderer extends DefaultTableCellRenderer {
         Color backgroundColor = shortToColor(backgroundIndex);
         if (backgroundColor != null) {
             setBackground(backgroundColor);
-        } else {
-            setBackground(Color.WHITE);
         }
         short fontIndex = cell.getCellStyle().getFontIndex();
         if (fontIndex > 0) {

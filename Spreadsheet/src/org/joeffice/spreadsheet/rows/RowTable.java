@@ -1,12 +1,16 @@
 package org.joeffice.spreadsheet.rows;
 
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.LookAndFeel;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  *
@@ -28,15 +32,30 @@ public class RowTable extends JTable {
         d.width = getPreferredSize().width;
         setPreferredScrollableViewportSize(d);
         setRowHeight(dataTable.getRowHeight());
-        setDefaultRenderer(String.class, new RowHeadersRenderer()); // This doesn't work!
-        getColumnModel().getColumn(0).setCellRenderer(new RowHeadersRenderer());
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        RowHeadersRenderer rowRenderer = new RowHeadersRenderer();
+        setDefaultRenderer(String.class, rowRenderer); // This doesn't work!
+        getColumnModel().getColumn(0).setCellRenderer(rowRenderer);
+        setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         JTableHeader corner = getTableHeader();
         corner.setReorderingAllowed(false);
         corner.setResizingAllowed(false);
 
         // Add listener for setRowHeight from the data table
+        int rowCount = dataTable.getRowCount();
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            int currentRowHeight = dataTable.getRowHeight(rowIndex);
+            if (currentRowHeight != getRowHeight(rowIndex)) {
+                setRowHeight(rowIndex, currentRowHeight);
+            }
+        }
+
+        // Listeners
+        RowEventsListeners rowListeners = new RowEventsListeners(this);
+        dataTable.addPropertyChangeListener("rowHeight", rowListeners);
+        dataTable.addPropertyChangeListener("singleRowHeight", rowListeners);
+        new TableRowResizer(this);
+        getSelectionModel().addListSelectionListener(rowListeners);
     }
 
     private TableModel createRowTableModel() {
@@ -58,9 +77,19 @@ public class RowTable extends JTable {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return true;
             }
         };
         return rowTableModel;
+    }
+
+    @Override
+    public void setRowHeight(int row, int rowHeight) {
+        super.setRowHeight(row, rowHeight);
+        dataTable.setRowHeight(row, rowHeight);
+    }
+
+    public JTable getDataTable() {
+        return dataTable;
     }
 }

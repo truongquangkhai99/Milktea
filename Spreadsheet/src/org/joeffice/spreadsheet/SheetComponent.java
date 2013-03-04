@@ -53,6 +53,7 @@ public class SheetComponent extends JPanel {
         scrolling.setCorner(UPPER_LEFT_CORNER, rowHeaders.getTableHeader());
         new JTableRowHeaderResizer(scrolling).setEnabled(true);
         new JScrollPaneAdjuster(scrolling);
+        scrolling.getVerticalScrollBar().setUnitIncrement(16);
 
         setLayout(new BorderLayout());
         add(scrolling);
@@ -60,7 +61,8 @@ public class SheetComponent extends JPanel {
 
     public JTable createTable(Sheet sheet) {
         SheetTableModel sheetTableModel = new SheetTableModel(sheet);
-        JTable table = new JTable(sheetTableModel);
+        JTable table = new SheetTable(sheetTableModel);
+
         table.setDefaultRenderer(Cell.class, new CellRenderer());
         //TableCellEditor editor = new DefaultCellEditor(new JTextField());
         TableCellEditor editor = new org.joeffice.spreadsheet.editor.CellEditor();
@@ -73,6 +75,7 @@ public class SheetComponent extends JPanel {
             int widthUnits = sheet.getColumnWidth(i);
             tableColumn.setPreferredWidth(widthUnitsToPixel(widthUnits));
         }
+
         int rowCount = sheetTableModel.getRowCount();
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             Row row = sheet.getRow(rowIndex);
@@ -80,10 +83,20 @@ public class SheetComponent extends JPanel {
                 table.setRowHeight(rowIndex, (int) sheet.getRow(rowIndex).getHeightInPoints());
             }
         }
-        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
         table.setAutoscrolls(true);
-        table.setDragEnabled(true);
         table.setFillsViewportHeight(true);
+        JLabel tableHeader = (JLabel) table.getTableHeader().getDefaultRenderer();
+        tableHeader.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // XXX This is OK for one block but it doesn't work for 2 blocks, also selecting row no longer works
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        table.setCellSelectionEnabled(true);
+        table.setRowSelectionAllowed(true);
+        table.setColumnSelectionAllowed(true);
+
+        table.setDragEnabled(true);
+        table.setDropMode(DropMode.ON_OR_INSERT);
         return table;
     }
 
