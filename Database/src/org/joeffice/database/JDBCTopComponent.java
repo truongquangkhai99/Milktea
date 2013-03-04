@@ -16,7 +16,9 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
+
 import org.joeffice.desktop.ui.OfficeUIUtils;
+
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -105,7 +107,9 @@ public final class JDBCTopComponent extends CloneableTopComponent {
             ResultSet rsTableNames = dbConnection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
             while (rsTableNames.next()) {
                 String nextTableName = rsTableNames.getString("TABLE_NAME");
+
                 TableComponent tableComp = new TableComponent(dbConnection, nextTableName);
+
                 String tabLabel = OfficeUIUtils.toDisplayable(nextTableName);
                 tables.addTab(tabLabel, tableComp);
             }

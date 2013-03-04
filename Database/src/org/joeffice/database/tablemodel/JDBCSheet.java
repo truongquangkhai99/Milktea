@@ -1,13 +1,17 @@
 package org.joeffice.database.tablemodel;
 
+import com.sun.rowset.JdbcRowSetImpl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import javax.sql.RowSet;
+import javax.sql.rowset.RowSetFactory;
+import javax.sql.rowset.RowSetProvider;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.AbstractTableModel;
 import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.openide.util.Exceptions;
@@ -17,12 +21,13 @@ import org.openide.util.Exceptions;
  *
  * @author Anthony Goubard - Japplis
  */
-public class JDBCSheet extends DefaultTableModel {
+public class JDBCSheet extends AbstractTableModel {
 
     public final static String BINARY_DATA_LABEL = "<binary data...>"; // No I18N
     private Connection conn;
     private String tableName;
     private ResultSetMetaData columnsMetaData;
+    private RowSet dataModel;
 
     public JDBCSheet(Connection conn, String tableName) {
         this.conn = conn;
@@ -36,19 +41,19 @@ public class JDBCSheet extends DefaultTableModel {
 
     private void fillWithQuery(String query) {
         try {
-            ResultSet tableData = conn.createStatement().executeQuery(query);
+            RowSetFactory rowSetFactory = RowSetProvider.newFactory();
+            dataModel = rowSetFactory.createJdbcRowSet();
+            dataModel.setUrl(conn.getMetaData().getURL());
+            dataModel.setUsername(conn.getMetaData().getUserName());
+            dataModel.setPassword("");
 
-            columnsMetaData = tableData.getMetaData();
+            dataModel.setCommand(query);
+            dataModel.execute();
+
+            columnsMetaData = dataModel.getMetaData();
 
             // TODO not go through the whole table
-            while (tableData.next()) {
-                Object[] rowValues = new Object[columnsMetaData.getColumnCount()];
-                for (int columnIndex = 0; columnIndex < columnsMetaData.getColumnCount(); columnIndex++) {
-                    Object value = getResultSetValueAsObject(tableData, columnIndex + 1);
-                    rowValues[columnIndex] = value;
-                }
-                addRow(rowValues);
-            }
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -118,6 +123,29 @@ public class JDBCSheet extends DefaultTableModel {
     }
 
     @Override
+    public int getRowCount() {
+        try {
+            dataModel.last();
+            return dataModel.getRow();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        try {
+            dataModel.absolute(rowIndex + 1);
+            Object value = getResultSetValueAsObject(dataModel, columnIndex + 1);
+            return value;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return "";
+        }
+    }
+
+    @Override
     public boolean isCellEditable(int row, int column) {
         boolean editable = false;
         try {
@@ -139,69 +167,29 @@ public class JDBCSheet extends DefaultTableModel {
             }
         } catch (SQLException ex) {
         }
-        super.setValueAt(newValue, row, column);
-        // TODO Also update the database
         updateDatabase(newValue, row, column);
     }
 
     private void updateDatabase(Object newValue, int row, int column) {
         try {
-            String columnName = columnsMetaData.getColumnName(column + 1);
-            String query = "update " + tableName + " set " + columnName + " = ?";
-            String whereClause = findRowCriteria(column, row);
-            query += whereClause;
-            PreparedStatement updateStmt = conn.prepareStatement(query);
-            setStatementValue(updateStmt, column, newValue);
-            int updatedRowsCount = updateStmt.executeUpdate();
-            System.out.println(updatedRowsCount + " rows updated.");
+            dataModel.absolute(row + 1);
+            setColumnValue(dataModel, column + 1, newValue);
         } catch (SQLException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
-    public String findRowCriteria(int updatedColumn, int row) throws SQLException {
-        String whereClause = "";
-        String conjunction = " where ";
-        for (int i = 0; i < columnsMetaData.getColumnCount(); i++) {
-            int columnType = columnsMetaData.getColumnType(i + 1);
-            switch (columnType) {
-                case Types.CHAR:
-                case Types.VARCHAR:
-                case Types.LONGVARCHAR:
-                case Types.NVARCHAR:
-                case Types.LONGNVARCHAR:
-                    String columnValue = (String) getValueAt(row, i);
-                    if (i != updatedColumn && columnValue != null && "".equals(columnValue)) {
-                        whereClause += conjunction + columnsMetaData.getColumnName(i + 1) + " = '" + columnValue + "'";
-                        conjunction = " and ";
-                    }
-                    break;
-                case Types.BIGINT:
-                case Types.INTEGER:
-                case Types.NUMERIC:
-                case Types.ROWID:
-                case Types.SMALLINT:
-                case Types.TINYINT:
-                    Integer columnIntValue = (Integer) getValueAt(row, i);
-                    if (i != updatedColumn && columnIntValue != null) {
-                        whereClause += conjunction + columnsMetaData.getColumnName(i + 1) + " = " + columnIntValue;
-                        conjunction = " and ";
-                    }
-                    break;
-            }
-        }
-        return whereClause;
-    }
-
-    public void setStatementValue(PreparedStatement updateStmt, int columnIndex, Object value) throws SQLException {
-        int columnType = columnsMetaData.getColumnType(columnIndex + 1);
+    // XXX This doesn't update the data: http://docs.oracle.com/javase/tutorial/jdbc/basics/jdbcrowset.html
+    // and throws an exception for column not null (which is not edited)
+    public void setColumnValue(RowSet rows, int columnIndex, Object value) throws SQLException {
+        int columnType = columnsMetaData.getColumnType(columnIndex);
         switch (columnType) {
             case Types.CHAR:
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
             case Types.NVARCHAR:
             case Types.LONGNVARCHAR:
-                updateStmt.setString(1, (String) value);
+                rows.updateString(1, (String) value);
                 break;
             case Types.BIGINT:
             case Types.INTEGER:
@@ -209,8 +197,9 @@ public class JDBCSheet extends DefaultTableModel {
             case Types.ROWID:
             case Types.SMALLINT:
             case Types.TINYINT:
-                updateStmt.setInt(1, Integer.parseInt((String) value));
+                rows.updateInt(1, Integer.parseInt((String) value));
                 break;
         }
+        rows.updateRow();
     }
 }
