@@ -6,6 +6,7 @@ package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -19,8 +20,8 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "org/joeffice/desktop/actions/color_swatch.png",
         displayName = "#CTL_ForegroundColorAction")
 @ActionReferences({
-    @ActionReference(path = "Menu/Edit", position = 1470),
-    @ActionReference(path = "Toolbars/Font", position = 3333)
+    @ActionReference(path = "Menu/Edit", position = 1500),
+    @ActionReference(path = "Toolbars/Font", position = 3300)
 })
 @Messages("CTL_ForegroundColorAction=Color")
 public final class ForegroundColorAction implements ActionListener {

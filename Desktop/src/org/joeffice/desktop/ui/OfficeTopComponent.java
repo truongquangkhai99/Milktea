@@ -20,7 +20,7 @@ import org.openide.windows.CloneableTopComponent;
 
 /**
  * Generic TopComponent to show the opened documents.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
 public abstract class OfficeTopComponent extends CloneableTopComponent {
@@ -61,6 +61,7 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         JToolBar topToolbar = createToolbar();
         mainComponent = createMainComponent();
         JScrollPane mainPane = new JScrollPane(mainComponent);
+        mainPane.getVerticalScrollBar().setUnitIncrement(16);
         ScrollPaneSelector.installScrollPaneSelector(mainPane);
 
         add(topToolbar, BorderLayout.NORTH);

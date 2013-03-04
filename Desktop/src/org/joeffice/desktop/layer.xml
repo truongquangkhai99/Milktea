@@ -14,18 +14,23 @@
       <file name="org-netbeans-modules-project-ui-RecentProjects.shadow_hidden"/>
       <file name="org-netbeans-modules-project-ui-groups-GroupsMenu.shadow_hidden"/>
     </folder>
-    <folder name="Help">
+        <file name="GoTo_hidden"/>
+        <folder name="Help">
       <file name="org-netbeans-modules-autoupdate-ui-actions-CheckForUpdatesAction.shadow_hidden"/>
       <file name="shortcuts.xml_hidden"/>
     </folder>
     <file name="RunProject_hidden"/>
-    <file name="Spacer.instance">
+        <file name="Source_hidden"/>
+        <file name="Spacer.instance">
       <attr name="instanceCreate" methodvalue="javax.swing.Box.createHorizontalGlue"/>
       <attr name="position" intvalue="9005"/>
     </file>
     <folder name="View">
       <file name="org-netbeans-core-actions-LogAction.shadow_hidden"/>
-    </folder>
+        <file name="org-netbeans-core-multiview-EditorsAction.instance_hidden"/>
+            <file name="org-netbeans-modules-editor-NbCodeFoldingAction.instance_hidden"/>
+            <file name="toggle-line-numbers.shadow_hidden"/>
+        </folder>
     <folder name="Window">
       <folder name="Other">
         <file name="ReporterResultAction.shadow_hidden"/>
@@ -46,7 +51,8 @@
     </file>
   </folder>
   <folder name="Toolbars">
-    <folder name="File">
+        <file name="Build_hidden"/>
+        <folder name="File">
       <file name="org-netbeans-modules-openfile-OpenFileAction.shadow">
         <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-NewFile.instance"/>
       </file>

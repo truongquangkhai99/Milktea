@@ -6,6 +6,7 @@ package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -19,8 +20,8 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "org/joeffice/desktop/actions/text_bold.png",
         displayName = "#CTL_BoldAction")
 @ActionReferences({
-    @ActionReference(path = "Menu/Edit", position = 2250),
-    @ActionReference(path = "Toolbars/Font", position = 3333),
+    @ActionReference(path = "Menu/Edit", position = 1780),
+    @ActionReference(path = "Toolbars/Font", position = 3100),
     @ActionReference(path = "Shortcuts", name = "D-B")
 })
 @Messages("CTL_BoldAction=Bold")

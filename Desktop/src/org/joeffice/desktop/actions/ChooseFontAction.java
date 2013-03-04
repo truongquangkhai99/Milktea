@@ -6,6 +6,7 @@ package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -20,7 +21,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_ChooseFontAction")
 @ActionReferences({
     @ActionReference(path = "Menu/Edit", position = 1470),
-    @ActionReference(path = "Toolbars/Font", position = 3333)
+    @ActionReference(path = "Toolbars/Font", position = 3000)
 })
 @Messages("CTL_ChooseFontAction=Choose Font...")
 public final class ChooseFontAction implements ActionListener {
