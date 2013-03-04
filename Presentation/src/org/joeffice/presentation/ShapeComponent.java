@@ -39,7 +39,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     public ShapeComponent(XSLFShape shape, SlideComponent slideComponent) {
         this.shape = shape;
         this.slideComponent = slideComponent;
-        setBorder(BorderFactory.createLineBorder(Color.RED)); // for debug 
+        setBorder(BorderFactory.createLineBorder(Color.RED)); // for debug
         setBounds(shape.getAnchor().getBounds());
         setOpaque(false);
         setLayout(new BorderLayout());
@@ -50,6 +50,8 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         if (shape instanceof XSLFTextShape) {
             handleTextShape((XSLFTextShape) shape);
         } else {
+
+            // XXX this doesn't display anything
             BufferedImage img = new BufferedImage((int) shape.getAnchor().getWidth(), (int) shape.getAnchor().getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D graphics = img.createGraphics();
             shape.draw(graphics);
