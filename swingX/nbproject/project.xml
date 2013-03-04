@@ -43,6 +43,7 @@
                 <package>org.jdesktop.swingx.prompt</package>
                 <package>org.jdesktop.swingx.renderer</package>
                 <package>org.jdesktop.swingx.rollover</package>
+                <package>org.jdesktop.swingx.scrollpaneselector</package>
                 <package>org.jdesktop.swingx.search</package>
                 <package>org.jdesktop.swingx.sort</package>
                 <package>org.jdesktop.swingx.table</package>
