@@ -14,6 +14,7 @@ import org.joeffice.spreadsheet.rows.JTableRowHeaderResizer;
 import org.joeffice.spreadsheet.rows.RowTable;
 
 import org.netbeans.swing.etable.ETable;
+import org.netbeans.swing.etable.ETableTransferHandler;
 
 /**
  * Component to display one of the database table.
@@ -25,7 +26,7 @@ public class TableComponent extends JPanel {
     public TableComponent(Connection conn, String tableName) {
         setLayout(new BorderLayout());
         JDBCSheet sheet = new JDBCSheet(conn, tableName); // Table model
-        JTable databaseTable = new ETable(sheet);
+        ETable databaseTable = new ETable(sheet);
 
         // TODO move this code to the rows spreadsheet package
         JScrollPane scrolling = new JScrollPane(databaseTable);
@@ -34,6 +35,10 @@ public class TableComponent extends JPanel {
         scrolling.setCorner(UPPER_LEFT_CORNER, rowHeaders.getTableHeader());
         new JTableRowHeaderResizer(scrolling).setEnabled(true);
         new JScrollPaneAdjuster(scrolling);
+
+        databaseTable.setColumnHidingAllowed(true);
+        databaseTable.setTransferHandler(new ETableTransferHandler());
+        databaseTable.setDragEnabled(true); // Dragging not working yet
 
         add(scrolling);
     }
