@@ -70,7 +70,8 @@ public final class SlidesTopComponent extends OfficeTopComponent {
             for (XSLFSlide slide : slides) {
                 SlideComponent slideComp = new SlideComponent(slide, this);
                 getMainComponent().add(slideComp);
-                getMainComponent().add(new JSeparator(JSeparator.HORIZONTAL));
+                // getMainComponent().add(new JSeparator(JSeparator.HORIZONTAL));
+                getMainComponent().add(new SlideSeparator());
             }
             ((PptxDataObject) getDataObject()).setContent(null);
         } catch (IOException ex) {
