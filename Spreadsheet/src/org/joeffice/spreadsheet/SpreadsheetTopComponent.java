@@ -95,7 +95,7 @@ public final class SpreadsheetTopComponent extends CloneableTopComponent {
     private void loadDocument() {
         File xslxFile = FileUtil.toFile(xlsxDataObject.getPrimaryFile());
         try {
-            workbook = WorkbookFactory.create(xslxFile);
+            workbook = JoefficeWorkbookFactory.create(xslxFile);
 
             spreadsheetComponent.load(workbook);
         } catch (IOException|InvalidFormatException ex) {

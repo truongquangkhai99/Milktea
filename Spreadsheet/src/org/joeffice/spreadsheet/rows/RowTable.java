@@ -1,16 +1,14 @@
 package org.joeffice.spreadsheet.rows;
 
 import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.LookAndFeel;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
-import org.apache.poi.ss.usermodel.Row;
 
 /**
  *
@@ -56,6 +54,7 @@ public class RowTable extends JTable {
         dataTable.addPropertyChangeListener("singleRowHeight", rowListeners);
         new TableRowResizer(this);
         getSelectionModel().addListSelectionListener(rowListeners);
+        addMouseListener(rowListeners);
     }
 
     private TableModel createRowTableModel() {
@@ -77,7 +76,7 @@ public class RowTable extends JTable {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return true;
+                return false;
             }
         };
         return rowTableModel;

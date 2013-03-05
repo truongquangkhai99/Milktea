@@ -24,5 +24,4 @@ public class CellEditor extends AbstractCellEditor implements TableCellEditor {
         }
         return currentComponent;
     }
-
 }

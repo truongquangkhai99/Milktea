@@ -2,11 +2,19 @@ package org.joeffice.spreadsheet.renderer;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Font;
 
 /**
@@ -16,33 +24,46 @@ import org.apache.poi.ss.usermodel.Font;
  */
 public class CellRenderer extends DefaultTableCellRenderer {
 
+    // Formatters
+    private final static NumberFormat NUMBER_FORMATTER = DecimalFormat.getInstance();
+    private final static DateFormat DATE_FORMATTER = DateFormat.getDateInstance();
+    private final static DateFormat TIME_FORMATTER = DateFormat.getTimeInstance();
+    private final static NumberFormat CURRENCY_FORMATTER = DecimalFormat.getCurrencyInstance();
+    private final static DataFormatter DATA_FORMATTER = new DataFormatter();
+
+    private final static TableCellRenderer DEFAULT_RENDERER = new CellRenderer();
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         if (value != null) {
+            JLabel defaultComponent = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
             Cell cell = (Cell) value;
-            decorateLabel(cell);
+            decorateLabel(cell, defaultComponent);
         }
         return this;
     }
 
-    public void decorateLabel(Cell cell) {
-        int type = cell.getCellType();
-        if (type == Cell.CELL_TYPE_STRING) {
-            setText(cell.getStringCellValue());
-            setHorizontalTextPosition(SwingConstants.LEADING);
-        } else if (type == Cell.CELL_TYPE_NUMERIC) {
-            setText("" + cell.getNumericCellValue());
-            setHorizontalTextPosition(SwingConstants.RIGHT);
-        } else if (type == Cell.CELL_TYPE_BOOLEAN) {
-        } else if (type == Cell.CELL_TYPE_FORMULA) {
-        }
-        short backgroundIndex = cell.getCellStyle().getFillBackgroundColor();
+    public void decorateLabel(Cell cell, JLabel defaultRenderer) {
+        CellStyle style = cell.getCellStyle();
+
+        // Text
+        // String text = getFormattedText(cell);
+        // XXX small bug with decimal not using the correct comma's
+        String text = DATA_FORMATTER.formatCellValue(cell);
+        setText(text);
+
+        // Background
+        short backgroundIndex = style.getFillBackgroundColor();
         Color backgroundColor = shortToColor(backgroundIndex);
         if (backgroundColor != null) {
             setBackground(backgroundColor);
+        } else {
+            setBackground(defaultRenderer.getBackground());
         }
-        short fontIndex = cell.getCellStyle().getFontIndex();
+
+        // Font and forground
+        short fontIndex = style.getFontIndex();
         if (fontIndex > 0) {
             Font xlsFont = cell.getSheet().getWorkbook().getFontAt(fontIndex);
             java.awt.Font font = java.awt.Font.decode(xlsFont.getFontName());
@@ -62,9 +83,22 @@ public class CellRenderer extends DefaultTableCellRenderer {
             if (fontColor != null) {
                 setForeground(fontColor);
             } else {
-                setForeground(Color.BLACK);
+                setForeground(defaultRenderer.getForeground());
             }
             setFont(font);
+        } else {
+            setForeground(defaultRenderer.getForeground());
+            setFont(defaultRenderer.getFont());
+        }
+
+        // Alignment
+        short alignment = style.getAlignment();
+        if (alignment == CellStyle.ALIGN_CENTER) {
+            setHorizontalAlignment(SwingConstants.CENTER);
+        } else if (alignment == CellStyle.ALIGN_RIGHT) {
+            setHorizontalAlignment(SwingConstants.RIGHT);
+        } else {
+            setHorizontalAlignment(defaultRenderer.getHorizontalAlignment());
         }
     }
 
@@ -77,5 +111,22 @@ public class CellRenderer extends DefaultTableCellRenderer {
             }
         }
         return null;
+    }
+
+    private String getFormattedText(Cell cell) {
+        int type = cell.getCellType();
+        if (type == Cell.CELL_TYPE_STRING) {
+            return cell.getStringCellValue();
+        } else if (type == Cell.CELL_TYPE_NUMERIC) {
+            if (DateUtil.isCellDateFormatted(cell)) {
+                return DATE_FORMATTER.format(cell.getDateCellValue());
+            } else {
+                return NUMBER_FORMATTER.format(cell.getNumericCellValue());
+            }
+        } else if (type == Cell.CELL_TYPE_BOOLEAN) {
+            return String.valueOf(cell.getBooleanCellValue());
+        } else {
+            return "";
+        }
     }
 }

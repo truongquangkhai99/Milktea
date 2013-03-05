@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import org.joeffice.spreadsheet.renderer.CellRenderer;
+import org.joeffice.spreadsheet.renderer.TableColumnAdjuster;
 import org.joeffice.spreadsheet.rows.JScrollPaneAdjuster;
 import org.joeffice.spreadsheet.rows.JTableRowHeaderResizer;
 import org.joeffice.spreadsheet.rows.RowTable;
@@ -64,9 +65,9 @@ public class SheetComponent extends JPanel {
         JTable table = new SheetTable(sheetTableModel);
 
         table.setDefaultRenderer(Cell.class, new CellRenderer());
-        //TableCellEditor editor = new DefaultCellEditor(new JTextField());
-        TableCellEditor editor = new org.joeffice.spreadsheet.editor.CellEditor();
-        // table.setDefaultEditor(Cell.class, editor);
+        TableCellEditor editor = new DefaultCellEditor(new JTextField());
+        //TableCellEditor editor = new org.joeffice.spreadsheet.editor.CellEditor();
+        table.setDefaultEditor(Cell.class, editor);
         int columnsCount = sheetTableModel.getColumnCount();
         for (int i = 0; i < columnsCount; i++) {
             TableColumn tableColumn = table.getColumnModel().getColumn(i);
@@ -92,11 +93,17 @@ public class SheetComponent extends JPanel {
         // XXX This is OK for one block but it doesn't work for 2 blocks, also selecting row no longer works
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.setCellSelectionEnabled(true);
-        table.setRowSelectionAllowed(true);
-        table.setColumnSelectionAllowed(true);
 
         table.setDragEnabled(true);
         table.setDropMode(DropMode.ON_OR_INSERT);
+
+        if (sheet.getDefaultColumnWidth() == -1) {
+            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            TableColumnAdjuster tca = new TableColumnAdjuster(table, 20);
+            tca.setOnlyAdjustLarger(true);
+            tca.setLeaveEmptyAsIs(true);
+            tca.adjustColumns();
+        }
         return table;
     }
 

@@ -2,23 +2,34 @@ package org.joeffice.spreadsheet.rows;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.swing.Action;
+import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.joeffice.spreadsheet.actions.InsertRowsAction;
+import org.joeffice.spreadsheet.actions.RemoveRowsAction;
+
 /**
  *
  * @author Anthony Goubard - Japplis
  */
-public class RowEventsListeners implements PropertyChangeListener, ActionListener, ListSelectionListener {
+public class RowEventsListeners implements PropertyChangeListener, ActionListener, ListSelectionListener, MouseListener {
 
     private RowTable rowTable;
+    Action insertRows;
+    Action removeRows;
 
     public RowEventsListeners(RowTable rowTable) {
         this.rowTable = rowTable;
+        insertRows = new InsertRowsAction(rowTable.getDataTable());
+        removeRows = new RemoveRowsAction(rowTable.getDataTable());
     }
 
     @Override
@@ -64,5 +75,38 @@ public class RowEventsListeners implements PropertyChangeListener, ActionListene
                 dataSelection.removeIndexInterval(row, row);
             }
         }
+    }
+
+    private void showPopup(MouseEvent me) {
+        if (me.isPopupTrigger()) {
+            int row = rowTable.rowAtPoint(me.getPoint());
+            rowTable.getSelectionModel().addSelectionInterval(row, row);
+            JPopupMenu menu = new JPopupMenu();
+            menu.add(removeRows);
+            menu.add(insertRows);
+            menu.show(me.getComponent(), me.getX(), me.getY());
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent me) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) {
+        showPopup(me);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent me) {
+        showPopup(me);
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent me) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent me) {
     }
 }

@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * The POI sheet table model.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
 public class SheetTableModel extends AbstractTableModel {
@@ -28,8 +28,7 @@ public class SheetTableModel extends AbstractTableModel {
         }
     }
 
-    @Override
-    public int getColumnCount() {
+    public int getLastColumnNum() {
         int lastRowNum = sheet.getLastRowNum();
         int lastColumn = 0;
         for (int i = 0; i < lastRowNum; i++) {
@@ -41,6 +40,12 @@ public class SheetTableModel extends AbstractTableModel {
                 }
             }
         }
+        return lastColumn;
+    }
+
+    @Override
+    public int getColumnCount() {
+        int lastColumn = getLastColumnNum();
         if (lastColumn < 20) {
             return lastColumn + 26;
         } else {
@@ -66,9 +71,8 @@ public class SheetTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object newValue, int rowIndex, int columnIndex) {
-        System.out.println("value " + newValue.getClass().getSimpleName());
         Row row = sheet.getRow(rowIndex);
-        Cell cell = null;
+        Cell cell;
         if (row != null) {
             cell = row.getCell(columnIndex);
             if (cell == null) {
@@ -79,5 +83,68 @@ public class SheetTableModel extends AbstractTableModel {
             cell = row.createCell(columnIndex);
         }
         cell.setCellValue((String) newValue);
+        fireTableCellUpdated(rowIndex, columnIndex);
+    }
+
+    /**
+     * Inserts a number of rows in the table.
+     *
+     * @param numberOfRows the number of rows to insert
+     * @param rowBefore the index of the row before the row inserted, -1 to insert rows at the top of the sheet.
+     */
+    public void insertRows(int numberOfRows, int... rowsBefore) {
+        if (numberOfRows <= 0) {
+            return;
+        }
+        for (int i = rowsBefore.length - 1; i >= 0; i--) {
+            int rowBefore = rowsBefore[i];
+            sheet.shiftRows(rowBefore + 1, sheet.getLastRowNum(), numberOfRows);
+            fireTableRowsInserted(rowBefore + 1, rowBefore + 1 + numberOfRows);
+        }
+    }
+
+    public void removeRows(int... rows) {
+        for (int i = rows.length - 1; i >= 0; i--) { // Remove from last to first to keep the row indexes correct
+            int rowIndex = rows[i];
+            Row row = sheet.getRow(rowIndex);
+            if (row != null) {
+                // sheet.removeRow(row); // This only clear the row
+                sheet.shiftRows(rowIndex + 1, sheet.getLastRowNum(), -1);
+            } else if (rowIndex <= sheet.getLastRowNum()) {
+                sheet.shiftRows(rowIndex + 1, sheet.getLastRowNum(), -1);
+            }
+            fireTableRowsDeleted(rowIndex, rowIndex);
+        }
+    }
+
+    public void removeColumns(int... columns) {
+        for (int rowIndex = 0; rowIndex < sheet.getLastRowNum(); rowIndex++) {
+            Row row = sheet.getRow(rowIndex);
+            if (row != null) {
+                short lastColumn = row.getLastCellNum();
+                for (int i = columns.length; i >= 0; i--) {
+                    int columnIndex = columns[i];
+                    if (columnIndex <= lastColumn) {
+                        Cell cell = row.getCell(columnIndex);
+                        // I'm afraid that this only clear the cell and doesn't shift
+                        // Also shiting columns is not supported in POI, so nothing happens for empty cells
+                        if (cell != null) {
+                            row.removeCell(cell);
+                        }
+                    }
+                }
+            }
+        }
+        fireTableStructureChanged();
+    }
+
+    public void deleteCell(int rowIndex, int columnIndex) {
+        Row row = sheet.getRow(rowIndex);
+        if (row != null) {
+            Cell cell = row.getCell(columnIndex);
+            if (cell != null) {
+                row.removeCell(cell);
+            }
+        }
     }
 }
