@@ -4,20 +4,18 @@
  */
 package org.joeffice.drawing;
 
-import java.awt.BorderLayout;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.net.MalformedURLException;
 import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
+
 import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
+import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
+
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
+
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.netbeans.api.visual.widget.Scene;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.filesystems.FileUtil;
@@ -25,6 +23,7 @@ import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
+import org.w3c.dom.Document;
 
 /**
  * Top component which displays a drawing.
@@ -63,6 +62,9 @@ public final class DrawingTopComponent extends OfficeTopComponent {
         //scene = new Scene();
         //JScrollPane scenePane = new JScrollPane(scene.createView());
         JSVGCanvas svgCanvas = new JSVGCanvas();
+        svgCanvas.setEnableImageZoomInteractor(true);
+        svgCanvas.setEnablePanInteractor(true);
+        svgCanvas.setEnableZoomInteractor(true);
         return svgCanvas;
     }
 
@@ -72,9 +74,27 @@ public final class DrawingTopComponent extends OfficeTopComponent {
         File svgFile = FileUtil.toFile(getDataObject().getPrimaryFile());
         try {
             String uri = Utilities.toURI(svgFile).toURL().toString();
+            svgCanvas.addSVGDocumentLoaderListener(new SVGDocumentLoaderAdapter() {
+
+                @Override
+                public void documentLoadingCompleted(SVGDocumentLoaderEvent svgdle) {
+                    // The loaded document is a org.apache.batik.dom.svg.SVGOMDocument
+                    setModified(false);
+                }
+            });
             svgCanvas.setURI(uri);
         } catch (MalformedURLException ex) {
             Exceptions.printStackTrace(ex);
+        }
+    }
+
+    @Override
+    public void setModified(boolean modified) {
+        if (modified) {
+            Document svgDocument = ((JSVGCanvas) getMainComponent()).getSVGDocument();
+            getDataObject().setContent(svgDocument);
+        } else {
+            getDataObject().setContent(null);
         }
     }
 
