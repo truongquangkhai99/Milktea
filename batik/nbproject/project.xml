@@ -39,6 +39,9 @@
                 <package>org.apache.batik.util.io</package>
                 <package>org.apache.batik.util.resources</package>
                 <package>org.apache.batik.xml</package>
+                <package>org.w3c.dom</package>
+                <package>org.w3c.dom.events</package>
+                <package>org.w3c.dom.svg</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/batik-transcoder.jar</runtime-relative-path>
