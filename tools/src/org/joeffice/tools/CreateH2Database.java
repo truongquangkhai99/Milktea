@@ -1,11 +1,7 @@
 package org.joeffice.tools;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Creates an empty h2 database.
@@ -18,28 +14,38 @@ import java.sql.Statement;
 public class CreateH2Database {
 
     public CreateH2Database() throws SQLException, ClassNotFoundException {
-        Class.forName("org.h2.Driver");
-        createTest1();
-        createTest2();
     }
 
     public void createTest1() throws SQLException {
-        if (!new File("C:/Java/projects/Joeffice/tools/tests/test1.h2.db").exists()) {
-            Connection conn = DriverManager.getConnection("jdbc:h2:C:/Java/projects/Joeffice/tools/tests/test1", "sa", "");
-            conn.close();
-        }
+        String test1Path = "C:/Java/projects/Joeffice/tools/tests/test1";
+        createSimpleDatabase(test1Path, false, false);
     }
 
     public void createTest2() throws SQLException {
-        if (!new File("C:/Java/projects/Joeffice/tools/tests/test2.h2.db").exists()) {
-            Connection conn = DriverManager.getConnection("jdbc:h2:C:/Java/projects/Joeffice/tools/tests/test2", "sa", "");
+        String test2Path = "C:/Java/projects/Joeffice/tools/tests/test2";
+        createSimpleDatabase(test2Path, true, true);
+    }
+
+    public static Connection createSimpleDatabase(String path, boolean withTable, boolean withData) throws SQLException {
+        if (!new File(path + ".h2.db").exists()) {
+            try {
+                Class.forName("org.h2.Driver");
+            } catch (ClassNotFoundException ex) {
+                throw new SQLException("Driver not found");
+            }
+            Connection conn = DriverManager.getConnection("jdbc:h2:" + path, "sa", "");
             PreparedStatement createTable = conn.prepareStatement("CREATE TABLE TEST_TABLE(ID INT PRIMARY KEY, NAME VARCHAR);");
             createTable.execute();
             createTable.close();
-            PreparedStatement insertValue = conn.prepareStatement("INSERT INTO TEST_TABLE VALUES(1, 'Hello World');");
-            insertValue.execute();
-            insertValue.close();
-            conn.close();
+            if (withData) {
+                PreparedStatement insertValue = conn.prepareStatement("INSERT INTO TEST_TABLE VALUES(1, 'Hello World');");
+                insertValue.execute();
+                insertValue.close();
+            }
+            return conn;
+        } else {
+            Connection conn = DriverManager.getConnection("jdbc:h2:" + path, "sa", "");
+            return conn;
         }
     }
 

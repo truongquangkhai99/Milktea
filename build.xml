@@ -5,4 +5,24 @@
 <project name="Joeffice" basedir=".">
     <description>Builds the module suite Joeffice.</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <target name="run-tool" description="Run a tool">
+      <mkdir dir="build/classes" />
+      <javac destdir="build/classes" srcdir="tools/src">
+        <classpath location="h2/release/modules/ext/h2-1.3.170.jar" />
+        <classpath>
+          <fileset dir="poi/release/modules/ext" includes="*.jar" />
+        </classpath>
+      </javac>
+
+      <!-- classes are CreateH2Database, CreatePresentationDirectories, JTableCellSelection, UpdateRowSet, PptxShapeNotDrawn -->
+      <java classname="org.joeffice.tools.PptxShapeNotDrawn">
+        <classpath path="build/classes" />
+        <classpath location="h2/release/modules/ext/h2-1.3.170.jar" />
+        <classpath>
+          <fileset dir="poi/release/modules/ext" includes="*.jar" />
+        </classpath>
+        <arg file="tools/tests/Test 3 - GDocs.pptx" />
+      </java>
+    </target>
 </project>
