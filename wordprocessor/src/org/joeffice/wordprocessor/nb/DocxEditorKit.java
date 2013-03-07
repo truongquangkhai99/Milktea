@@ -2,14 +2,13 @@ package org.joeffice.wordprocessor.nb;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.StyledEditorKit;
 import javax.swing.text.ViewFactory;
 import java.io.*;
 
-import org.joeffice.wordprocessor.view.DocxViewFactory;
 import org.joeffice.wordprocessor.writer.DocxWriter;
+import org.netbeans.editor.BaseKit;
 
-import org.openide.text.NbDocument;
+import org.netbeans.modules.editor.NbEditorDocument;
 import org.openide.util.Lookup;
 
 /**
@@ -17,7 +16,7 @@ import org.openide.util.Lookup;
  *
  * @author Stanislav Lapitsky
  */
-public class DocxEditorKit extends StyledEditorKit {
+public class DocxEditorKit extends BaseKit {
 
     private Lookup lookup;
 
@@ -77,7 +76,9 @@ public class DocxEditorKit extends StyledEditorKit {
 
     @Override
     public Document createDefaultDocument() {
-        Document doc = NbDocument.getDocument(new LookupProvider());
+        //Document doc = NbDocument.getDocument(new LookupProvider());
+        //Document doc = new DocxDocument();
+        Document doc = new NbEditorDocument(getContentType());
         return doc;
     }
 
@@ -92,6 +93,5 @@ public class DocxEditorKit extends StyledEditorKit {
         public Lookup getLookup() {
             return lookup;
         }
-
     }
 }

@@ -2,8 +2,6 @@ package org.joeffice.wordprocessor.nb;
 
 import java.io.IOException;
 import java.io.InputStream;
-import javax.swing.JEditorPane;
-import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.EditorKit;
 import javax.swing.text.StyledDocument;
@@ -17,7 +15,6 @@ import org.openide.loaders.DataObject;
 import org.openide.text.DataEditorSupport;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.windows.CloneableTopComponent;
 
 /**
  *
@@ -29,8 +26,14 @@ public class DocxEditorSupport extends DataEditorSupport implements EditorCookie
 
     public DocxEditorSupport(OfficeDataObject obj, Lookup lkp) {
         super(obj, lkp, new DocxEditorSupportEnv(obj));
-        localLookup = lkp;
+        this.localLookup = lkp;
         setMIMEType(obj.getPrimaryFile().getMIMEType());
+    }
+
+    @Override
+    protected EditorKit createEditorKit() {
+        DocxEditorKit editorKit = new DocxEditorKit(localLookup);
+        return editorKit;
     }
 
     @Override
@@ -48,34 +51,6 @@ public class DocxEditorSupport extends DataEditorSupport implements EditorCookie
     }
 
     @Override
-    protected Pane createPane() {
-        return new Pane() {
-
-            @Override
-            public JEditorPane getEditorPane() {
-                JEditorPane editor = new JTextPane();
-                editor.setEditorKit(new DocxEditorKit(localLookup));
-                editor.registerEditorKitForContentType(getDataObject().getPrimaryFile().getMIMEType(), DocxEditorKit.class.getName());
-                return editor;
-            }
-
-            @Override
-            public CloneableTopComponent getComponent() {
-                return new WordpTopComponent((DocxDataObject) getDataObject());
-            }
-
-            @Override
-            public void updateName() {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void ensureVisible() {
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        };
-    }
-
     protected StyledDocument createStyledDocument(EditorKit kit) {
         return (StyledDocument) kit.createDefaultDocument();
     }

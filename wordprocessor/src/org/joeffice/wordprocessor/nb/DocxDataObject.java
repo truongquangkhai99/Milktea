@@ -41,7 +41,7 @@ import org.openide.util.NbBundle.Messages;
         mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         iconBase = "org/joeffice/wordprocessor/wordp-16.png",
         displayName = "#LBL_Docx_LOADER",
-        position = 250) // Decrease the position to make it the default one
+        position = 250) // 250 to enable as editor, 350 to disable
 @ActionReferences({
     @ActionReference(
             path = "Loaders/application/vnd.openxmlformats-officedocument.wordprocessingml.document/Actions",

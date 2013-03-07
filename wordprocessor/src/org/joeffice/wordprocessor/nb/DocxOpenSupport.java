@@ -20,6 +20,7 @@ public class DocxOpenSupport extends OpenSupport implements OpenCookie, CloseCoo
 
     @Override
     protected CloneableTopComponent createCloneableTopComponent() {
-        return new WordpTopComponent((DocxDataObject) entry.getDataObject());
+        // return new WordpTopComponent((DocxDataObject) entry.getDataObject());
+        return null;
     }
 }
