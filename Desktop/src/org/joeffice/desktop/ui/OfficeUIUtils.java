@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
+
 import org.openide.cookies.SaveCookie;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
@@ -12,7 +13,8 @@ import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 
 /**
- *
+ * Generic UI utilities.
+ * 
  * @author Anthony Goubard - Japplis
  */
 public class OfficeUIUtils {

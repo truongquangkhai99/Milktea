@@ -11,8 +11,11 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+
 import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
+
 import org.joeffice.desktop.file.OfficeDataObject;
+
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
@@ -119,13 +122,6 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     }
 
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        System.out.println("------- office writeExternal");
-        super.writeExternal(out);
-        out.writeObject(getDataObject());
-    }
-
-    @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         System.out.println("------- office readExternal");
         super.readExternal(in);
@@ -134,6 +130,13 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     }
 
     @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        System.out.println("------- office writeExternal");
+        super.writeExternal(out);
+        out.writeObject(getDataObject());
+    }
+
+    /*@Override
     public Object writeReplace() {
         System.out.println("------- office writeReplace");
         return new ResolvableHelper();
@@ -154,5 +157,5 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
             OfficeTopComponent topComponent = (OfficeTopComponent) cloneTopComponent();
             return topComponent;
         }
-    }
+    }*/
 }

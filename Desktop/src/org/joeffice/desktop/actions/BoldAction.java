@@ -13,8 +13,13 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Change the font weight to bold.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
-        category = "Build",
+        category = "Edit/Office",
         id = "org.joeffice.desktop.actions.BoldAction")
 @ActionRegistration(
         iconBase = "org/joeffice/desktop/actions/text_bold.png",

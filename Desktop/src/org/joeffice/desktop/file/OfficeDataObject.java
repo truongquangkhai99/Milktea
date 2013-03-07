@@ -1,6 +1,5 @@
 package org.joeffice.desktop.file;
 
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;

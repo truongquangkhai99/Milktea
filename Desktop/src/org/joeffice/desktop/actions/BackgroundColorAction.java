@@ -12,8 +12,13 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Change the background color.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
-        category = "Edit",
+        category = "Edit/Office",
         id = "org.joeffice.desktop.actions.BackgroundColorAction")
 @ActionRegistration(
         iconBase = "org/joeffice/desktop/actions/tag_blue_edit.png",

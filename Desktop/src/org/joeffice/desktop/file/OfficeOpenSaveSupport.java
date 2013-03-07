@@ -1,16 +1,13 @@
 package org.joeffice.desktop.file;
 
 import java.io.IOException;
-import javax.swing.text.Document;
+
 import org.openide.cookies.CloseCookie;
 import org.openide.cookies.OpenCookie;
 import org.openide.cookies.SaveCookie;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.OpenSupport;
 import org.openide.windows.CloneableTopComponent;
-import org.openide.windows.TopComponent;
 
 /**
  *

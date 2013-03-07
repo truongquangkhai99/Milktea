@@ -13,8 +13,13 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Change font.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
-        category = "Edit",
+        category = "Edit/Office",
         id = "org.joeffice.desktop.actions.ChooseFontAction")
 @ActionRegistration(
         iconBase = "org/joeffice/desktop/actions/font.png",

@@ -13,8 +13,13 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Change the font color.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
-        category = "Edit",
+        category = "Edit/Office",
         id = "org.joeffice.desktop.actions.ForegroundColorAction")
 @ActionRegistration(
         iconBase = "org/joeffice/desktop/actions/color_swatch.png",
