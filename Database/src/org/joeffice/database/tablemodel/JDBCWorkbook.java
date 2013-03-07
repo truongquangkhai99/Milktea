@@ -12,7 +12,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.openide.util.Exceptions;
 
 /**
- *
+ * Workbook for the database. Each sheet is a table of the database.
+ * 
  * @author Anthony Goubard - Japplis
  */
 public class JDBCWorkbook implements Workbook {

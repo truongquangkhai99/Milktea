@@ -18,6 +18,8 @@ import org.openide.util.Exceptions;
 
 /**
  * TableModel representing one table of the database.
+ * Note that the method parameter indexes are 0 based in this class.
+ * Most of JDBC method parameter indexes are 1 based.
  *
  * @author Anthony Goubard - Japplis
  */
@@ -60,6 +62,7 @@ public class JDBCSheet extends AbstractTableModel {
     }
 
     public Object getResultSetValueAsObject(ResultSet tableData, int columnIndex) throws SQLException {
+        columnIndex++; // JDBC indexes are 1 based
         int columnType = columnsMetaData.getColumnType(columnIndex);
         Object dataValue = null;
         switch (columnType) {
@@ -137,7 +140,7 @@ public class JDBCSheet extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         try {
             dataModel.absolute(rowIndex + 1);
-            Object value = getResultSetValueAsObject(dataModel, columnIndex + 1);
+            Object value = getResultSetValueAsObject(dataModel, columnIndex);
             return value;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -173,23 +176,21 @@ public class JDBCSheet extends AbstractTableModel {
     private void updateDatabase(Object newValue, int row, int column) {
         try {
             dataModel.absolute(row + 1);
-            setColumnValue(dataModel, column + 1, newValue);
+            setColumnValue(dataModel, column, newValue);
         } catch (SQLException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
-    // XXX This doesn't update the data: http://docs.oracle.com/javase/tutorial/jdbc/basics/jdbcrowset.html
-    // and throws an exception for column not null (which is not edited)
     public void setColumnValue(RowSet rows, int columnIndex, Object value) throws SQLException {
-        int columnType = columnsMetaData.getColumnType(columnIndex);
+        int columnType = columnsMetaData.getColumnType(columnIndex + 1);
         switch (columnType) {
             case Types.CHAR:
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
             case Types.NVARCHAR:
             case Types.LONGNVARCHAR:
-                rows.updateString(1, (String) value);
+                rows.updateString(columnIndex + 1, (String) value);
                 break;
             case Types.BIGINT:
             case Types.INTEGER:
@@ -197,7 +198,7 @@ public class JDBCSheet extends AbstractTableModel {
             case Types.ROWID:
             case Types.SMALLINT:
             case Types.TINYINT:
-                rows.updateInt(1, Integer.parseInt((String) value));
+                rows.updateInt(columnIndex + 1, Integer.parseInt((String) value));
                 break;
         }
         rows.updateRow();

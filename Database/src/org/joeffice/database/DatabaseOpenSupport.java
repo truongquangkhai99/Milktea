@@ -7,7 +7,7 @@ import org.openide.loaders.OpenSupport;
 import org.openide.windows.CloneableTopComponent;
 
 /**
- * Cookie for opening (and closing) the docx files.
+ * Cookie for opening (and closing) the H2 database files (.h2.db).
  * In this file the data object is associated with the top element used to visualize the document.
  *
  * @author Anthony Goubard - Japplis

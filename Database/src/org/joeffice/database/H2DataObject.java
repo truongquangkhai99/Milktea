@@ -20,13 +20,18 @@ import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * The data object to deal with .h2.db (H2 database)  files.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @Messages({
     "LBL_H2_LOADER=Files of H2"
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_H2_LOADER",
         mimeType = "application/h2",
-        extension = {"db"})
+        extension = {"db"}) // Netbeans Platform can't handle .h2.db as extension
 @DataObject.Registration(
         mimeType = "application/h2",
         iconBase = "org/joeffice/database/database-16.png",
