@@ -35,6 +35,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
 
     private XSLFShape shape;
     private SlideComponent slideComponent;
+    private boolean editable;
 
     public ShapeComponent(XSLFShape shape, SlideComponent slideComponent) {
         this.shape = shape;
@@ -43,6 +44,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         setBounds(shape.getAnchor().getBounds());
         setOpaque(false);
         setLayout(new BorderLayout());
+        editable = slideComponent.getSlidesComponent() != null;
         initComponent();
     }
 
@@ -91,7 +93,11 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         }
 
         add(textField, BorderLayout.CENTER);
-        textField.getDocument().addDocumentListener(this);
+        if (editable) {
+            textField.getDocument().addDocumentListener(this);
+        } else {
+            textField.setEditable(false);
+        }
     }
 
     private AttributeSet getFontAttributes(XSLFTextRun textPart) {

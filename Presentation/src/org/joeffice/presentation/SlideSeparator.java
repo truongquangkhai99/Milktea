@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import javax.swing.JSeparator;
 
 /**
+ * A fancy(?) separator between 2 slides.
  *
  * @author Anthony Goubard - Japplis
  */

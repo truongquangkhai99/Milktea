@@ -38,7 +38,7 @@ import org.openide.util.NbBundle.Messages;
     "CTL_SlidesTopComponent=Slides Window",
     "HINT_SlidesTopComponent=This is a Slides window"
 })
-public final class SlidesTopComponent extends OfficeTopComponent implements Externalizable {
+public final class SlidesTopComponent extends OfficeTopComponent {
 
     private transient XMLSlideShow presentation;
 
@@ -81,6 +81,10 @@ public final class SlidesTopComponent extends OfficeTopComponent implements Exte
         }
     }
 
+    public XMLSlideShow getPresentation() {
+        return presentation;
+    }
+
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
@@ -91,17 +95,5 @@ public final class SlidesTopComponent extends OfficeTopComponent implements Exte
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
-    }
-
-    @Override
-    public void readExternal(ObjectInput oi) throws IOException, ClassNotFoundException {
-        System.out.println("------- sildes readExternal");
-        super.readExternal(oi);
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput oo) throws IOException {
-        System.out.println("------- slides writeExternal");
-        super.writeExternal(oo);
     }
 }

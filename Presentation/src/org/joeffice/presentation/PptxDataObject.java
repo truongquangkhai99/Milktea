@@ -7,8 +7,11 @@ package org.joeffice.presentation;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+
 import org.joeffice.desktop.file.OfficeDataObject;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -18,13 +21,16 @@ import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
-import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * The data object that deals with .pptx files.
+ * 
+ * @author Anthony Goubard - Japplis
+ */
 @Messages({
     "LBL_Pptx_LOADER=Files of Pptx"
 })
