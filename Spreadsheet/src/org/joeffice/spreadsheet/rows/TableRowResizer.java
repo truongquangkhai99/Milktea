@@ -8,6 +8,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.JTable;
 import javax.swing.event.MouseInputAdapter;
 
+/**
+ * Resize the rows with the mouse.
+ */
 public class TableRowResizer extends MouseInputAdapter {
 
     public static Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);

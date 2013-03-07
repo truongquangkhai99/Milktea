@@ -20,6 +20,9 @@ import javax.swing.table.*;
  * of the other columns must decrease. Because of this the resize mode of RESIZE_ALL_COLUMNS will work the best.
  *
  * @see http://www.camick.com/java/source/TableColumnAdjuster.java
+ *
+ * Added by Anthony Goubard - Japplis
+ * The possibilty to leave empty columns as is (no resize for columns that have no values)
  */
 public class TableColumnAdjuster implements PropertyChangeListener, TableModelListener {
 

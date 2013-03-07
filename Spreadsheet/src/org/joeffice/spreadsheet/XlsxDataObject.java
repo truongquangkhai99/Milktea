@@ -7,8 +7,12 @@ package org.joeffice.spreadsheet;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.Workbook;
+
 import org.joeffice.desktop.file.OfficeDataObject;
+import org.joeffice.spreadsheet.csv.CSVWorkbook;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -18,13 +22,16 @@ import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
-import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Data object that handles the ooxml Excel format (.xslx).
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @Messages({
     "LBL_Xlsx_LOADER=Files of Xlsx"
 })
@@ -149,7 +156,11 @@ public class XlsxDataObject extends OfficeDataObject implements CookieSet.Factor
             }
             File xslxFile = FileUtil.toFile(getPrimaryFile());
             try (FileOutputStream xslxOutputStream  = new FileOutputStream(xslxFile)) {
-                workbook.write(xslxOutputStream);
+                if (workbook instanceof CSVWorkbook) {
+                    ((CSVWorkbook) workbook).write2(xslxOutputStream);
+                } else {
+                    workbook.write(xslxOutputStream);
+                }
             }
         }
     }

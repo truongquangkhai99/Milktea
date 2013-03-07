@@ -1,10 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.joeffice.spreadsheet;
 
 import java.io.IOException;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -15,6 +12,11 @@ import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Data object that handles the old Excel format (.xls).
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @Messages({
     "LBL_Xls_LOADER=Files of Xls"
 })

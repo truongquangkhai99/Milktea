@@ -7,7 +7,7 @@ import org.openide.loaders.OpenSupport;
 import org.openide.windows.CloneableTopComponent;
 
 /**
- * Cookie for opening (and closing) the xlsx files.
+ * Cookie for opening (and closing) the xlsx (Excell 2007) files.
  * In this file the data object is associated with the top element used to visualize the document.
  *
  * @author Anthony Goubard - Japplis

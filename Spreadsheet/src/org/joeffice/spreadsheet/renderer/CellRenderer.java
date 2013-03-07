@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -45,7 +46,6 @@ public class CellRenderer extends DefaultTableCellRenderer {
     }
 
     public void decorateLabel(Cell cell, JLabel defaultRenderer) {
-        CellStyle style = cell.getCellStyle();
 
         // Text
         // String text = getFormattedText(cell);
@@ -53,13 +53,41 @@ public class CellRenderer extends DefaultTableCellRenderer {
         String text = DATA_FORMATTER.formatCellValue(cell);
         setText(text);
 
+        decorateComponent(cell, this, defaultRenderer);
+
+        // Alignment
+        CellStyle style = cell.getCellStyle();
+        short alignment = style.getAlignment();
+        if (alignment == CellStyle.ALIGN_CENTER) {
+            setHorizontalAlignment(SwingConstants.CENTER);
+        } else if (alignment == CellStyle.ALIGN_RIGHT) {
+            setHorizontalAlignment(SwingConstants.RIGHT);
+        } else {
+            setHorizontalAlignment(defaultRenderer.getHorizontalAlignment());
+        }
+    }
+
+    private static Color shortToColor(short xlsColorIndex) {
+        if (xlsColorIndex > 0) {
+            HSSFColor xlsColor = HSSFColor.getIndexHash().get(new Integer(xlsColorIndex));
+            if (xlsColor != null) {
+                short[] rgb = xlsColor.getTriplet();
+                return new Color(rgb[0], rgb[1], rgb[2]);
+            }
+        }
+        return null;
+    }
+
+    public static void decorateComponent(Cell cell, JComponent renderingComponent, JComponent defaultRenderer) {
+        CellStyle style = cell.getCellStyle();
+
         // Background
         short backgroundIndex = style.getFillBackgroundColor();
         Color backgroundColor = shortToColor(backgroundIndex);
         if (backgroundColor != null) {
-            setBackground(backgroundColor);
+            renderingComponent.setBackground(backgroundColor);
         } else {
-            setBackground(defaultRenderer.getBackground());
+            renderingComponent.setBackground(defaultRenderer.getBackground());
         }
 
         // Font and forground
@@ -81,36 +109,15 @@ public class CellRenderer extends DefaultTableCellRenderer {
             short fontColorIndex = xlsFont.getColor();
             Color fontColor = shortToColor(fontColorIndex);
             if (fontColor != null) {
-                setForeground(fontColor);
+                renderingComponent.setForeground(fontColor);
             } else {
-                setForeground(defaultRenderer.getForeground());
+                renderingComponent.setForeground(defaultRenderer.getForeground());
             }
-            setFont(font);
+            renderingComponent.setFont(font);
         } else {
-            setForeground(defaultRenderer.getForeground());
-            setFont(defaultRenderer.getFont());
+            renderingComponent.setForeground(defaultRenderer.getForeground());
+            renderingComponent.setFont(defaultRenderer.getFont());
         }
-
-        // Alignment
-        short alignment = style.getAlignment();
-        if (alignment == CellStyle.ALIGN_CENTER) {
-            setHorizontalAlignment(SwingConstants.CENTER);
-        } else if (alignment == CellStyle.ALIGN_RIGHT) {
-            setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-            setHorizontalAlignment(defaultRenderer.getHorizontalAlignment());
-        }
-    }
-
-    private Color shortToColor(short xlsColorIndex) {
-        if (xlsColorIndex > 0) {
-            HSSFColor xlsColor = HSSFColor.getIndexHash().get(new Integer(xlsColorIndex));
-            if (xlsColor != null) {
-                short[] rgb = xlsColor.getTriplet();
-                return new Color(rgb[0], rgb[1], rgb[2]);
-            }
-        }
-        return null;
     }
 
     private String getFormattedText(Cell cell) {

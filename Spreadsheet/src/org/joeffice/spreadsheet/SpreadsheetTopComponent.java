@@ -7,12 +7,14 @@ package org.joeffice.spreadsheet;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+
 import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -22,6 +24,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.Utilities;
 import org.openide.windows.CloneableTopComponent;
 
 /**
@@ -84,12 +87,20 @@ public final class SpreadsheetTopComponent extends CloneableTopComponent {
 
     protected JToolBar createToolbar() {
         JToolBar spreadsheetToolbar = new JToolBar();
+        List<? extends Action> spreadsheetToolbarActions = Utilities.actionsForPath("Office/Spreadsheet/Toolbar");
+        for (Action action : spreadsheetToolbarActions) {
+            spreadsheetToolbar.add(action);
+        }
         return spreadsheetToolbar;
     }
 
     protected SpreadsheetComponent createSpreadsheet() {
         SpreadsheetComponent spreadsheet = new SpreadsheetComponent(this);
         return spreadsheet;
+    }
+
+    public SpreadsheetComponent getSpreadsheetComponent() {
+        return spreadsheetComponent;
     }
 
     private void loadDocument() {

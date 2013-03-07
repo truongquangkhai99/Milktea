@@ -1,15 +1,7 @@
 package org.joeffice.spreadsheet.csv;
 
 import java.io.*;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.h2.tools.Csv;
+
 import org.joeffice.spreadsheet.XlsxDataObject;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -21,6 +13,11 @@ import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Data object that deals with comma separated values files (.csv)
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @Messages({
     "LBL_Csv_LOADER=Files of Csv"
 })

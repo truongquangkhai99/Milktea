@@ -1,16 +1,15 @@
 package org.joeffice.spreadsheet.rows;
 
 import java.awt.Dimension;
-
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.LookAndFeel;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 
 /**
+ * Table used to displays the row numbers next to the data table.
  *
  * @author Anthony Goubard - Japplis
  */

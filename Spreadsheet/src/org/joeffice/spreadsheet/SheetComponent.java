@@ -8,6 +8,8 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 
@@ -31,6 +33,7 @@ public class SheetComponent extends JPanel {
 
     public static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
     public static final int UNIT_OFFSET_LENGTH = 7;
+    public static final int CELL_HEIGHT_MARGINS = 2;
 
     private SpreadsheetComponent spreadsheetComponent;
 
@@ -44,6 +47,7 @@ public class SheetComponent extends JPanel {
 
     private void initComponent(Sheet sheet) {
         sheetTable = createTable(sheet);
+        listenToChanges();
         layers = createSheetLayers(sheetTable);
 
         JScrollPane scrolling = new JScrollPane(VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -65,8 +69,8 @@ public class SheetComponent extends JPanel {
         JTable table = new SheetTable(sheetTableModel);
 
         table.setDefaultRenderer(Cell.class, new CellRenderer());
-        TableCellEditor editor = new DefaultCellEditor(new JTextField());
-        //TableCellEditor editor = new org.joeffice.spreadsheet.editor.CellEditor();
+        //TableCellEditor editor = new DefaultCellEditor(new JTextField());
+        TableCellEditor editor = new org.joeffice.spreadsheet.editor.CellEditor();
         table.setDefaultEditor(Cell.class, editor);
         int columnsCount = sheetTableModel.getColumnCount();
         for (int i = 0; i < columnsCount; i++) {
@@ -81,7 +85,9 @@ public class SheetComponent extends JPanel {
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row != null) {
-                table.setRowHeight(rowIndex, (int) sheet.getRow(rowIndex).getHeightInPoints());
+                int cellHeight = (int) Math.ceil(sheet.getRow(rowIndex).getHeightInPoints());
+                cellHeight += CELL_HEIGHT_MARGINS;
+                table.setRowHeight(rowIndex, cellHeight);
             }
         }
 
@@ -146,6 +152,20 @@ public class SheetComponent extends JPanel {
         pixels += Math.round((float) offsetWidthUnits / ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
 
         return pixels;
+    }
+
+    public void listenToChanges() {
+        sheetTable.getModel().addTableModelListener(new TableModelListener() {
+
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                getSpreadsheetComponent().getSpreadsheetAndToolbar().setModified(true);
+            }
+        });
+    }
+
+    public JTable getTable() {
+        return sheetTable;
     }
 
     public SpreadsheetComponent getSpreadsheetComponent() {

@@ -3,25 +3,30 @@ package org.joeffice.spreadsheet.editor;
 import java.awt.Component;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.joeffice.spreadsheet.renderer.CellRenderer;
 
 /**
- *
+ * Editor for POI Cell objects.
+ * 
  * @author Anthony Goubard - Japplis
  */
-public class CellEditor extends AbstractCellEditor implements TableCellEditor {
+public class CellEditor extends DefaultCellEditor implements TableCellEditor {
 
-    private JComponent currentComponent;
+    public final static CellEditor DEFAULT_EDITOR = new CellEditor();
 
-    @Override
-    public Object getCellEditorValue() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public CellEditor() {
+        super(new JTextField());
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        if (value instanceof String) {
-            currentComponent = new JTextField((String) value);
+        super.getTableCellEditorComponent(table, value, isSelected, row, column);
+        if (value != null) {
+            JComponent defaultComponent = (JComponent) DEFAULT_EDITOR.getTableCellEditorComponent(table, null, isSelected, row, column);
+            Cell cell = (Cell) value;
+            CellRenderer.decorateComponent(cell, (JComponent) getComponent(), defaultComponent);
         }
-        return currentComponent;
+        return getComponent();
     }
 }

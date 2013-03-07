@@ -1,35 +1,29 @@
 package org.joeffice.spreadsheet.rows;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
-import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.joeffice.spreadsheet.actions.InsertRowsAction;
-import org.joeffice.spreadsheet.actions.RemoveRowsAction;
+import org.openide.util.Utilities;
 
 /**
+ * Listeners for events that happen in the row header.
  *
  * @author Anthony Goubard - Japplis
  */
-public class RowEventsListeners implements PropertyChangeListener, ActionListener, ListSelectionListener, MouseListener {
+public class RowEventsListeners implements PropertyChangeListener, ListSelectionListener, MouseListener {
 
     private RowTable rowTable;
-    Action insertRows;
-    Action removeRows;
 
     public RowEventsListeners(RowTable rowTable) {
         this.rowTable = rowTable;
-        insertRows = new InsertRowsAction(rowTable.getDataTable());
-        removeRows = new RemoveRowsAction(rowTable.getDataTable());
     }
 
     @Override
@@ -61,29 +55,18 @@ public class RowEventsListeners implements PropertyChangeListener, ActionListene
         }
     }
 
-    // Not used to remove
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() instanceof JToggleButton) {
-            // Get selected row
-            JToggleButton button = (JToggleButton) ae.getSource();
-            int row = rowTable.rowAtPoint(button.getLocation());
-            ListSelectionModel dataSelection = rowTable.getDataTable().getSelectionModel();
-            if (button.isSelected()) {
-                dataSelection.addSelectionInterval(row, row);
-            } else {
-                dataSelection.removeIndexInterval(row, row);
-            }
-        }
-    }
-
     private void showPopup(MouseEvent me) {
         if (me.isPopupTrigger()) {
-            int row = rowTable.rowAtPoint(me.getPoint());
+            /*Action insertAction = Utilities.actionsForPath("Actions/Build/org-joeffice-spreadsheet-actions-InsertRowsAction").get(0);
+            Action removeAction = Utilities.actionsForPath("Actions/Build/org-joeffice-spreadsheet-actions-RemoveRowsAction").get(0);
+            JPopupMenu menu = Utilities.actionsToPopup(new Action[] {insertAction, removeAction}, me.getComponent());*/
+            List<? extends Action> buildActions = Utilities.actionsForPath("Office/Spreadsheet/Rows/Popup");
+            JPopupMenu menu = Utilities.actionsToPopup(buildActions.toArray(new Action[buildActions.size()]), me.getComponent());
+            /*int row = rowTable.rowAtPoint(me.getPoint());
             rowTable.getSelectionModel().addSelectionInterval(row, row);
             JPopupMenu menu = new JPopupMenu();
             menu.add(removeRows);
-            menu.add(insertRows);
+            menu.add(insertRows);*/
             menu.show(me.getComponent(), me.getX(), me.getY());
         }
     }

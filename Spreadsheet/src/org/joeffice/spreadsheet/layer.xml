@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+  <folder name="Actions">
+    <folder name="Edit">
+      <folder name="Office">
+        <folder name="Spreadsheet">
+          <file name="org-joeffice-spreadsheet-actions-InsertRowsAction.instance">
+            <attr name="injectable" stringvalue="org.joeffice.spreadsheet.actions.InsertRowsAction"/>
+            <attr name="noIconInMenu" boolvalue="false"/>
+            <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+            <attr name="type" stringvalue="javax.swing.JTable"/>
+          </file>
+          <file name="org-joeffice-spreadsheet-actions-RemoveRowsAction.instance">
+            <attr name="injectable" stringvalue="org.joeffice.spreadsheet.actions.RemoveRowsAction"/>
+            <attr name="noIconInMenu" boolvalue="false"/>
+            <attr name="selectionType" stringvalue="EXACTLY_ONE"/>
+            <attr name="type" stringvalue="javax.swing.JTable"/>
+          </file>
+          <file name="org-joeffice-spreadsheet-actions-InsertSheetAction.instance" />
+          <file name="org-joeffice-spreadsheet-actions-RemoveSheetAction.instance" />
+        </folder>
+      </folder>
+    </folder>
+  </folder>
+  <folder name="Office">
+    <folder name="Spreadsheet">
+      <folder name="Rows">
+        <folder name="Popup">
+          <file name="org-joeffice-spreadsheet-actions-InsertRowsAction.shadow">
+            <attr name="originalFile" stringvalue="Actions/Edit/Office/Spreadsheet/org-joeffice-spreadsheet-actions-InsertRowsAction.instance"/>
+          </file>
+          <file name="org-joeffice-spreadsheet-actions-RemoveRowsAction.shadow">
+            <attr name="originalFile" stringvalue="Actions/Edit/Office/Spreadsheet/org-joeffice-spreadsheet-actions-RemoveRowsAction.instance"/>
+          </file>
+        </folder>
+      </folder>
+      <folder name="Tabs">
+        <folder name="Popup">
+          <file name="org-joeffice-spreadsheet-actions-InsertSheetAction.shadow">
+            <attr name="originalFile" stringvalue="Actions/Edit/Office/Spreadsheet/org-joeffice-spreadsheet-actions-InsertSheetAction.instance"/>
+          </file>
+          <file name="org-joeffice-spreadsheet-actions-RemoveSheetAction.shadow">
+            <attr name="originalFile" stringvalue="Actions/Edit/Office/Spreadsheet/org-joeffice-spreadsheet-actions-RemoveSheetAction.instance"/>
+          </file>
+        </folder>
+      </folder>
+      <folder name="Toolbar">
+        <file name="org-joeffice-spreadsheet-actions-InsertRowsAction.shadow">
+          <attr name="originalFile" stringvalue="Actions/Edit/Office/Spreadsheet/org-joeffice-spreadsheet-actions-InsertRowsAction.instance"/>
+        </file>
+        <file name="org-joeffice-spreadsheet-actions-RemoveRowsAction.shadow">
+          <attr name="originalFile" stringvalue="Actions/Edit/Office/Spreadsheet/org-joeffice-spreadsheet-actions-RemoveRowsAction.instance"/>
+        </file>
+        <file name="org-joeffice-spreadsheet-actions-InsertSheetAction.shadow">
+          <attr name="originalFile" stringvalue="Actions/Edit/Office/Spreadsheet/org-joeffice-spreadsheet-actions-InsertSheetAction.instance"/>
+        </file>
+        <file name="org-joeffice-spreadsheet-actions-RemoveSheetAction.shadow">
+          <attr name="originalFile" stringvalue="Actions/Edit/Office/Spreadsheet/org-joeffice-spreadsheet-actions-RemoveSheetAction.instance"/>
+        </file>
+      </folder>
+    </folder>
+  </folder>
+</filesystem>

@@ -48,6 +48,28 @@ public class SpreadsheetComponent extends JPanel implements ChangeListener {
         return spreadsheetAndToolbar;
     }
 
+    public SheetComponent getSelectedSheet() {
+        return (SheetComponent) sheets.getComponentAt(workbook.getActiveSheetIndex());
+    }
+
+    public void insertSheet(String name) throws IllegalArgumentException {
+        Sheet sheet = workbook.createSheet(name);
+        int newSheetPosition = workbook.getActiveSheetIndex() + 1;
+        workbook.setSheetOrder(name, newSheetPosition);
+        JPanel sheetPanel = new SheetComponent(sheet, this);
+        sheets.insertTab(name, null, sheetPanel, null, newSheetPosition);
+
+        sheets.setSelectedIndex(newSheetPosition);
+    }
+
+    public void removeCurrentSheet() {
+        if (workbook.getNumberOfSheets() > 1) {
+            int selectedSheetIndex = workbook.getActiveSheetIndex();
+            workbook.removeSheetAt(selectedSheetIndex);
+            sheets.remove(selectedSheetIndex);
+        }
+    }
+
     @Override
     public void stateChanged(ChangeEvent ce) {
         workbook.setActiveSheet(sheets.getSelectedIndex());

@@ -7,19 +7,20 @@ import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.h2.tools.Csv;
+import org.h2.tools.SimpleResultSet;
 import org.openide.util.Exceptions;
 
 /**
  * Smart CSV reader is a CSV reader that is able to detect:
  * <ul><li>The character encoding of the file</li>
- * <li>The field delimiter</li>
+ * <li>The field separator</li>
  * <li>The escape character (quote)</li>
  * </ul>
  *
@@ -127,15 +128,11 @@ public class SmartCsvReader {
     public Workbook read(File csvFile) throws IOException {
         detect(csvFile);
 
-        Workbook csvWorkbook = new XSSFWorkbook();
+        Workbook csvWorkbook = new CSVWorkbook(this);
         Sheet csvSheet = csvWorkbook.createSheet(csvFile.getName());
 
         Reader csvReader = new BufferedReader(new InputStreamReader(new FileInputStream(csvFile), getCharset()));
-        Csv csv = new Csv();
-        csv.setEscapeCharacter(getEscapeCharater());
-        csv.setFieldDelimiter(getEscapeCharater());
-        csv.setFieldSeparatorRead(getFieldSeparator());
-        csv.setFieldSeparatorWrite("" + getFieldSeparator());
+        Csv csv = createCsv();
         ResultSet rs = csv.read(csvReader, getHeaders());
         try {
             ResultSetMetaData meta = rs.getMetaData();
@@ -154,6 +151,40 @@ public class SmartCsvReader {
         }
         csvSheet.setDefaultColumnWidth(-1);
         return csvWorkbook;
+    }
+
+    public void write(OutputStream output, Workbook workbook) throws IOException {
+        Csv csv = createCsv();
+        SimpleResultSet rs = new SimpleResultSet();
+        // TODO use the first row
+        for (String header : headers) {
+            rs.addColumn(header, Types.VARCHAR, 2000, 0);
+        }
+        Sheet firstSheet = workbook.getSheetAt(0);
+        for (int i = 1; i <= firstSheet.getLastRowNum(); i++) {
+            Row row = firstSheet.getRow(i);
+            String[] rowValues = new String[headers.length];
+            for (int j = 0; j < headers.length; j++) {
+                Cell cell = row.getCell(j);
+                rowValues[j] = cell == null ? "" : cell.getStringCellValue();
+            }
+            rs.addRow(rowValues);
+        }
+        Writer writer = new BufferedWriter(new OutputStreamWriter(output, charset));
+        try {
+            csv.write(writer, rs);
+        } catch (SQLException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    private Csv createCsv() {
+        Csv csv = new Csv();
+        csv.setEscapeCharacter(getEscapeCharater());
+        csv.setFieldDelimiter(getEscapeCharater());
+        csv.setFieldSeparatorRead(getFieldSeparator());
+        csv.setFieldSeparatorWrite("" + getFieldSeparator());
+        return csv;
     }
 
     public char getFieldSeparator() {
