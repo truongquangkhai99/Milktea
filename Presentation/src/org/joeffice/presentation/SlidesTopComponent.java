@@ -1,8 +1,6 @@
 package org.joeffice.presentation;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import javax.swing.*;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -10,7 +8,6 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 
-import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -41,11 +38,12 @@ import org.openide.util.NbBundle.Messages;
     "CTL_SlidesTopComponent=Slides Window",
     "HINT_SlidesTopComponent=This is a Slides window"
 })
-public final class SlidesTopComponent extends OfficeTopComponent {
+public final class SlidesTopComponent extends OfficeTopComponent implements Externalizable {
 
-    private XMLSlideShow presentation;
+    private transient XMLSlideShow presentation;
 
     public SlidesTopComponent() {
+        System.out.println("created");
     }
 
     public SlidesTopComponent(OfficeDataObject pptxDataObject) {
@@ -67,6 +65,9 @@ public final class SlidesTopComponent extends OfficeTopComponent {
 
             // Add the slides
             XSLFSlide[] slides = presentation.getSlides();
+            if (slides.length > 0) {
+                getMainComponent().add(new SlideSeparator());
+            }
             for (XSLFSlide slide : slides) {
                 SlideComponent slideComp = new SlideComponent(slide, this);
                 getMainComponent().add(slideComp);
@@ -90,5 +91,17 @@ public final class SlidesTopComponent extends OfficeTopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+    }
+
+    @Override
+    public void readExternal(ObjectInput oi) throws IOException, ClassNotFoundException {
+        System.out.println("------- sildes readExternal");
+        super.readExternal(oi);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput oo) throws IOException {
+        System.out.println("------- slides writeExternal");
+        super.writeExternal(oo);
     }
 }
