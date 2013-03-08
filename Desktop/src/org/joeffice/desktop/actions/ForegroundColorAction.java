@@ -6,6 +6,7 @@ package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.AbstractAction;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -29,7 +30,7 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Toolbars/Font", position = 3300)
 })
 @Messages("CTL_ForegroundColorAction=Color")
-public final class ForegroundColorAction implements ActionListener {
+public final class ForegroundColorAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {

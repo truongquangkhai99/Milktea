@@ -5,7 +5,7 @@
 package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.AbstractAction;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -25,7 +25,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_BackgroundColorAction")
 @ActionReference(path = "Menu/Edit", position = 1510)
 @Messages("CTL_BackgroundColorAction=Background Color")
-public final class BackgroundColorAction implements ActionListener {
+public final class BackgroundColorAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {

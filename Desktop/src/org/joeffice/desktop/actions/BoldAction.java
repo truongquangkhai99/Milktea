@@ -6,6 +6,7 @@ package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.AbstractAction;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -30,7 +31,7 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Shortcuts", name = "D-B")
 })
 @Messages("CTL_BoldAction=Bold")
-public final class BoldAction implements ActionListener {
+public final class BoldAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {

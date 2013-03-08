@@ -6,6 +6,7 @@ package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.AbstractAction;
 import javax.swing.JEditorPane;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -35,7 +36,7 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Shortcuts", name = "D-I")
 })
 @Messages("CTL_ItalicAction=Italic")
-public final class ItalicAction implements ActionListener {
+public final class ItalicAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {

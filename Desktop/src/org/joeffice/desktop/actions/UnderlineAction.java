@@ -2,6 +2,7 @@ package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.AbstractAction;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -10,7 +11,7 @@ import org.openide.util.NbBundle.Messages;
 
 /**
  * Underline the selected text.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
 @ActionID(
@@ -24,7 +25,7 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Shortcuts", name = "D-U")
 })
 @Messages("CTL_UnderlineAction=Underline")
-public final class UnderlineAction implements ActionListener {
+public final class UnderlineAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {

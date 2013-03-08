@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import javax.swing.AbstractAction;
 
 import org.joeffice.desktop.file.OfficeDataObject;
 
@@ -35,7 +36,7 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Loaders/image/svg+xml/Actions", position = 200)
 })
 @Messages("CTL_OpenInSystemAction=Open in System")
-public final class OpenInSystemAction implements ActionListener {
+public final class OpenInSystemAction extends AbstractAction {
 
     private final List<DataObject> context;
 
