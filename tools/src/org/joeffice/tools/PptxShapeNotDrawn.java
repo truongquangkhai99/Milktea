@@ -48,6 +48,7 @@ public class PptxShapeNotDrawn {
 
                 BufferedImage img = new BufferedImage((int) shape.getAnchor().getWidth(), (int) shape.getAnchor().getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
                 Graphics2D graphics = img.createGraphics();
+                graphics.translate(-shape.getAnchor().getX(), -shape.getAnchor().getY());
                 shape.draw(graphics);
                 graphics.dispose();
                 JLabel shapeLabel = new JLabel(new ImageIcon(img));
