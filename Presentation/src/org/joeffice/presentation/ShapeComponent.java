@@ -40,7 +40,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     public ShapeComponent(XSLFShape shape, SlideComponent slideComponent) {
         this.shape = shape;
         this.slideComponent = slideComponent;
-        setBorder(BorderFactory.createLineBorder(Color.RED)); // for debug
+        // setBorder(BorderFactory.createLineBorder(Color.RED)); // for debug
         setBounds(shape.getAnchor().getBounds());
         setOpaque(false);
         setLayout(new BorderLayout());
@@ -49,16 +49,20 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     }
 
     private void initComponent() {
-        if (shape instanceof XSLFTextShape) {
+        if (shape instanceof XSLFTextShape && !"".equals(((XSLFTextShape) shape).getText())) {
             handleTextShape((XSLFTextShape) shape);
         } else {
 
             // XXX this doesn't display anything
             BufferedImage img = new BufferedImage((int) shape.getAnchor().getWidth(), (int) shape.getAnchor().getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D graphics = img.createGraphics();
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            graphics.translate(-shape.getAnchor().getX(), -shape.getAnchor().getY());
             shape.draw(graphics);
             graphics.dispose();
             JLabel shapeLabel = new JLabel(new ImageIcon(img));
+            // shapeLabel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
             add(shapeLabel);
         }
         // else paintComponent should display the shape (but it doesn't work)
@@ -92,7 +96,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
             newLine = true;
         }
 
-        add(textField, BorderLayout.CENTER);
+        add(textField);
         if (editable) {
             textField.getDocument().addDocumentListener(this);
         } else {

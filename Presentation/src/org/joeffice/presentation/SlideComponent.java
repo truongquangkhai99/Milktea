@@ -36,12 +36,11 @@ public class SlideComponent extends JPanel {
         } else {
             setBackground(Color.WHITE);
         }
-        XSLFTextShape[] textShapes = slide.getPlaceholders();
+        /*XSLFTextShape[] textShapes = slide.getPlaceholders();
         for (XSLFTextShape textShape : textShapes) {
             ShapeComponent shapeComponent = new ShapeComponent(textShape, this);
-            //JComponent shapeComponent = new JLabel(textShape.getText());
             add(shapeComponent);
-        }
+        }*/
         XSLFShape[] shapes = slide.getShapes();
         for (XSLFShape shape : shapes) {
             ShapeComponent shapeComponent = new ShapeComponent(shape, this);

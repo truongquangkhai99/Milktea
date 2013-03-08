@@ -6,11 +6,12 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.awt.image.MemoryImageSource;
+import java.util.Date;
 import javax.swing.Timer;
 
 /**
  * Listeners to events when the presentation is in full screen mode.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
 public class FullScreenListener implements KeyListener, MouseMotionListener, MouseListener {
@@ -49,6 +50,10 @@ public class FullScreenListener implements KeyListener, MouseMotionListener, Mou
 
     @Override
     public void keyTyped(KeyEvent ke) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent ke) {
         switch (ke.getKeyCode()) {
             case KeyEvent.VK_ESCAPE:
                 setMouseVisible(true);
@@ -71,10 +76,6 @@ public class FullScreenListener implements KeyListener, MouseMotionListener, Mou
     }
 
     @Override
-    public void keyPressed(KeyEvent ke) {
-    }
-
-    @Override
     public void keyReleased(KeyEvent ke) {
     }
 
@@ -90,6 +91,7 @@ public class FullScreenListener implements KeyListener, MouseMotionListener, Mou
 
     @Override
     public void mouseClicked(MouseEvent me) {
+        System.out.println("mouse " + me.getButton());
         if (me.getButton() == MouseEvent.BUTTON1) {
             frame.setSlideIndex(frame.getSlideIndex() + 1);
         }
