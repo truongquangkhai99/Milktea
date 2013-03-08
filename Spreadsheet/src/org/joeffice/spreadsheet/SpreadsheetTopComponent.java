@@ -5,12 +5,12 @@
 package org.joeffice.spreadsheet;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-import javax.swing.JToolBar;
+import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -51,9 +51,7 @@ import org.openide.windows.CloneableTopComponent;
 public final class SpreadsheetTopComponent extends CloneableTopComponent {
 
     private XlsxDataObject xlsxDataObject;
-
     private SpreadsheetComponent spreadsheetComponent;
-
     private Workbook workbook;
 
     public SpreadsheetTopComponent() {
@@ -103,13 +101,17 @@ public final class SpreadsheetTopComponent extends CloneableTopComponent {
         return spreadsheetComponent;
     }
 
+    public JTable getSelectedTable() {
+        return getSpreadsheetComponent().getSelectedSheet().getTable();
+    }
+
     private void loadDocument() {
         File xslxFile = FileUtil.toFile(xlsxDataObject.getPrimaryFile());
         try {
             workbook = JoefficeWorkbookFactory.create(xslxFile);
 
             spreadsheetComponent.load(workbook);
-        } catch (IOException|InvalidFormatException ex) {
+        } catch (IOException | InvalidFormatException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + xslxFile.getAbsolutePath());
             Exceptions.printStackTrace(ex);
         }
@@ -140,6 +142,19 @@ public final class SpreadsheetTopComponent extends CloneableTopComponent {
         } else {
             xlsxDataObject.setContent(null);
         }
+    }
+
+    @Override
+    protected void componentActivated() {
+        ActionMap topComponentActions = getActionMap();
+        ActionMap tableActions = getSelectedTable().getActionMap();
+
+        // Actives the cut / copy / paste buttons
+        topComponentActions.put(DefaultEditorKit.cutAction, tableActions.get(DefaultEditorKit.cutAction));
+        topComponentActions.put(DefaultEditorKit.copyAction, tableActions.get(DefaultEditorKit.copyAction));
+        topComponentActions.put(DefaultEditorKit.pasteAction, tableActions.get(DefaultEditorKit.pasteAction));
+
+        super.componentActivated();
     }
 
     void writeProperties(java.util.Properties p) {

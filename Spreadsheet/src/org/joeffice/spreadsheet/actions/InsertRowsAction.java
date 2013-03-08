@@ -7,6 +7,8 @@ import javax.swing.JTable;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
@@ -20,8 +22,12 @@ import org.openide.windows.TopComponent;
         category = "Edit/Office/Spreadsheet",
         id = "org.joeffice.spreadsheet.actions.InsertRowsAction")
 @ActionRegistration(
+        iconBase = "org/joeffice/spreadsheet/actions/table_row_insert.png",
         displayName = "#CTL_InsertRowsAction")
 @Messages("CTL_InsertRowsAction=Insert row(s)")
+@ActionReferences(value = {
+    @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 100),
+    @ActionReference(path = "Office/Spreadsheet/Rows/Popup")})
 public final class InsertRowsAction extends AbstractAction {
 
     @Override

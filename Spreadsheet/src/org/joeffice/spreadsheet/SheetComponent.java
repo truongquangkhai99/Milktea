@@ -12,10 +12,12 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
+import javax.swing.text.DefaultEditorKit;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.joeffice.spreadsheet.actions.ClipboardAction;
 
 import org.joeffice.spreadsheet.renderer.CellRenderer;
 import org.joeffice.spreadsheet.renderer.TableColumnAdjuster;
@@ -39,13 +41,15 @@ public class SheetComponent extends JPanel {
 
     private JLayeredPane layers;
     private JTable sheetTable;
+    private Sheet sheet;
 
     public SheetComponent(Sheet sheet, SpreadsheetComponent spreadsheetComponent) {
+        this.sheet = sheet;
         this.spreadsheetComponent = spreadsheetComponent;
-        initComponent(sheet);
+        initComponent();
     }
 
-    private void initComponent(Sheet sheet) {
+    private void initComponent() {
         sheetTable = createTable(sheet);
         listenToChanges();
         layers = createSheetLayers(sheetTable);
@@ -110,6 +114,19 @@ public class SheetComponent extends JPanel {
             tca.setLeaveEmptyAsIs(true);
             tca.adjustColumns();
         }
+
+        Action cutAction = new ClipboardAction(DefaultEditorKit.cutAction);
+        Action copyAction = new ClipboardAction(DefaultEditorKit.copyAction);
+        Action pasteAction = new ClipboardAction(DefaultEditorKit.pasteAction);
+        table.getActionMap().put(DefaultEditorKit.cutAction, cutAction);
+        table.getActionMap().put(DefaultEditorKit.copyAction, copyAction);
+        table.getActionMap().put(DefaultEditorKit.pasteAction, pasteAction);
+
+        table.setIntercellSpacing(new Dimension(0, 0));
+
+        if (!sheet.isDisplayGridlines()) {
+            table.setShowGrid(false);
+        }
         return table;
     }
 
@@ -159,13 +176,17 @@ public class SheetComponent extends JPanel {
 
             @Override
             public void tableChanged(TableModelEvent e) {
-                getSpreadsheetComponent().getSpreadsheetAndToolbar().setModified(true);
+                getSpreadsheetComponent().setModified(true);
             }
         });
     }
 
     public JTable getTable() {
         return sheetTable;
+    }
+
+    public Sheet getSheet() {
+        return sheet;
     }
 
     public SpreadsheetComponent getSpreadsheetComponent() {

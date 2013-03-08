@@ -12,6 +12,8 @@ import javax.swing.JTable;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
@@ -25,7 +27,11 @@ import org.openide.windows.TopComponent;
         category = "Edit/Office/Spreadsheet",
         id = "org.joeffice.spreadsheet.actions.RemoveRowsAction")
 @ActionRegistration(
+        iconBase = "org/joeffice/spreadsheet/actions/table_delete.png",
         displayName = "#CTL_RemoveRowsAction")
+@ActionReferences(value = {
+    @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 200),
+    @ActionReference(path = "Office/Spreadsheet/Rows/Popup")})
 @Messages("CTL_RemoveRowsAction=Remove selected rows")
 public final class RemoveRowsAction extends AbstractAction {
 

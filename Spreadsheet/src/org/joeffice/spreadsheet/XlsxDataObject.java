@@ -23,6 +23,7 @@ import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
+import org.openide.loaders.SaveAsCapable;
 import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
@@ -33,7 +34,7 @@ import org.openide.util.NbBundle.Messages;
  * @author Anthony Goubard - Japplis
  */
 @Messages({
-    "LBL_Xlsx_LOADER=Files of Xlsx"
+    "LBL_Xlsx_LOADER=Microsoft Word 2007 / 2010"
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_Xlsx_LOADER",
@@ -109,6 +110,8 @@ public class XlsxDataObject extends OfficeDataObject implements CookieSet.Factor
         CookieSet cookies = getCookieSet();
         cookies.add(XlsxOpenSupport.class, this);
         cookies.add(XlsxSaveCookie.class, this);
+        saver = new XlsxSaveCookie();
+        cookies.assign(SaveAsCapable.class, saver);
     }
 
     @Override
@@ -144,17 +147,21 @@ public class XlsxDataObject extends OfficeDataObject implements CookieSet.Factor
      * Cookie invoked when the file is saved.
      * Note that if the file is not edited, no save cookie is in the cookies set.
      */
-    private class XlsxSaveCookie implements SaveCookie {
+    private class XlsxSaveCookie implements SaveCookie, SaveAsCapable {
 
         @Override
         public void save() throws IOException {
+            save(getPrimaryFile());
+        }
+
+        public void save(FileObject file) throws IOException {
             Workbook workbook;
             synchronized (XlsxDataObject.this) {
                 //synchronize access to the content field
                 workbook = content;
                 setContent(null);
             }
-            File xslxFile = FileUtil.toFile(getPrimaryFile());
+            File xslxFile = FileUtil.toFile(file);
             try (FileOutputStream xslxOutputStream  = new FileOutputStream(xslxFile)) {
                 if (workbook instanceof CSVWorkbook) {
                     ((CSVWorkbook) workbook).write2(xslxOutputStream);
@@ -162,6 +169,12 @@ public class XlsxDataObject extends OfficeDataObject implements CookieSet.Factor
                     workbook.write(xslxOutputStream);
                 }
             }
+        }
+
+        @Override
+        public void saveAs(FileObject folder, String fileName) throws IOException {
+            FileObject newFile = folder.getFileObject(fileName);
+            save(newFile);
         }
     }
 }

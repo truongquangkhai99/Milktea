@@ -4,6 +4,7 @@ import javax.swing.table.AbstractTableModel;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.joeffice.spreadsheet.POIUtils;
 
 /**
  * The POI sheet table model.
@@ -71,18 +72,18 @@ public class SheetTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object newValue, int rowIndex, int columnIndex) {
-        Row row = sheet.getRow(rowIndex);
-        Cell cell;
-        if (row != null) {
-            cell = row.getCell(columnIndex);
-            if (cell == null) {
-                cell = row.createCell(columnIndex);
-            }
+        Cell cell = POIUtils.getCell(true, sheet, rowIndex, columnIndex);
+        
+        if (newValue instanceof Boolean) {
+            cell.setCellValue((Boolean) newValue);
         } else {
-            row = sheet.createRow(rowIndex);
-            cell = row.createCell(columnIndex);
+            try {
+                double numericValue = Double.parseDouble((String) newValue);
+                cell.setCellValue(numericValue);
+            } catch (NumberFormatException ex) {
+                cell.setCellValue((String) newValue);
+            }
         }
-        cell.setCellValue((String) newValue);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
@@ -146,5 +147,25 @@ public class SheetTableModel extends AbstractTableModel {
                 row.removeCell(cell);
             }
         }
+    }
+
+    public void insertColumn(int columnIndex) {
+        for (int i = sheet.getFirstRowNum(); i < sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            if (row != null) {
+                for (int j = row.getLastCellNum(); j > columnIndex; j--) {
+                    POIUtils.copyCellToColumn(row, row.getCell(j), j + 1);
+                }
+                row.createCell(columnIndex);
+            }
+        }
+        fireTableStructureChanged();
+    }
+
+    public void removeColumn(int columnIndex) {
+        for (int rowIndex = sheet.getFirstRowNum(); rowIndex < sheet.getLastRowNum(); rowIndex++) {
+            deleteCell(rowIndex, columnIndex);
+        }
+        fireTableStructureChanged();
     }
 }

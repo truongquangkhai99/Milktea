@@ -6,8 +6,9 @@ package org.joeffice.spreadsheet.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-import org.joeffice.spreadsheet.SpreadsheetComponent;
+import javax.swing.JTable;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
+import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -15,29 +16,23 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 
-/**
- * Remove the selected sheet.
- *
- * @author Anthony Goubard - Japplis
- */
 @ActionID(
         category = "Edit/Office/Spreadsheet",
-        id = "org.joeffice.spreadsheet.actions.RemoveSheetAction")
+        id = "org.joeffice.spreadsheet.actions.RemoveColumnAction")
 @ActionRegistration(
-        iconBase = "org/joeffice/spreadsheet/actions/table_delete.png",
-        displayName = "#CTL_RemoveSheetAction")
+        displayName = "#CTL_RemoveColumnAction")
 @ActionReferences(value = {
-    /* @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 600), */
-    @ActionReference(path = "Office/Spreadsheet/Tabs/Popup")})
-@Messages("CTL_RemoveSheetAction=Remove sheet")
-public final class RemoveSheetAction extends AbstractAction {
+    @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 400)})
+@Messages("CTL_RemoveColumnAction=Remove Column")
+public final class RemoveColumnAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
         TopComponent currentTopComponent = TopComponent.getRegistry().getActivated();
         if (currentTopComponent instanceof SpreadsheetTopComponent) {
-            SpreadsheetComponent spreadsheet = ((SpreadsheetTopComponent) currentTopComponent).getSpreadsheetComponent();
-            spreadsheet.removeCurrentSheet();
+            JTable currentTable = ((SpreadsheetTopComponent) currentTopComponent).getSelectedTable();
+            int selectedColumn = currentTable.getSelectedColumn();
+            ((SheetTableModel) currentTable.getModel()).removeColumn(selectedColumn);
         }
     }
 }
