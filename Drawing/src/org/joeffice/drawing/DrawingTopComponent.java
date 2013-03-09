@@ -35,7 +35,7 @@ import org.w3c.dom.Document;
         preferredID = "DrawingTopComponent",
         iconBase="org/joeffice/drawing/drawing-16.png",
         persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED)
-@TopComponent.Registration(mode = "explorer", openAtStartup = false)
+@TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.drawing.DrawingTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
@@ -98,14 +98,14 @@ public final class DrawingTopComponent extends OfficeTopComponent {
         }
     }
 
-    void writeProperties(java.util.Properties p) {
+    public void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
         // TODO store your settings
     }
 
-    void readProperties(java.util.Properties p) {
+    public void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
