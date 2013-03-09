@@ -8,13 +8,18 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Collection;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import org.joeffice.desktop.file.OfficeDataObject;
+import org.openide.ErrorManager;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
+import org.openide.cookies.InstanceCookie;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
@@ -32,12 +37,15 @@ public final class NewFileAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        JFileChooser newFileChooser = new JFileChooser();
+        Action a = findAction("Actions/Project/org-netbeans-modules-project-ui-NewFile$WithSubMenu.instance");
+        a.setEnabled(true);
+        a.actionPerformed(ae);
+        /*JFileChooser newFileChooser = new JFileChooser();
         String defaultLocation = NbPreferences.forModule(NewFileAction.class).get("file.location", System.getProperty("user.home"));
         newFileChooser.setCurrentDirectory(new File(defaultLocation));
         newFileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
         addFileFilters(newFileChooser);
-        newFileChooser.showSaveDialog(null);
+        newFileChooser.showSaveDialog(null);*/
     }
 
     private void addFileFilters(JFileChooser chooser) {
@@ -60,5 +68,26 @@ public final class NewFileAction extends AbstractAction {
             chooser.addChoosableFileFilter(filter);
         }
         chooser.setAcceptAllFileFilterUsed(true);
+    }
+
+    public Action findAction(String key) {
+        FileObject fo = FileUtil.getConfigFile(key);
+        if (fo != null && fo.isValid()) {
+            try {
+                DataObject dob = DataObject.find(fo);
+                InstanceCookie ic = dob.getLookup().lookup(InstanceCookie.class);
+                if (ic != null) {
+                    Object instance = ic.instanceCreate();
+                    if (instance instanceof Action) {
+                        Action a = (Action) instance;
+                        return a;
+                    }
+                }
+            } catch (Exception e) {
+                ErrorManager.getDefault().notify(ErrorManager.WARNING, e);
+                return null;
+            }
+        }
+        return null;
     }
 }

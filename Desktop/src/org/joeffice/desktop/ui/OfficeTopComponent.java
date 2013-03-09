@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JComponent;
@@ -18,6 +17,7 @@ import org.joeffice.desktop.file.OfficeDataObject;
 
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
 import org.openide.windows.CloneableTopComponent;
 
@@ -29,7 +29,6 @@ import org.openide.windows.CloneableTopComponent;
 public abstract class OfficeTopComponent extends CloneableTopComponent {
 
     private OfficeDataObject dataObject;
-
     private JComponent mainComponent;
 
     /**
@@ -39,15 +38,16 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     }
 
     public OfficeTopComponent(OfficeDataObject dataObject) {
-        this.dataObject = dataObject;
-        init();
+        init(dataObject);
     }
 
     public OfficeDataObject getDataObject() {
         return dataObject;
     }
 
-    protected void init() {
+    protected void init(OfficeDataObject dataObject) {
+        this.dataObject = dataObject;
+        associateLookup(dataObject.getLookup());
         initComponents();
         FileObject docxFileObject = dataObject.getPrimaryFile();
         String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
@@ -97,6 +97,16 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         return null;
     }
 
+    // http://wiki.netbeans.org/DevFaqEditorTopComponent
+    @Override
+    public String getHtmlDisplayName() {
+        DataObject dob = getLookup().lookup(DataObject.class);
+        if (dob != null && dob.isModified()) {
+            return "<html><body><b>" + dob.getName() + "</b></body></html>";
+        }
+        return super.getHtmlDisplayName();
+    }
+
     @Override
     protected boolean closeLast() {
         int answer = OfficeUIUtils.checkSaveBeforeClosing(dataObject, this);
@@ -126,7 +136,7 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         System.out.println("------- office readExternal");
         super.readExternal(in);
         dataObject = (OfficeDataObject) in.readObject();
-        init();
+        init(dataObject);
     }
 
     @Override
@@ -137,25 +147,25 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     }
 
     /*@Override
-    public Object writeReplace() {
-        System.out.println("------- office writeReplace");
-        return new ResolvableHelper();
-    }
+     public Object writeReplace() {
+     System.out.println("------- office writeReplace");
+     return new ResolvableHelper();
+     }
 
-    final class ResolvableHelper implements Serializable {
+     final class ResolvableHelper implements Serializable {
 
-        private static final long serialVersionUID = 1L;
-        private final OfficeDataObject dataObject;
+     private static final long serialVersionUID = 1L;
+     private final OfficeDataObject dataObject;
 
-        ResolvableHelper() {
-            this.dataObject = OfficeTopComponent.this.dataObject;
-        }
+     ResolvableHelper() {
+     this.dataObject = OfficeTopComponent.this.dataObject;
+     }
 
-        public Object readResolve() {
-            System.out.println("------- office readResolve");
-            OfficeTopComponent.this.dataObject = this.dataObject;
-            OfficeTopComponent topComponent = (OfficeTopComponent) cloneTopComponent();
-            return topComponent;
-        }
-    }*/
+     public Object readResolve() {
+     System.out.println("------- office readResolve");
+     OfficeTopComponent.this.dataObject = this.dataObject;
+     OfficeTopComponent topComponent = (OfficeTopComponent) cloneTopComponent();
+     return topComponent;
+     }
+     }*/
 }
