@@ -39,7 +39,7 @@ import org.openide.windows.CloneableTopComponent;
         preferredID = "JDBCTopComponent",
         iconBase = "org/joeffice/database/database-16.png",
         persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED)
-@TopComponent.Registration(mode = "explorer", openAtStartup = false)
+@TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.database.JDBCTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
