@@ -1,10 +1,12 @@
 package org.joeffice.presentation;
 
 import java.awt.*;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 
 /**
  * The frame showing the presentation in full screen.
@@ -39,7 +41,9 @@ public class FullScreenFrame extends JFrame {
         glassPane.addMouseMotionListener(eventListener);
         glassPane.setFocusable(true);
         glassPane.setVisible(true);
-
+        ImageIcon icon = new ImageIcon(getClass().getResource("/org/joeffice/presentation/presentation-16.png"));
+        setIconImage(icon.getImage());
+        getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER));
     }
 
     public void showSlides(XMLSlideShow presentation) {
@@ -65,16 +69,25 @@ public class FullScreenFrame extends JFrame {
         if (slideIndex >= presentation.getSlides().length) return;
         this.slideIndex = slideIndex;
         if (isVisible()) {
-            SlideComponent slidePanel = new SlideComponent(presentation.getSlides()[slideIndex], null);
+            DisplayMode display = getScreen().getDisplayMode();
+            XSLFSlide slide = presentation.getSlides()[slideIndex];
+            Dimension displaySize = new Dimension(display.getWidth(), display.getHeight());
+            SlideComponent slidePanel = new SlideComponent(slide, null, displaySize);
+            if (getContentPane().getComponentCount() > 0) {
+                getContentPane().remove(0);
+            }
             add(slidePanel);
-            GraphicsDevice screen = getScreen();
-            setBounds(0, 0, screen.getDisplayMode().getWidth(), (int) screen.getDisplayMode().getHeight());
+            setSize(displaySize);
             revalidate();
         }
     }
 
     public int getSlideIndex() {
         return slideIndex;
+    }
+
+    public XMLSlideShow getPresentation() {
+        return presentation;
     }
 
     public GraphicsDevice getScreen() {

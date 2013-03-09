@@ -36,12 +36,21 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     private XSLFShape shape;
     private SlideComponent slideComponent;
     private boolean editable;
+    private double scale;
 
     public ShapeComponent(XSLFShape shape, SlideComponent slideComponent) {
         this.shape = shape;
         this.slideComponent = slideComponent;
         // setBorder(BorderFactory.createLineBorder(Color.RED)); // for debug
-        setBounds(shape.getAnchor().getBounds());
+
+        Rectangle shapeBounds = shape.getAnchor().getBounds();
+        double scaleX = slideComponent.getPreferredSize().getWidth() / slideComponent.getSlide().getBackground().getAnchor().getWidth();
+        double scaleY = slideComponent.getPreferredSize().getHeight() / slideComponent.getSlide().getBackground().getAnchor().getHeight();
+        scale = Math.min(scaleX, scaleY);
+        Rectangle.Double scaledBounds = new Rectangle.Double(shapeBounds.x * scale, shapeBounds.y * scale, shapeBounds.width * scale, shapeBounds.height * scale);
+        setBounds(scaledBounds.getBounds());
+        //setBounds(shapeBounds);
+
         setOpaque(false);
         setLayout(new BorderLayout());
         editable = slideComponent.getSlidesComponent() != null;
@@ -49,20 +58,21 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     }
 
     private void initComponent() {
-        if (shape instanceof XSLFTextShape && !"".equals(((XSLFTextShape) shape).getText())) {
+        if (shape instanceof XSLFTextShape && !"".equals(((XSLFTextShape) shape).getText().trim())) {
             handleTextShape((XSLFTextShape) shape);
         } else {
 
             // XXX this doesn't display anything
-            BufferedImage img = new BufferedImage((int) shape.getAnchor().getWidth(), (int) shape.getAnchor().getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+            BufferedImage img = new BufferedImage((int) (shape.getAnchor().getWidth() * scale), (int) (shape.getAnchor().getHeight() * scale), BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D graphics = img.createGraphics();
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            graphics.translate(-shape.getAnchor().getX(), -shape.getAnchor().getY());
+            graphics.translate(-shape.getAnchor().getX() * scale, -shape.getAnchor().getY() * scale);
+            graphics.scale(scale, scale);
             shape.draw(graphics);
             graphics.dispose();
             JLabel shapeLabel = new JLabel(new ImageIcon(img));
-            // shapeLabel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+            shapeLabel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
             add(shapeLabel);
         }
         // else paintComponent should display the shape (but it doesn't work)
@@ -196,11 +206,14 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         }
     }*/
 
-    @Override
-    public Dimension getPreferredSize() {
-        Rectangle2D bounds = shape.getAnchor();
-        return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
+    public double getScale() {
+        return scale;
     }
+
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+
 
     public SlideComponent getSlideComponent() {
         return slideComponent;

@@ -28,7 +28,7 @@ import org.openide.util.NbBundle.Messages;
 
 /**
  * The data object that deals with .pptx files.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
 @Messages({
@@ -117,7 +117,9 @@ public class PptxDataObject extends OfficeDataObject implements CookieSet.Factor
             getCookieSet().add(saver);
         } else {
             setModified(false);
-            getCookieSet().remove(saver);
+            if (saver != null) {
+                getCookieSet().remove(saver);
+            }
         }
     }
 

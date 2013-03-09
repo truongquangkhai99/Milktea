@@ -63,14 +63,14 @@ public class FullScreenListener implements KeyListener, MouseMotionListener, Mou
                 frame.setSlideIndex(frame.getSlideIndex() + 1);
                 break;
             case KeyEvent.VK_P:
-            case KeyEvent.VK_DELETE:
+            case KeyEvent.VK_BACK_SPACE:
                 frame.setSlideIndex(frame.getSlideIndex() - 1);
                 break;
             case KeyEvent.VK_HOME:
                 frame.setSlideIndex(0);
                 break;
             case KeyEvent.VK_END:
-                //frame.setSlideIndex(0);
+                frame.setSlideIndex(frame.getPresentation().getSlides().length - 1);
                 break;
         }
     }
@@ -91,7 +91,6 @@ public class FullScreenListener implements KeyListener, MouseMotionListener, Mou
 
     @Override
     public void mouseClicked(MouseEvent me) {
-        System.out.println("mouse " + me.getButton());
         if (me.getButton() == MouseEvent.BUTTON1) {
             frame.setSlideIndex(frame.getSlideIndex() + 1);
         }

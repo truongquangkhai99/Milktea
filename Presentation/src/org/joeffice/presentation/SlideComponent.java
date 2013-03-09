@@ -21,14 +21,18 @@ public class SlideComponent extends JPanel {
     private SlidesTopComponent slidesComponent;
 
     public SlideComponent(XSLFSlide slide, SlidesTopComponent slidesComponent) {
+        this(slide, slidesComponent, new Dimension(1280, 720));
+    }
+
+    public SlideComponent(XSLFSlide slide, SlidesTopComponent slidesComponent, Dimension slideSize) {
         this.slide = slide;
         this.slidesComponent = slidesComponent;
+        setPreferredSize(slideSize);
         initComponent();
     }
 
     private void initComponent() {
         setLayout(null);
-        setPreferredSize(new Dimension(1280, 720));
         XSLFBackground background = slide.getBackground();
         if (background != null) {
             Color backgroundColor = background.getFillColor();
@@ -36,16 +40,15 @@ public class SlideComponent extends JPanel {
         } else {
             setBackground(Color.WHITE);
         }
-        /*XSLFTextShape[] textShapes = slide.getPlaceholders();
-        for (XSLFTextShape textShape : textShapes) {
-            ShapeComponent shapeComponent = new ShapeComponent(textShape, this);
-            add(shapeComponent);
-        }*/
         XSLFShape[] shapes = slide.getShapes();
         for (XSLFShape shape : shapes) {
             ShapeComponent shapeComponent = new ShapeComponent(shape, this);
             add(shapeComponent);
         }
+    }
+
+    public XSLFSlide getSlide() {
+        return slide;
     }
 
     public SlidesTopComponent getSlidesComponent() {

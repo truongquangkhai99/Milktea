@@ -4,6 +4,8 @@
  */
 package org.joeffice.presentation.actions;
 
+import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
@@ -20,7 +22,7 @@ import org.openide.windows.TopComponent;
 
 /**
  * Action that launch the presentation in full screen mode when invoked.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
 @ActionID(
@@ -38,6 +40,8 @@ public final class LaunchPresentationAction extends AbstractAction {
         if (currentTopComponent instanceof SlidesTopComponent) {
             XMLSlideShow currentPresentation = ((SlidesTopComponent) currentTopComponent).getPresentation();
             FullScreenFrame presentationFrame = new FullScreenFrame();
+            DisplayMode slideshowDisplay = presentationFrame.getScreen().getDisplayMode();
+            //currentPresentation.setPageSize(new Dimension(slideshowDisplay.getWidth(), slideshowDisplay.getHeight()));
             presentationFrame.showSlides(currentPresentation);
         }
     }

@@ -1,6 +1,7 @@
 package org.joeffice.presentation;
 
 import java.io.*;
+import java.util.Properties;
 import javax.swing.*;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -13,6 +14,8 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
@@ -21,13 +24,13 @@ import org.openide.util.NbBundle.Messages;
  * Top component which displays the toolbar and the presentation slides in edit mode.
  */
 @ConvertAsProperties(
-        dtd = "-//org.joeffice.presentation//Slides//EN",
+        dtd = "-//org.joeffice.presentation//SlidesTopComponent//EN",
         autostore = false)
 @TopComponent.Description(
         preferredID = "SlidesTopComponent",
         iconBase = "org/joeffice/presentation/presentation-16.png",
         persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED)
-@TopComponent.Registration(mode = "explorer", openAtStartup = false)
+@TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.presentation.SlidesTopComponent")
 @ActionReference(path = "Menu/Window")
 @TopComponent.OpenActionRegistration(
@@ -43,7 +46,7 @@ public final class SlidesTopComponent extends OfficeTopComponent {
     private transient XMLSlideShow presentation;
 
     public SlidesTopComponent() {
-        System.out.println("created");
+        System.out.println("------ created");
     }
 
     public SlidesTopComponent(OfficeDataObject pptxDataObject) {
@@ -85,15 +88,22 @@ public final class SlidesTopComponent extends OfficeTopComponent {
         return presentation;
     }
 
-    void writeProperties(java.util.Properties p) {
+    public void writeProperties(Properties properties) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
+        properties.setProperty("version", "1.0");
+        properties.setProperty("path", FileUtil.toFile(getDataObject().getPrimaryFile()).getAbsolutePath());
+
     }
 
-    void readProperties(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
+    public void readProperties(Properties properties) {
+        String version = properties.getProperty("version");
+        System.out.println("--------- readProperties");
+        try {
+            init((OfficeDataObject) DataObject.find(FileUtil.toFileObject(FileUtil.normalizeFile(new File(properties.getProperty("path"))))));
+            // TODO read your settings according to their version
+        } catch (DataObjectNotFoundException ex) {
+            close();
+        }
     }
 }
