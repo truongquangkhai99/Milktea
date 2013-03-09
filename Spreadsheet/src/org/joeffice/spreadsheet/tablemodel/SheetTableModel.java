@@ -73,7 +73,7 @@ public class SheetTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object newValue, int rowIndex, int columnIndex) {
         Cell cell = POIUtils.getCell(true, sheet, rowIndex, columnIndex);
-        
+
         if (newValue instanceof Boolean) {
             cell.setCellValue((Boolean) newValue);
         } else {

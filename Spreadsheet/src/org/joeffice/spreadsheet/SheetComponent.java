@@ -107,9 +107,9 @@ public class SheetComponent extends JPanel {
         table.setDragEnabled(true);
         table.setDropMode(DropMode.ON_OR_INSERT);
 
+        TableColumnAdjuster tca = new TableColumnAdjuster(table, 20);
         if (sheet.getDefaultColumnWidth() == -1) {
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            TableColumnAdjuster tca = new TableColumnAdjuster(table, 20);
             tca.setOnlyAdjustLarger(true);
             tca.setLeaveEmptyAsIs(true);
             tca.adjustColumns();

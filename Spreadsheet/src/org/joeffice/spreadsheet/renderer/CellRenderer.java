@@ -2,23 +2,19 @@ package org.joeffice.spreadsheet.renderer;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+
 import org.joeffice.spreadsheet.POIUtils;
 
 /**
@@ -68,13 +64,15 @@ public class CellRenderer extends DefaultTableCellRenderer {
         } else {
             setHorizontalAlignment(defaultRenderer.getHorizontalAlignment());
         }
-        short verticalAlignment = style.getAlignment();
+        short verticalAlignment = style.getAlignment(); // Either LibreOffice 4 or POI has problem with vertical alignment
         if (verticalAlignment == CellStyle.VERTICAL_TOP) {
             setVerticalAlignment(SwingConstants.TOP);
         } else if (verticalAlignment == CellStyle.VERTICAL_CENTER) {
             setVerticalAlignment(SwingConstants.CENTER);
         } else if (verticalAlignment == CellStyle.VERTICAL_BOTTOM) {
             setVerticalAlignment(SwingConstants.BOTTOM);
+        } else {
+            setVerticalAlignment(defaultRenderer.getVerticalAlignment());
         }
     }
 
