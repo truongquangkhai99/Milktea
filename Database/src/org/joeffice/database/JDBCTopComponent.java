@@ -1,33 +1,39 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013 Japplis.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.joeffice.database;
 
-import java.awt.BorderLayout;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
+import java.util.Properties;
+import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
 
+import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.CloneableTopComponent;
 
 /**
  * Top component which displays the database data.
@@ -50,53 +56,27 @@ import org.openide.windows.CloneableTopComponent;
     "CTL_JDBCTopComponent=JDBC Window",
     "HINT_JDBCTopComponent=This is a JDBC window"
 })
-public final class JDBCTopComponent extends CloneableTopComponent {
+public final class JDBCTopComponent extends OfficeTopComponent {
 
-    private H2DataObject h2DataObject;
-    private transient JTabbedPane tables;
     private transient Connection dbConnection;
 
     public JDBCTopComponent() {
     }
 
     public JDBCTopComponent(H2DataObject h2DataObject) {
-        init(h2DataObject);
+        super(h2DataObject);
     }
 
-    private void init(H2DataObject h2DataObject) {
-        this.h2DataObject = h2DataObject;
-        initComponents();
-        FileObject docxFileObject = h2DataObject.getPrimaryFile();
-        String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
-        setToolTipText(fileDisplayName);
-        setName(docxFileObject.getName());
-        loadDocument();
-    }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     */
-    private void initComponents() {
-        setLayout(new BorderLayout());
-        JToolBar databaseToolbar = createToolbar();
-        tables = createTabbbedPane();
-
-        add(databaseToolbar, BorderLayout.NORTH);
-        add(tables);
-    }
-
-    protected JToolBar createToolbar() {
-        JToolBar spreadsheetToolbar = new JToolBar();
-        return spreadsheetToolbar;
-    }
-
-    protected JTabbedPane createTabbbedPane() {
+    @Override
+    protected JComponent createMainComponent() {
         JTabbedPane tablesComponent = new JTabbedPane(JTabbedPane.BOTTOM);
         return tablesComponent;
     }
 
-    private void loadDocument() {
-        File h2File = FileUtil.toFile(h2DataObject.getPrimaryFile());
+    @Override
+    public void loadDocument() {
+        File h2File = FileUtil.toFile(getDataObject().getPrimaryFile());
         try {
             Class.forName("org.h2.Driver");
             String filePath = h2File.getAbsolutePath().replace('\\', '/');
@@ -111,7 +91,7 @@ public final class JDBCTopComponent extends CloneableTopComponent {
                 TableComponent tableComp = new TableComponent(dbConnection, nextTableName);
 
                 String tabLabel = OfficeUIUtils.toDisplayable(nextTableName);
-                tables.addTab(tabLabel, tableComp);
+                ((JTabbedPane) getMainComponent()).addTab(tabLabel, tableComp);
             }
         } catch (SQLException | ClassNotFoundException ex) {
             Exceptions.printStackTrace(ex);
@@ -121,13 +101,6 @@ public final class JDBCTopComponent extends CloneableTopComponent {
     @Override
     public void componentOpened() {
         // TODO add custom code on component opening
-    }
-
-    @Override
-    public boolean canClose() {
-        int answer = OfficeUIUtils.checkSaveBeforeClosing(h2DataObject, this);
-        boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
-        return canClose;
     }
 
     @Override
@@ -142,32 +115,12 @@ public final class JDBCTopComponent extends CloneableTopComponent {
     }
 
     @Override
-    protected CloneableTopComponent createClonedObject() {
-        return new JDBCTopComponent(h2DataObject);
-    }
-
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
-    }
-
-    void readProperties(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
+    public void writeProperties(Properties properties) {
+        super.writeProperties(properties);
     }
 
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        super.writeExternal(out);
-        out.writeObject(h2DataObject);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        super.readExternal(in);
-        H2DataObject storedH2DataObject = (H2DataObject) in.readObject();
-        init(storedH2DataObject);
+    public void readProperties(Properties properties) {
+        super.readProperties(properties);
     }
 }
