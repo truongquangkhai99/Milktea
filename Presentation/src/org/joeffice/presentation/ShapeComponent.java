@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 Japplis.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.joeffice.presentation;
 
 import static org.apache.poi.xslf.usermodel.TextAlign.CENTER;
@@ -23,6 +38,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import org.apache.poi.xslf.usermodel.*;
+import org.openide.awt.UndoRedo;
 
 import org.openide.util.Exceptions;
 
@@ -36,20 +52,17 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     private XSLFShape shape;
     private SlideComponent slideComponent;
     private boolean editable;
-    private double scale;
 
     public ShapeComponent(XSLFShape shape, SlideComponent slideComponent) {
         this.shape = shape;
         this.slideComponent = slideComponent;
+        setOpaque(false);
         // setBorder(BorderFactory.createLineBorder(Color.RED)); // for debug
 
         Rectangle shapeBounds = shape.getAnchor().getBounds();
-        double scaleX = slideComponent.getPreferredSize().getWidth() / slideComponent.getSlide().getBackground().getAnchor().getWidth();
-        double scaleY = slideComponent.getPreferredSize().getHeight() / slideComponent.getSlide().getBackground().getAnchor().getHeight();
-        scale = Math.min(scaleX, scaleY);
+        double scale = slideComponent.getScale();
         Rectangle.Double scaledBounds = new Rectangle.Double(shapeBounds.x * scale, shapeBounds.y * scale, shapeBounds.width * scale, shapeBounds.height * scale);
         setBounds(scaledBounds.getBounds());
-        //setBounds(shapeBounds);
 
         setOpaque(false);
         setLayout(new BorderLayout());
@@ -62,7 +75,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
             handleTextShape((XSLFTextShape) shape);
         } else {
 
-            // XXX this doesn't display anything
+            double scale = slideComponent.getScale();
             BufferedImage img = new BufferedImage((int) (shape.getAnchor().getWidth() * scale), (int) (shape.getAnchor().getHeight() * scale), BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D graphics = img.createGraphics();
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -72,15 +85,15 @@ public class ShapeComponent extends JPanel implements DocumentListener {
             shape.draw(graphics);
             graphics.dispose();
             JLabel shapeLabel = new JLabel(new ImageIcon(img));
-            shapeLabel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+            // shapeLabel.setBorder(BorderFactory.createLineBorder(Color.BLUE)); // for debug
             add(shapeLabel);
         }
-        // else paintComponent should display the shape (but it doesn't work)
     }
 
     private void handleTextShape(XSLFTextShape textShape) {
         JTextPane textField = new JTextPane();
         textField.setBorder(BorderFactory.createEmptyBorder());
+        textField.setOpaque(false);
         java.util.List<XSLFTextParagraph> paragraphs = textShape.getTextParagraphs();
         boolean newLine = false;
         for (XSLFTextParagraph paragraph : paragraphs) {
@@ -109,6 +122,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         add(textField);
         if (editable) {
             textField.getDocument().addDocumentListener(this);
+            textField.getDocument().addUndoableEditListener((UndoRedo.Manager) getSlideComponent().getSlidesComponent().getUndoRedo());
         } else {
             textField.setEditable(false);
         }
@@ -195,25 +209,6 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         }
         return ""; // No bullets
     }
-
-    /*@Override
-    public void paintComponent(Graphics g) {
-        // The draw and drawContent methods don't display anything
-        if (shape instanceof XSLFTextShape) {
-            super.paintComponent(g);
-        } else {
-            shape.draw((Graphics2D) g);
-        }
-    }*/
-
-    public double getScale() {
-        return scale;
-    }
-
-    public void setScale(double scale) {
-        this.scale = scale;
-    }
-
 
     public SlideComponent getSlideComponent() {
         return slideComponent;

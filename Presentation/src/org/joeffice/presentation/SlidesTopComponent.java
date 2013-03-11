@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 Japplis.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.joeffice.presentation;
 
 import java.io.*;
@@ -13,6 +28,7 @@ import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -46,7 +62,6 @@ public final class SlidesTopComponent extends OfficeTopComponent {
     private transient XMLSlideShow presentation;
 
     public SlidesTopComponent() {
-        System.out.println("------ created");
     }
 
     public SlidesTopComponent(OfficeDataObject pptxDataObject) {
@@ -88,22 +103,13 @@ public final class SlidesTopComponent extends OfficeTopComponent {
         return presentation;
     }
 
+    @Override
     public void writeProperties(Properties properties) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        properties.setProperty("version", "1.0");
-        properties.setProperty("path", FileUtil.toFile(getDataObject().getPrimaryFile()).getAbsolutePath());
-
+        super.writeProperties(properties);
     }
 
+    @Override
     public void readProperties(Properties properties) {
-        String version = properties.getProperty("version");
-        System.out.println("--------- readProperties");
-        try {
-            init((OfficeDataObject) DataObject.find(FileUtil.toFileObject(FileUtil.normalizeFile(new File(properties.getProperty("path"))))));
-            // TODO read your settings according to their version
-        } catch (DataObjectNotFoundException ex) {
-            close();
-        }
+        super.readProperties(properties);
     }
 }
