@@ -1,25 +1,45 @@
+/*
+ * Copyright 2013 Japplis.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.joeffice.wordprocessor;
 
-import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.font.TextAttribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.AttributedString;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
-import org.joeffice.desktop.ui.OfficeUIUtils;
+import org.joeffice.desktop.actions.StyleActions;
+
+import org.joeffice.desktop.file.OfficeDataObject;
+import org.joeffice.desktop.ui.OfficeTopComponent;
+
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.filesystems.FileObject;
+import org.openide.awt.UndoRedo;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
-import org.openide.util.LookupEvent;
-import org.openide.util.LookupListener;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.CloneableTopComponent;
 
 /**
  * Top component which displays the docx documents.
@@ -42,61 +62,35 @@ import org.openide.windows.CloneableTopComponent;
     "CTL_WordpTopComponent=Word processor Window",
     "HINT_WordpTopComponent=This is a Word processor window"
 })
-public final class WordpTopComponent extends CloneableTopComponent implements LookupListener, DocumentListener {
-
-    private JEditorPane wordProcessor;
+public final class WordpTopComponent extends OfficeTopComponent implements DocumentListener {
 
     private Document document;
-
-    private DocxDataObject docxDataObject;
 
     public WordpTopComponent() {
     }
 
     public WordpTopComponent(DocxDataObject dataObject) {
-        this.docxDataObject = dataObject;
-        init(dataObject);
+        super(dataObject);
     }
 
-    private void init(DocxDataObject dataObject) {
-        initComponents();
-        FileObject docxFileObject = dataObject.getPrimaryFile();
-        String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
-        setToolTipText(fileDisplayName);
-        setName(docxFileObject.getName());
-        loadDocument(dataObject);
-    }
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     */
-    private void initComponents() {
-        setLayout(new BorderLayout());
-        JToolBar wordProcessingToolbar = createToolbar();
-        wordProcessor = createEditorPane();
-        JScrollPane editorScrollPane = new JScrollPane(wordProcessor);
-
-        add(wordProcessingToolbar, BorderLayout.NORTH);
-        add(editorScrollPane);
-    }
-
-    private JToolBar createToolbar() {
-        JToolBar editorToolbar = new JToolBar();
-        return editorToolbar;
-    }
-
-    private JEditorPane createEditorPane() {
-        JEditorPane editor = new JTextPane();
+    @Override
+    protected JComponent createMainComponent() {
+        JTextPane editor = new JTextPane();
         editor.setEditorKit(new DocxEditorKit());
         return editor;
     }
 
-    private void loadDocument(DocxDataObject docxDataObject) {
+    @Override
+    public void loadDocument() {
+        OfficeDataObject docxDataObject = getDataObject();
         File docxFile = FileUtil.toFile(docxDataObject.getPrimaryFile());
         try (FileInputStream docxIS = new FileInputStream(docxFile)) {
+            JTextPane wordProcessor = (JTextPane) getMainComponent();
             wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
             document = wordProcessor.getDocument();
             document.addDocumentListener(this);
+            document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
+            //getServices().add(new EditorStyleable());
         } catch (IOException|BadLocationException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + docxFile.getAbsolutePath());
             Exceptions.printStackTrace(ex);
@@ -104,16 +98,28 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
     }
 
     @Override
-    public boolean canClose() {
-        int answer = OfficeUIUtils.checkSaveBeforeClosing(docxDataObject, this);
-        boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
-        if (canClose && docxDataObject != null) {
-            docxDataObject.setContent(null);
-        }
-        return canClose;
+    protected void componentActivated() {
+        JTextPane wordProcessor = (JTextPane) getMainComponent();
+        ActionMap editorActionMap = wordProcessor.getActionMap();
+        getActionMap().put(DefaultEditorKit.cutAction, editorActionMap.get(DefaultEditorKit.cutAction));
+        getActionMap().put(DefaultEditorKit.copyAction, editorActionMap.get(DefaultEditorKit.copyAction));
+        getActionMap().put(DefaultEditorKit.pasteAction, editorActionMap.get(DefaultEditorKit.pasteAction));
+        final EditorStyleable styleable = new EditorStyleable();
+        getActionMap().put(StyleActions.CHOOSE_FONT_ACTION_MAP_KEY, new AbstractAction(StyleActions.CHOOSE_FONT_ACTION_MAP_KEY) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AttributedString attributes = new AttributedString("ChangeFont");
+                attributes.addAttribute(TextAttribute.FAMILY, Font.MONOSPACED);
+                styleable.setFontAttributes(attributes);
+            }
+        });
+        super.componentActivated();
     }
 
+    @Override
     public void setModified(boolean modified) {
+        super.setModified(modified);
+         OfficeDataObject docxDataObject = getDataObject();
         if (modified) {
             docxDataObject.setContent(document);
         } else {
@@ -121,21 +127,14 @@ public final class WordpTopComponent extends CloneableTopComponent implements Lo
         }
     }
 
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
-    }
-
-    void readProperties(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
+    @Override
+    public void writeProperties(java.util.Properties properties) {
+        super.writeProperties(properties);
     }
 
     @Override
-    public void resultChanged(LookupEvent le) {
-
+    public void readProperties(java.util.Properties properties) {
+        super.readProperties(properties);
     }
 
     @Override
