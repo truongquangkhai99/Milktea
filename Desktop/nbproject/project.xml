@@ -197,6 +197,7 @@
             </module-dependencies>
             <public-packages>
                 <package>org.joeffice.desktop</package>
+                <package>org.joeffice.desktop.actions</package>
                 <package>org.joeffice.desktop.file</package>
                 <package>org.joeffice.desktop.ui</package>
             </public-packages>

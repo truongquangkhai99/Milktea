@@ -54,7 +54,7 @@ made subject to such option by the copyright holder.
     <Toolbar name="Clipboard"/>
     <Toolbar name="UndoRedo" />
     <Toolbar name="Remote" visible="false"/>
-    <Toolbar name="Build" />
+    <Toolbar name="Build"  visible="false" />
     <Toolbar name="Debug" visible="false" />
     <Toolbar name="Memory" visible="false"/>
     <Toolbar name="QuickSearch" align="right" />

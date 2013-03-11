@@ -1,24 +1,46 @@
+/*
+ * Copyright 2013 Japplis.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.joeffice.desktop.ui;
 
 import java.awt.BorderLayout;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 
 import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
 
 import org.joeffice.desktop.file.OfficeDataObject;
+import org.openide.awt.UndoRedo;
+import org.openide.explorer.ExplorerUtils;
 
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.ProxyLookup;
 import org.openide.windows.CloneableTopComponent;
 
 /**
@@ -28,8 +50,10 @@ import org.openide.windows.CloneableTopComponent;
  */
 public abstract class OfficeTopComponent extends CloneableTopComponent {
 
-    private OfficeDataObject dataObject;
     private JComponent mainComponent;
+    private UndoRedo.Manager manager = new UndoRedo.Manager();
+    private InstanceContent services;
+    private Lookup servicesLookup;
 
     /**
      * Empty constructor used for (de)serialization.
@@ -42,12 +66,15 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     }
 
     public OfficeDataObject getDataObject() {
+        OfficeDataObject dataObject = getLookup().lookup(OfficeDataObject.class);
         return dataObject;
     }
 
     protected void init(OfficeDataObject dataObject) {
-        this.dataObject = dataObject;
         associateLookup(dataObject.getLookup());
+        services = new InstanceContent();
+        servicesLookup = new AbstractLookup(services);
+
         initComponents();
         FileObject docxFileObject = dataObject.getPrimaryFile();
         String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
@@ -63,15 +90,19 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         setLayout(new BorderLayout());
         JToolBar topToolbar = createToolbar();
         mainComponent = createMainComponent();
-        JScrollPane mainPane = new JScrollPane(mainComponent);
-        mainPane.getVerticalScrollBar().setUnitIncrement(16);
-        ScrollPaneSelector.installScrollPaneSelector(mainPane);
+        if (mainComponent instanceof JScrollPane || mainComponent instanceof JTabbedPane) {
+            add(mainComponent);
+        } else {
+            JScrollPane mainPane = new JScrollPane(mainComponent);
+            mainPane.getVerticalScrollBar().setUnitIncrement(16);
+            ScrollPaneSelector.installScrollPaneSelector(mainPane);
+            add(mainPane);
+        }
 
         add(topToolbar, BorderLayout.NORTH);
-        add(mainPane);
     }
 
-    private JToolBar createToolbar() {
+    protected JToolBar createToolbar() {
         JToolBar editorToolbar = new JToolBar();
         return editorToolbar;
     }
@@ -84,12 +115,16 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
 
     protected abstract void loadDocument();
 
+    public InstanceContent getServices() {
+        return services;
+    }
+
     @Override
     protected CloneableTopComponent createClonedObject() {
         try {
             // Use reflection
             Constructor componentContructor = getClass().getConstructor(OfficeDataObject.class);
-            Object newComponent = componentContructor.newInstance(dataObject);
+            Object newComponent = componentContructor.newInstance(getDataObject());
             return (CloneableTopComponent) newComponent;
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             Exceptions.printStackTrace(ex);
@@ -109,6 +144,7 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
 
     @Override
     protected boolean closeLast() {
+        OfficeDataObject dataObject = getDataObject();
         int answer = OfficeUIUtils.checkSaveBeforeClosing(dataObject, this);
         boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
         if (canClose && dataObject != null) {
@@ -128,44 +164,37 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     }
 
     public void setModified(boolean modified) {
-        dataObject.setModified(modified);
+        getDataObject().setModified(modified);
     }
 
     @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        System.out.println("------- office readExternal");
-        super.readExternal(in);
-        dataObject = (OfficeDataObject) in.readObject();
-        init(dataObject);
+    public Lookup getLookup() {
+        return new ProxyLookup(super.getLookup(), servicesLookup);
     }
 
     @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        System.out.println("------- office writeExternal");
-        super.writeExternal(out);
-        out.writeObject(getDataObject());
+    public UndoRedo getUndoRedo() {
+        return manager;
     }
 
-    /*@Override
-     public Object writeReplace() {
-     System.out.println("------- office writeReplace");
-     return new ResolvableHelper();
-     }
+    public void writeProperties(Properties properties) {
+        properties.setProperty("version", "1.0");
+        File closingFile = FileUtil.toFile(getDataObject().getPrimaryFile());
+        properties.setProperty("path", closingFile.getAbsolutePath());
+    }
 
-     final class ResolvableHelper implements Serializable {
+    public void readProperties(Properties properties) {
+        String version = properties.getProperty("version");
+        try {
+            String path = properties.getProperty("path");
+            File openingFile = FileUtil.normalizeFile(new File(path));
+            FileObject openingFileObject = FileUtil.toFileObject(openingFile);
+            OfficeDataObject openingDataObject = (OfficeDataObject) DataObject.find(openingFileObject);
+            init(openingDataObject);
 
-     private static final long serialVersionUID = 1L;
-     private final OfficeDataObject dataObject;
-
-     ResolvableHelper() {
-     this.dataObject = OfficeTopComponent.this.dataObject;
-     }
-
-     public Object readResolve() {
-     System.out.println("------- office readResolve");
-     OfficeTopComponent.this.dataObject = this.dataObject;
-     OfficeTopComponent topComponent = (OfficeTopComponent) cloneTopComponent();
-     return topComponent;
-     }
-     }*/
+            // If the file has moved or has been deleted
+        } catch (DataObjectNotFoundException ex) {
+            close();
+        }
+    }
 }

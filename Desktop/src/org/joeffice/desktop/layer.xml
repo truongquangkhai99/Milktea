@@ -14,6 +14,12 @@
       <file name="org-netbeans-modules-project-ui-RecentProjects.shadow_hidden"/>
       <file name="org-netbeans-modules-project-ui-groups-GroupsMenu.shadow_hidden"/>
     </folder>
+    <folder name="Edit">
+      <folder name="Gimme More">
+        <attr name="displayName" bundlevalue="org.joeffice.desktop.Bundle#Menu/Edit/GimmeMore"/>
+                <attr name="position" intvalue="9999"/>
+      </folder>
+    </folder>
     <file name="GoTo_hidden"/>
     <folder name="Help">
       <file name="org-netbeans-modules-autoupdate-ui-actions-CheckForUpdatesAction.shadow_hidden"/>
@@ -32,10 +38,9 @@
       <file name="toggle-line-numbers.shadow_hidden"/>
     </folder>
     <folder name="Window">
-      <folder name="Other">
-        <file name="ReporterResultAction.shadow_hidden"/>
-      </folder>
-      <file name="Output_hidden"/>
+            <file name="Navigator_hidden"/>
+      <file name="Other_hidden"/>
+            <file name="Output_hidden"/>
       <file name="Web_hidden"/>
       <file name="org-joeffice-database-JDBCTopComponent.shadow_hidden"/>
       <file name="org-joeffice-drawing-DrawingTopComponent.shadow_hidden"/>
@@ -51,18 +56,19 @@
     </file>
   </folder>
   <folder name="Office">
-    </folder>
-    <folder name="Toolbars">
+  </folder>
+  <folder name="Toolbars">
     <file name="Build_hidden"/>
     <folder name="File">
       <file name="org-netbeans-modules-openfile-OpenFileAction.shadow">
-        <attr name="originalFile" stringvalue="Actions/Project/org-netbeans-modules-project-ui-NewFile.instance"/>
-      </file>
-      <file name="org-netbeans-modules-openfile-OpenFileAction.shadow">
         <attr name="originalFile" stringvalue="Actions/System/org-netbeans-modules-openfile-OpenFileAction.instance"/>
+        <attr name="position" intvalue="150"/>
       </file>
       <file name="org-netbeans-modules-project-ui-NewProject.shadow_hidden"/>
       <file name="org-netbeans-modules-project-ui-OpenProject.shadow_hidden"/>
+    </folder>
+    <folder name="Font">
+      <attr name="position" intvalue="2500"/>
     </folder>
     <folder name="Memory">
       <file name="org-netbeans-modules-profiler-actions-SelfSamplerAction.shadow_hidden"/>
@@ -83,12 +89,12 @@
       <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-PasteAction.instance"/>
     </file>
   </folder>
-    <folder name="WelcomePage"/>
-    <folder name="Windows2">
-        <folder name="Modes">
-            <folder name="explorer">
-                <file name="favorites.wstcref" url="favoritesWstcref.xml"/>
-            </folder>
-        </folder>
+  <folder name="WelcomePage"/>
+  <folder name="Windows2">
+    <folder name="Modes">
+      <folder name="explorer">
+        <file name="favorites.wstcref" url="favoritesWstcref.xml"/>
+      </folder>
     </folder>
+  </folder>
 </filesystem>
