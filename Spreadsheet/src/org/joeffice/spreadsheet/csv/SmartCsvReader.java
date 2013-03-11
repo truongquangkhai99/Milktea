@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 Japplis.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.joeffice.spreadsheet.csv;
 
 import java.io.*;
@@ -28,26 +43,32 @@ import org.openide.util.Exceptions;
  */
 public class SmartCsvReader {
 
-    private char fieldSeparator;
     private Charset charset;
-    private char escapeCharater;
+    private Csv csvMetadata;
     private String[] headers;
 
     public SmartCsvReader() {
+        csvMetadata = new Csv();
+        csvMetadata.setLineCommentCharacter('#');
     }
 
     protected void detect(File csvFile) {
         List<String> lines = detectCharset(csvFile.toPath());
         String header = lines.get(0);
+        int index = 1;
+        while ((header.isEmpty() || header.charAt(0) == csvMetadata.getLineCommentCharacter()) && index < lines.size()) {
+            header = lines.get(index);
+            index++;
+        }
         detectDelimiter(header);
         headers = getValues(header, true);
         detectEscapeCharacter(lines);
     }
 
     private List<String> detectCharset(Path csvPath) {
-        List<String> lines = read(csvPath, Charset.defaultCharset());
+        List<String> lines = read(csvPath, Charset.forName("UTF-8"));
         if (lines == null) {
-            lines = read(csvPath, Charset.forName("UTF-8"));
+            lines = read(csvPath, Charset.defaultCharset());
         }
         if (lines == null) {
             lines = read(csvPath, Charset.forName("ISO-8859-1"));
@@ -70,29 +91,30 @@ public class SmartCsvReader {
         int tabCount = header.split("\t").length;
         int commaCount = header.split(",").length;
         int semiColomCount = header.split(";").length;
+        char fieldSeparator = '\t';
         if (tabCount > commaCount && tabCount > semiColomCount) {
             fieldSeparator = '\t';
         } else if (commaCount > tabCount && commaCount > semiColomCount) {
             fieldSeparator = ',';
         } else if (semiColomCount > tabCount && semiColomCount > commaCount) {
             fieldSeparator = ';';
-        } else {
-            fieldSeparator = '\t';
         }
+        csvMetadata.setFieldSeparatorRead(fieldSeparator);
+        csvMetadata.setFieldSeparatorWrite("" + fieldSeparator);
     }
 
     public String[] getValues(String line, boolean removeQuotes) {
         // This won't work if a delimiter is in a quoted text
         String[] values;
-        if (fieldSeparator == '\t') {
+        if (csvMetadata.getFieldDelimiter() == '\t') {
             values = line.split("\\t");
         } else {
-            values = line.split("" + fieldSeparator);
+            values = line.split("" + csvMetadata.getFieldSeparatorRead());
         }
-        if (removeQuotes && escapeCharater > 0) {
+        if (removeQuotes && csvMetadata.getFieldDelimiter() > 0) {
             for (int i = 0; i < values.length; i++) {
                 String value = values[i];
-                if (value.length() > 1 && value.startsWith("" + escapeCharater) && value.endsWith("" + escapeCharater)) {
+                if (value.length() > 1 && value.startsWith("" + csvMetadata.getFieldDelimiter()) && value.endsWith("" + csvMetadata.getFieldDelimiter())) {
                     values[i] = value.substring(1, value.length() - 1);
                 }
             }
@@ -103,26 +125,29 @@ public class SmartCsvReader {
     private void detectEscapeCharacter(List<String> lines) {
         int quoteCount = 0;
         int doubleQuoteCount = 0;
+        char escapeCharacter = csvMetadata.getEscapeCharacter();
         for (String line : lines) {
             String[] values = getValues(line, false);
             for (String value : values) {
                 if (value.startsWith("'") && value.endsWith("'")) quoteCount++;
                 if (value.startsWith("\"") && value.endsWith("\"")) doubleQuoteCount++;
                 if (quoteCount > 20 && doubleQuoteCount < quoteCount / 10) {
-                    escapeCharater = '\'';
+                    escapeCharacter = '\'';
                     break;
                 }
                 if (doubleQuoteCount > 20 && quoteCount < doubleQuoteCount / 10) {
-                    escapeCharater = '\"';
+                    escapeCharacter = '\"';
                     break;
                 }
             }
-            if (escapeCharater == 0 && quoteCount > doubleQuoteCount) {
-                escapeCharater = '\'';
-            } else if (escapeCharater == 0) {
-                escapeCharater = '\"';
+            if (escapeCharacter == 0 && quoteCount > doubleQuoteCount) {
+                escapeCharacter = '\'';
+            } else if (escapeCharacter == 0) {
+                escapeCharacter = '\"';
             }
         }
+        csvMetadata.setEscapeCharacter(escapeCharacter);
+        csvMetadata.setFieldDelimiter(escapeCharacter);
     }
 
     public Workbook read(File csvFile) throws IOException {
@@ -132,8 +157,7 @@ public class SmartCsvReader {
         Sheet csvSheet = csvWorkbook.createSheet(csvFile.getName());
 
         Reader csvReader = new BufferedReader(new InputStreamReader(new FileInputStream(csvFile), getCharset()));
-        Csv csv = createCsv();
-        ResultSet rs = csv.read(csvReader, getHeaders());
+        ResultSet rs = csvMetadata.read(csvReader, getHeaders());
         try {
             ResultSetMetaData meta = rs.getMetaData();
             int rowIndex = 0; // First row contains the headers
@@ -141,7 +165,13 @@ public class SmartCsvReader {
                 Row dataRow = csvSheet.createRow(rowIndex);
                 for (int i = 0; i < meta.getColumnCount(); i++) {
                     Cell dataCell = dataRow.createCell(i);
-                    dataCell.setCellValue(rs.getString(i + 1));
+                    String cellValue = rs.getString(i + 1);
+                    try {
+                        double cellNumericValue = Double.parseDouble(cellValue);
+                        dataCell.setCellValue(cellNumericValue);
+                    } catch (NumberFormatException ex) {
+                        dataCell.setCellValue(cellValue);
+                    }
                 }
                 rowIndex++;
             }
@@ -154,7 +184,6 @@ public class SmartCsvReader {
     }
 
     public void write(OutputStream output, Workbook workbook) throws IOException {
-        Csv csv = createCsv();
         SimpleResultSet rs = new SimpleResultSet();
         // TODO use the first row
         for (String header : headers) {
@@ -172,27 +201,10 @@ public class SmartCsvReader {
         }
         Writer writer = new BufferedWriter(new OutputStreamWriter(output, charset));
         try {
-            csv.write(writer, rs);
+            csvMetadata.write(writer, rs);
         } catch (SQLException ex) {
             throw new IOException(ex);
         }
-    }
-
-    private Csv createCsv() {
-        Csv csv = new Csv();
-        csv.setEscapeCharacter(getEscapeCharater());
-        csv.setFieldDelimiter(getEscapeCharater());
-        csv.setFieldSeparatorRead(getFieldSeparator());
-        csv.setFieldSeparatorWrite("" + getFieldSeparator());
-        return csv;
-    }
-
-    public char getFieldSeparator() {
-        return fieldSeparator;
-    }
-
-    public void setFieldSeparator(char fieldSeparator) {
-        this.fieldSeparator = fieldSeparator;
     }
 
     public Charset getCharset() {
@@ -201,14 +213,6 @@ public class SmartCsvReader {
 
     public void setCharset(Charset charset) {
         this.charset = charset;
-    }
-
-    public char getEscapeCharater() {
-        return escapeCharater;
-    }
-
-    public void setEscapeCharater(char escapeCharater) {
-        this.escapeCharater = escapeCharater;
     }
 
     public String[] getHeaders() {

@@ -1,6 +1,17 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2013 Japplis.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.joeffice.spreadsheet;
 
@@ -8,23 +19,22 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 
-import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
-import org.openide.windows.CloneableTopComponent;
 
 /**
  * Top component which displays the toolbar and the sheets tab panel.
@@ -47,41 +57,18 @@ import org.openide.windows.CloneableTopComponent;
     "CTL_SpreadsheetTopComponent=Spreadsheet Window",
     "HINT_SpreadsheetTopComponent=This is a Spreadsheet window"
 })
-public final class SpreadsheetTopComponent extends CloneableTopComponent {
+public final class SpreadsheetTopComponent extends OfficeTopComponent {
 
-    private XlsxDataObject xlsxDataObject;
-    private SpreadsheetComponent spreadsheetComponent;
     private Workbook workbook;
 
     public SpreadsheetTopComponent() {
     }
 
     public SpreadsheetTopComponent(XlsxDataObject dataObject) {
-        this.xlsxDataObject = dataObject;
-        init();
+        init(dataObject);
     }
 
-    private void init() {
-        initComponents();
-        FileObject docxFileObject = xlsxDataObject.getPrimaryFile();
-        String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
-        setToolTipText(fileDisplayName);
-        setName(docxFileObject.getName());
-        loadDocument();
-    }
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     */
-    private void initComponents() {
-        setLayout(new BorderLayout());
-        JToolBar spreadsheetToolbar = createToolbar();
-        spreadsheetComponent = createSpreadsheet();
-
-        add(spreadsheetToolbar, BorderLayout.NORTH);
-        add(spreadsheetComponent);
-    }
-
+    @Override
     protected JToolBar createToolbar() {
         JToolBar spreadsheetToolbar = new JToolBar();
         List<? extends Action> spreadsheetToolbarActions = Utilities.actionsForPath("Office/Spreadsheet/Toolbar");
@@ -91,80 +78,51 @@ public final class SpreadsheetTopComponent extends CloneableTopComponent {
         return spreadsheetToolbar;
     }
 
-    protected SpreadsheetComponent createSpreadsheet() {
+    @Override
+    protected JComponent createMainComponent() {
         SpreadsheetComponent spreadsheet = new SpreadsheetComponent(this);
         return spreadsheet;
     }
 
-    public SpreadsheetComponent getSpreadsheetComponent() {
-        return spreadsheetComponent;
-    }
-
     public JTable getSelectedTable() {
-        return getSpreadsheetComponent().getSelectedSheet().getTable();
+        return ((SpreadsheetComponent) getMainComponent()).getSelectedSheet().getTable();
     }
 
-    private void loadDocument() {
-        File xslxFile = FileUtil.toFile(xlsxDataObject.getPrimaryFile());
+    @Override
+    public void loadDocument() {
+        File xslxFile = FileUtil.toFile(getDataObject().getPrimaryFile());
         try {
             workbook = JoefficeWorkbookFactory.create(xslxFile);
 
-            spreadsheetComponent.load(workbook);
+            ((SpreadsheetComponent) getMainComponent()).load(workbook);
         } catch (IOException | InvalidFormatException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + xslxFile.getAbsolutePath());
             Exceptions.printStackTrace(ex);
         }
     }
 
-    @Override
-    public void componentOpened() {
-        // TODO add custom code on component opening
-    }
-
-    @Override
-    public boolean canClose() {
-        int answer = OfficeUIUtils.checkSaveBeforeClosing(xlsxDataObject, this);
-        boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
-        if (canClose && xlsxDataObject != null) {
-            xlsxDataObject.setContent(null);
-        }
-        return canClose;
-    }
-
-    @Override
-    public void componentClosed() {
-    }
-
     public void setModified(boolean modified) {
         if (modified) {
-            xlsxDataObject.setContent(workbook);
+            getDataObject().setContent(workbook);
         } else {
-            xlsxDataObject.setContent(null);
+            getDataObject().setContent(null);
         }
     }
 
     @Override
     protected void componentActivated() {
-        ActionMap topComponentActions = getActionMap();
-        ActionMap tableActions = getSelectedTable().getActionMap();
-
-        // Actives the cut / copy / paste buttons
-        topComponentActions.put(DefaultEditorKit.cutAction, tableActions.get(DefaultEditorKit.cutAction));
-        topComponentActions.put(DefaultEditorKit.copyAction, tableActions.get(DefaultEditorKit.copyAction));
-        topComponentActions.put(DefaultEditorKit.pasteAction, tableActions.get(DefaultEditorKit.pasteAction));
+        ((SpreadsheetComponent) getMainComponent()).registerActions();
 
         super.componentActivated();
     }
 
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
+    @Override
+    public void writeProperties(Properties properties) {
+        super.writeProperties(properties);
     }
 
-    void readProperties(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
+    @Override
+    public void readProperties(Properties properties) {
+        super.readProperties(properties);
     }
 }
