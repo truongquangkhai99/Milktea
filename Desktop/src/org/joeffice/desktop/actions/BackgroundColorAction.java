@@ -15,8 +15,13 @@
  */
 package org.joeffice.desktop.actions;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 import javax.swing.AbstractAction;
+import org.joeffice.desktop.ui.Styleable;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -36,10 +41,18 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_BackgroundColorAction")
 @ActionReference(path = "Menu/Edit", position = 1560)
 @Messages("CTL_BackgroundColorAction=Background Color")
-public final class BackgroundColorAction extends AbstractAction {
+public class BackgroundColorAction extends AbstractAction {
+
+    private Styleable styleable;
+
+    public BackgroundColorAction(Styleable styleable) {
+        this.styleable = styleable;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO implement action body
+        AttributedString attributes = new AttributedString("Backgroundcolor");
+        attributes.addAttribute(TextAttribute.BACKGROUND, Color.YELLOW);
+        styleable.setFontAttributes(attributes);
     }
 }

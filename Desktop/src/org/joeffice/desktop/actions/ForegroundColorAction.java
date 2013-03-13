@@ -15,9 +15,13 @@
  */
 package org.joeffice.desktop.actions;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 import javax.swing.AbstractAction;
+import org.joeffice.desktop.ui.Styleable;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -41,10 +45,18 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Toolbars/Font", position = 3300)
 })
 @Messages("CTL_ForegroundColorAction=Color")
-public final class ForegroundColorAction extends AbstractAction {
+public class ForegroundColorAction extends AbstractAction {
+
+    private Styleable styleable;
+
+    public ForegroundColorAction(Styleable styleable) {
+        this.styleable = styleable;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO implement action body
+        AttributedString attributes = new AttributedString("ForegroundColor");
+        attributes.addAttribute(TextAttribute.FOREGROUND, Color.RED);
+        styleable.setFontAttributes(attributes);
     }
 }

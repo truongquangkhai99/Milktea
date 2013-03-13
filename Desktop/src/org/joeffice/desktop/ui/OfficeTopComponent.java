@@ -38,8 +38,10 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.RequestProcessor;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
+import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 import org.openide.windows.CloneableTopComponent;
 
@@ -53,7 +55,6 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     private JComponent mainComponent;
     private UndoRedo.Manager manager = new UndoRedo.Manager();
     private InstanceContent services;
-    private Lookup servicesLookup;
 
     /**
      * Empty constructor used for (de)serialization.
@@ -71,16 +72,17 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     }
 
     protected void init(OfficeDataObject dataObject) {
-        associateLookup(dataObject.getLookup());
         services = new InstanceContent();
-        servicesLookup = new AbstractLookup(services);
+        Lookup lookup = new ProxyLookup(dataObject.getLookup(), new AbstractLookup(services));
+        associateLookup(lookup);
 
         initComponents();
-        FileObject docxFileObject = dataObject.getPrimaryFile();
-        String fileDisplayName = FileUtil.getFileDisplayName(docxFileObject);
+        FileObject documentFileObject = dataObject.getPrimaryFile();
+        String fileDisplayName = FileUtil.getFileDisplayName(documentFileObject);
         setToolTipText(fileDisplayName);
-        setName(docxFileObject.getName());
-        loadDocument();
+        setName(documentFileObject.getName());
+        File documentFile = FileUtil.toFile(documentFileObject);
+        loadDocument(documentFile);
     }
 
     /**
@@ -113,7 +115,7 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         return mainComponent;
     }
 
-    protected abstract void loadDocument();
+    protected abstract void loadDocument(File documentFile);
 
     public InstanceContent getServices() {
         return services;
@@ -165,11 +167,6 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
 
     public void setModified(boolean modified) {
         getDataObject().setModified(modified);
-    }
-
-    @Override
-    public Lookup getLookup() {
-        return new ProxyLookup(super.getLookup(), servicesLookup);
     }
 
     @Override

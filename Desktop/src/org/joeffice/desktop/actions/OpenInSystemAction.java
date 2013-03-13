@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Loaders/image/svg+xml/Actions", position = 200)
 })
 @Messages("CTL_OpenInSystemAction=Open in System")
-public final class OpenInSystemAction extends AbstractAction {
+public class OpenInSystemAction extends AbstractAction {
 
     private final List<DataObject> context;
 

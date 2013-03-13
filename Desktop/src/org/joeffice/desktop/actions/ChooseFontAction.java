@@ -44,7 +44,7 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Toolbars/Font", position = 3000)
 })
 @Messages("CTL_ChooseFontAction=Choose Font...")
-public final class ChooseFontAction extends AbstractAction {
+public class ChooseFontAction extends AbstractAction {
 
     private Styleable styleable;
 

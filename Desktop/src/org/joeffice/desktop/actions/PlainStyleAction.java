@@ -15,12 +15,11 @@
  */
 package org.joeffice.desktop.actions;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
+
 import org.joeffice.desktop.ui.Styleable;
 
 import org.openide.awt.ActionID;
@@ -36,28 +35,27 @@ import org.openide.util.NbBundle.Messages;
  */
 @ActionID(
         category = "Edit/Office",
-        id = "org.joeffice.desktop.actions.BoldAction")
+        id = "org.joeffice.desktop.actions.PlainStyleAction")
 @ActionRegistration(
-        iconBase = "org/joeffice/desktop/actions/text_bold.png",
-        displayName = "#CTL_BoldAction")
+        displayName = "#CTL_PlainStyleAction")
 @ActionReferences({
-    @ActionReference(path = "Menu/Edit", position = 1520),
-    @ActionReference(path = "Toolbars/Font", position = 3100),
-    @ActionReference(path = "Shortcuts", name = "D-B")
+    @ActionReference(path = "Shortcuts", name = "D-Space")
 })
-@Messages("CTL_BoldAction=Bold")
-public class BoldAction extends AbstractAction {
+@Messages("CTL_PlainStyleAction=Standard")
+public class PlainStyleAction extends AbstractAction {
 
     private Styleable styleable;
 
-    public BoldAction(Styleable styleable) {
+    public PlainStyleAction(Styleable styleable) {
         this.styleable = styleable;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AttributedString attributes = new AttributedString("Bold");
-        attributes.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+        AttributedString attributes = new AttributedString("Plain");
+        attributes.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_REGULAR);
+        attributes.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_REGULAR);
+        attributes.addAttribute(TextAttribute.UNDERLINE, -1);
         styleable.setFontAttributes(attributes);
     }
 }

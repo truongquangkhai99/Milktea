@@ -15,12 +15,16 @@
  */
 package org.joeffice.desktop.actions;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 import javax.swing.AbstractAction;
 import javax.swing.JEditorPane;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import org.joeffice.desktop.ui.Styleable;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -47,24 +51,18 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Shortcuts", name = "D-I")
 })
 @Messages("CTL_ItalicAction=Italic")
-public final class ItalicAction extends AbstractAction {
+public class ItalicAction extends AbstractAction {
+
+    private Styleable styleable;
+
+    public ItalicAction(Styleable styleable) {
+        this.styleable = styleable;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO implement action body
-        DataEditorSupport editorSupport = Lookup.getDefault().lookup(DataEditorSupport.class);
-        JEditorPane[] openedPanes = editorSupport.getOpenedPanes();
-        for (JEditorPane openedPane : openedPanes) {
-            int startSelection = openedPane.getSelectionStart();
-            int endSelection = openedPane.getSelectionEnd();
-            int selectionLength = endSelection - startSelection;
-            if (selectionLength > 0) {
-                SimpleAttributeSet italicSet = new SimpleAttributeSet();
-                StyleConstants.setItalic(italicSet, true);
-                editorSupport.getDocument().setCharacterAttributes(startSelection, endSelection - startSelection, italicSet, false);
-            } else {
-                // todo
-            }
-        }
+        AttributedString attributes = new AttributedString("Italic");
+        attributes.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+        styleable.setFontAttributes(attributes);
     }
 }
