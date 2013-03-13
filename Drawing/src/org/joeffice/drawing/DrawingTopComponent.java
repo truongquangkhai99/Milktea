@@ -81,9 +81,8 @@ public final class DrawingTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    protected void loadDocument() {
+    protected void loadDocument(File svgFile) {
         JSVGCanvas svgCanvas = (JSVGCanvas) getMainComponent();
-        File svgFile = FileUtil.toFile(getDataObject().getPrimaryFile());
         try {
             String uri = Utilities.toURI(svgFile).toURL().toString();
             svgCanvas.addSVGDocumentLoaderListener(new SVGDocumentLoaderAdapter() {
