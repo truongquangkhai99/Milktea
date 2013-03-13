@@ -33,13 +33,15 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import org.joeffice.desktop.ui.Styleable;
 import org.openide.windows.TopComponent;
+import sun.awt.resources.awt;
 
 /**
  * Class that applies the style to the selected cells.
@@ -88,23 +90,22 @@ public class TableStyleable implements Styleable {
      */
     protected void addAttribute(AttributedCharacterIterator.Attribute attribute, Object attributeValue, Cell cell) {
         CellStyle oldStyle = cell.getCellStyle();
+        Workbook workbook = cell.getSheet().getWorkbook();
         CellStyle style = cell.getSheet().getWorkbook().createCellStyle();
         style.cloneStyleFrom(oldStyle);
-        short fontIndex = style.getFontIndex();
-        org.apache.poi.ss.usermodel.Font xlsFont = cell.getSheet().getWorkbook().getFontAt(fontIndex);
-        java.awt.Font font = java.awt.Font.decode(xlsFont.getFontName());
+        Font newFont = copyFont(cell);
         if (attribute == FAMILY) {
-            xlsFont.setFontName((String) attributeValue);
-            style.setFont(xlsFont);
+            newFont.setFontName((String) attributeValue);
+            CellUtil.setFont(cell, workbook, newFont);
         } else if (attribute == FOREGROUND) {
             Color color = (Color) attributeValue;
             if (cell instanceof XSSFCell) {
                 ((XSSFCellStyle) style).setFillForegroundColor(new XSSFColor(color));
             } else {
-                HSSFWorkbook workbook = (HSSFWorkbook) cell.getSheet().getWorkbook();
-                HSSFColor xlsColor = workbook.getCustomPalette().findColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
+                HSSFWorkbook xlsWorkbook = (HSSFWorkbook) workbook;
+                HSSFColor xlsColor = xlsWorkbook.getCustomPalette().findColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 if (xlsColor == null) {
-                    xlsColor = workbook.getCustomPalette().addColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
+                    xlsColor = xlsWorkbook.getCustomPalette().addColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 }
                 style.setFillForegroundColor(xlsColor.getIndex());
             }
@@ -114,48 +115,63 @@ public class TableStyleable implements Styleable {
             if (cell instanceof XSSFCell) {
                 ((XSSFCellStyle) style).setFillBackgroundColor(new XSSFColor(color));
             } else {
-                HSSFWorkbook workbook = (HSSFWorkbook) cell.getSheet().getWorkbook();
-                HSSFColor xlsColor = workbook.getCustomPalette().findColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
+                HSSFWorkbook xlsWorkbook = (HSSFWorkbook) workbook;
+                HSSFColor xlsColor = xlsWorkbook.getCustomPalette().findColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 if (xlsColor == null) {
-                    xlsColor = workbook.getCustomPalette().addColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
+                    xlsColor = xlsWorkbook.getCustomPalette().addColor((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 }
                 style.setFillBackgroundColor(xlsColor.getIndex());
             }
         } else if (attribute == WEIGHT) {
             short boldValue = Font.BOLDWEIGHT_BOLD;
-            if (xlsFont.getBoldweight() == Font.BOLDWEIGHT_BOLD) {
+            if (newFont.getBoldweight() == Font.BOLDWEIGHT_BOLD) {
                 boldValue = Font.BOLDWEIGHT_NORMAL;
             }
-            xlsFont.setBoldweight(boldValue);
-            style.setFont(xlsFont);
+            newFont.setBoldweight(boldValue);
+            CellUtil.setFont(cell, workbook, newFont);
         } else if (attribute == UNDERLINE) {
             byte underlineValue = Font.U_SINGLE;
-            if (xlsFont.getUnderline() == Font.U_SINGLE) {
+            if (newFont.getUnderline() == Font.U_SINGLE) {
                 underlineValue = Font.U_NONE;
             }
-            xlsFont.setUnderline(underlineValue);
+            newFont.setUnderline(underlineValue);
+            CellUtil.setFont(cell, workbook, newFont);
         } else if (attribute == POSTURE) {
             boolean italic = true;
-            if (xlsFont.getItalic()) {
+            if (newFont.getItalic()) {
                 italic = false;
             }
-            xlsFont.setItalic(italic);
-            style.setFont(xlsFont);
+            newFont.setItalic(italic);
+            CellUtil.setFont(cell, workbook, newFont);
         } else if (attribute == SIZE) {
-            xlsFont.setFontHeightInPoints(((Number) attributeValue).shortValue());
-            style.setFont(xlsFont);
+            newFont.setFontHeightInPoints(((Number) attributeValue).shortValue());
+            CellUtil.setFont(cell, workbook, newFont);
         } else if (attribute == JUSTIFICATION) {
-            style.setAlignment(CellStyle.ALIGN_JUSTIFY);
+            CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_JUSTIFY);
         } else if (attribute == ALIGNMENT) {
             if (attributeValue.equals(StyleConstants.ALIGN_LEFT)) {
-                style.setAlignment(CellStyle.ALIGN_LEFT);
+                CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_LEFT);
             } else if (attributeValue.equals(StyleConstants.ALIGN_RIGHT)) {
-                style.setAlignment(CellStyle.ALIGN_RIGHT);
+                CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_RIGHT);
             } else if (attributeValue.equals(StyleConstants.ALIGN_CENTER)) {
-                style.setAlignment(CellStyle.ALIGN_CENTER);
+                CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_CENTER);
             }
         }
-        cell.setCellStyle(style);
+    }
+
+    private Font copyFont(Cell cell) {
+        CellStyle style = cell.getCellStyle();
+        Workbook workbook = cell.getSheet().getWorkbook();
+        short fontIndex = style.getFontIndex();
+        Font xlsFont = cell.getSheet().getWorkbook().getFontAt(fontIndex);
+        Font newFont = workbook.createFont();
+        newFont.setFontName(xlsFont.getFontName());
+        newFont.setFontHeight((short) xlsFont.getFontHeight());
+        newFont.setBoldweight(xlsFont.getBoldweight());
+        newFont.setItalic(xlsFont.getItalic());
+        newFont.setUnderline(xlsFont.getUnderline());
+        newFont.setColor(xlsFont.getColor());
+        return newFont;
     }
 
     @Override
