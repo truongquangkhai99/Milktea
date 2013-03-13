@@ -20,10 +20,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 
 /**
  * Utility methods for Cell and Row manipulation.
@@ -31,7 +28,7 @@ import org.apache.poi.ss.usermodel.Sheet;
  * @author Anthony Goubard - Japplis
  */
 public class POIUtils {
-    
+
     private final static NumberFormat NUMBER_FORMATTER = DecimalFormat.getInstance();
     private final static DateFormat DATE_FORMATTER = DateFormat.getDateInstance();
     private final static DateFormat TIME_FORMATTER = DateFormat.getTimeInstance();
@@ -49,6 +46,13 @@ public class POIUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Converts a POI color to an AWT color.
+     */
+    public static short colorToShort(Color awtColor, Cell cell) {
+        return -1;
     }
 
     public static Cell getCell(boolean createIfAbsent, Sheet sheet, int rowIndex, int columnIndex) {

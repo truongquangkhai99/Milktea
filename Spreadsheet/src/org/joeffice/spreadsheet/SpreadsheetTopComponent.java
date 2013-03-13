@@ -15,7 +15,6 @@
  */
 package org.joeffice.spreadsheet;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
@@ -84,13 +82,16 @@ public final class SpreadsheetTopComponent extends OfficeTopComponent {
         return spreadsheet;
     }
 
+    public SpreadsheetComponent getSpreadsheetComponent() {
+        return (SpreadsheetComponent) getMainComponent();
+    }
+
     public JTable getSelectedTable() {
-        return ((SpreadsheetComponent) getMainComponent()).getSelectedSheet().getTable();
+        return getSpreadsheetComponent().getSelectedSheet().getTable();
     }
 
     @Override
-    public void loadDocument() {
-        File xslxFile = FileUtil.toFile(getDataObject().getPrimaryFile());
+    public void loadDocument(File xslxFile) {
         try {
             workbook = JoefficeWorkbookFactory.create(xslxFile);
 
@@ -111,9 +112,14 @@ public final class SpreadsheetTopComponent extends OfficeTopComponent {
 
     @Override
     protected void componentActivated() {
-        ((SpreadsheetComponent) getMainComponent()).registerActions();
-
+        getSpreadsheetComponent().registerActions();
         super.componentActivated();
+    }
+
+    @Override
+    protected void componentDeactivated() {
+        getSpreadsheetComponent().unregisterActions();
+        super.componentDeactivated();
     }
 
     @Override

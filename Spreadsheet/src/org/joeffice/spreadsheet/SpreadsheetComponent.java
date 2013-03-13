@@ -39,6 +39,7 @@ import org.openide.windows.TopComponent;
 public class SpreadsheetComponent extends JTabbedPane implements ChangeListener {
 
     private Workbook workbook;
+    private TableStyleable styleable;
     private SpreadsheetTopComponent spreadsheetAndToolbar;
 
     public SpreadsheetComponent(SpreadsheetTopComponent spreadsheetAndToolbar) {
@@ -49,6 +50,7 @@ public class SpreadsheetComponent extends JTabbedPane implements ChangeListener 
 
     private void initComponents() {
         addPopupToTabs();
+        styleable = new TableStyleable();
         addChangeListener(this);
     }
 
@@ -142,6 +144,11 @@ public class SpreadsheetComponent extends JTabbedPane implements ChangeListener 
         topComponentActions.put(DefaultEditorKit.cutAction, tableActions.get(DefaultEditorKit.cutAction));
         topComponentActions.put(DefaultEditorKit.copyAction, tableActions.get(DefaultEditorKit.copyAction));
         topComponentActions.put(DefaultEditorKit.pasteAction, tableActions.get(DefaultEditorKit.pasteAction));
+        spreadsheetAndToolbar.getServices().add(styleable);
+    }
+
+    public void unregisterActions() {
+        spreadsheetAndToolbar.getServices().remove(styleable);
     }
 
     public static SpreadsheetComponent getSelectedInstance() {
