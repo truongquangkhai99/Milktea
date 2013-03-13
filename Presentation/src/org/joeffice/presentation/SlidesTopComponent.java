@@ -28,10 +28,6 @@ import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
-import org.openide.loaders.DataObject;
-import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
@@ -76,8 +72,7 @@ public final class SlidesTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    public void loadDocument() {
-        File pptxFile = FileUtil.toFile(getDataObject().getPrimaryFile());
+    public void loadDocument(File pptxFile) {
         try (FileInputStream fis = new FileInputStream(pptxFile)) {
             presentation = new XMLSlideShow(fis);
 

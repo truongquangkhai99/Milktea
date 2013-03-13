@@ -76,18 +76,23 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         } else {
 
             double scale = slideComponent.getScale();
-            BufferedImage img = new BufferedImage((int) (shape.getAnchor().getWidth() * scale), (int) (shape.getAnchor().getHeight() * scale), BufferedImage.TYPE_4BYTE_ABGR);
-            Graphics2D graphics = img.createGraphics();
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            graphics.translate(-shape.getAnchor().getX() * scale, -shape.getAnchor().getY() * scale);
-            graphics.scale(scale, scale);
-            shape.draw(graphics);
-            graphics.dispose();
+            BufferedImage img = shapeToImage(shape, scale);
             JLabel shapeLabel = new JLabel(new ImageIcon(img));
             // shapeLabel.setBorder(BorderFactory.createLineBorder(Color.BLUE)); // for debug
             add(shapeLabel);
         }
+    }
+
+    public static BufferedImage shapeToImage(XSLFShape shape, double scale) {
+        BufferedImage img = new BufferedImage((int) (shape.getAnchor().getWidth() * scale), (int) (shape.getAnchor().getHeight() * scale), BufferedImage.TYPE_4BYTE_ABGR);
+        Graphics2D graphics = img.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics.translate(-shape.getAnchor().getX() * scale, -shape.getAnchor().getY() * scale);
+        graphics.scale(scale, scale);
+        shape.draw(graphics);
+        graphics.dispose();
+        return img;
     }
 
     private void handleTextShape(XSLFTextShape textShape) {

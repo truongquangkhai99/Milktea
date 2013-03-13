@@ -15,10 +15,9 @@
  */
 package org.joeffice.presentation;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import org.apache.poi.xslf.usermodel.XSLFBackground;
@@ -37,6 +36,8 @@ public class SlideComponent extends JPanel {
     private SlidesTopComponent slidesComponent;
 
     private double scale;
+
+    private BufferedImage backgroundImage;
 
     public SlideComponent(XSLFSlide slide, SlidesTopComponent slidesComponent) {
         this(slide, slidesComponent, new Dimension(1280, 720));
@@ -59,10 +60,8 @@ public class SlideComponent extends JPanel {
         setLayout(null);
         //setOpaque(false);
         XSLFBackground background = slide.getBackground();
-        /*ShapeComponent backgroundShape = new ShapeComponent(background, this);
-        backgroundShape.setOpaque(false);
-        add(backgroundShape);*/
         if (background != null) {
+            backgroundImage = ShapeComponent.shapeToImage(background, scale);
             Color backgroundColor = background.getFillColor();
             setBackground(backgroundColor);
         } else {
@@ -78,17 +77,9 @@ public class SlideComponent extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        /*XSLFBackground background = slide.getBackground();
-        ShapeComponent backgroundShape = new ShapeComponent(background, this);
-        backgroundShape.paintAll(g);*/
-        /*XSLFBackground background = slide.getBackground();
-            BufferedImage img = new BufferedImage((int) (background.getAnchor().getWidth() * scale), (int) (background.getAnchor().getHeight() * scale), BufferedImage.TYPE_4BYTE_ABGR);
-            Graphics2D graphics = img.createGraphics();
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            //graphics.translate(-background.getAnchor().getX() * scale, -background.getAnchor().getY() * scale);
-            //graphics.scale(scale, scale);
-            background.draw(graphics);*/
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, null);
+        }
     }
 
     public double getScale() {
