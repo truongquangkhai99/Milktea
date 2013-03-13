@@ -15,31 +15,33 @@
  */
 package org.joeffice.wordprocessor;
 
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.font.TextAttribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.AttributedString;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
-import org.joeffice.desktop.actions.StyleActions;
 
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeans.modules.spellchecker.api.Spellchecker;
+import org.openide.actions.CutAction;
+import org.openide.actions.FindAction;
 import org.openide.awt.ActionID;
 import org.openide.awt.UndoRedo;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.RequestProcessor;
+import org.openide.util.actions.CallbackSystemAction;
+import org.openide.util.actions.SystemAction;
 
 /**
  * Top component which displays the docx documents.
@@ -65,6 +67,7 @@ import org.openide.util.NbBundle.Messages;
 public final class WordpTopComponent extends OfficeTopComponent implements DocumentListener {
 
     private Document document;
+    private EditorStyleable styleable;
 
     public WordpTopComponent() {
     }
@@ -81,20 +84,33 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
     }
 
     @Override
-    public void loadDocument() {
-        OfficeDataObject docxDataObject = getDataObject();
-        File docxFile = FileUtil.toFile(docxDataObject.getPrimaryFile());
-        try (FileInputStream docxIS = new FileInputStream(docxFile)) {
-            JTextPane wordProcessor = (JTextPane) getMainComponent();
-            wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
-            document = wordProcessor.getDocument();
-            document.addDocumentListener(this);
-            document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
-            //getServices().add(new EditorStyleable());
-        } catch (IOException|BadLocationException ex) {
-            Exceptions.attachMessage(ex, "Failed to load: " + docxFile.getAbsolutePath());
-            Exceptions.printStackTrace(ex);
-        }
+    public void loadDocument(final File docxFile) {
+        styleable = new EditorStyleable();
+        RequestProcessor.getDefault().post(new Runnable() {
+
+            @Override
+            public void run() {
+                ProgressHandle progress = ProgressHandleFactory.createHandle("Opening " + docxFile.getName());
+                progress.start();
+                try (FileInputStream docxIS = new FileInputStream(docxFile)) {
+                    JTextPane wordProcessor = (JTextPane) getMainComponent();
+                    wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
+                    document = wordProcessor.getDocument();
+                    document.addDocumentListener(WordpTopComponent.this);
+                    document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
+                    Spellchecker.register(wordProcessor); // Doesn't do anything (yet)
+                    /*FindAction find = new FindAction();
+                    getActionMap().put(find.getName(), find);
+                    ReplaceAction replace = new ReplaceAction();
+                    getActionMap().put(replace.getName(), replace);*/
+                } catch (IOException|BadLocationException ex) {
+                    Exceptions.attachMessage(ex, "Failed to load: " + docxFile.getAbsolutePath());
+                    Exceptions.printStackTrace(ex);
+                } finally {
+                    progress.finish();
+                }
+            }
+        });
     }
 
     @Override
@@ -104,16 +120,14 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
         getActionMap().put(DefaultEditorKit.cutAction, editorActionMap.get(DefaultEditorKit.cutAction));
         getActionMap().put(DefaultEditorKit.copyAction, editorActionMap.get(DefaultEditorKit.copyAction));
         getActionMap().put(DefaultEditorKit.pasteAction, editorActionMap.get(DefaultEditorKit.pasteAction));
-        final EditorStyleable styleable = new EditorStyleable();
-        getActionMap().put(StyleActions.CHOOSE_FONT_ACTION_MAP_KEY, new AbstractAction(StyleActions.CHOOSE_FONT_ACTION_MAP_KEY) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AttributedString attributes = new AttributedString("ChangeFont");
-                attributes.addAttribute(TextAttribute.FAMILY, Font.MONOSPACED);
-                styleable.setFontAttributes(attributes);
-            }
-        });
+        getServices().add(styleable);
         super.componentActivated();
+    }
+
+    @Override
+    protected void componentDeactivated() {
+        getServices().remove(styleable);
+        super.componentDeactivated();
     }
 
     @Override
