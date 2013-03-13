@@ -30,7 +30,6 @@ import org.joeffice.desktop.ui.OfficeUIUtils;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
@@ -75,8 +74,7 @@ public final class JDBCTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    public void loadDocument() {
-        File h2File = FileUtil.toFile(getDataObject().getPrimaryFile());
+    public void loadDocument(File h2File) {
         try {
             Class.forName("org.h2.Driver");
             String filePath = h2File.getAbsolutePath().replace('\\', '/');
