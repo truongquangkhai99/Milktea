@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import javax.swing.*;
-import javax.swing.text.DefaultEditorKit;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.joeffice.desktop.ui.OfficeTopComponent;
+import org.joeffice.desktop.file.OfficeDataObject;
 
+import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -62,7 +62,7 @@ public final class SpreadsheetTopComponent extends OfficeTopComponent {
     public SpreadsheetTopComponent() {
     }
 
-    public SpreadsheetTopComponent(XlsxDataObject dataObject) {
+    public SpreadsheetTopComponent(OfficeDataObject dataObject) {
         init(dataObject);
     }
 
@@ -96,17 +96,10 @@ public final class SpreadsheetTopComponent extends OfficeTopComponent {
             workbook = JoefficeWorkbookFactory.create(xslxFile);
 
             ((SpreadsheetComponent) getMainComponent()).load(workbook);
+            getDataObject().setDocument(workbook);
         } catch (IOException | InvalidFormatException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + xslxFile.getAbsolutePath());
             Exceptions.printStackTrace(ex);
-        }
-    }
-
-    public void setModified(boolean modified) {
-        if (modified) {
-            getDataObject().setContent(workbook);
-        } else {
-            getDataObject().setContent(null);
         }
     }
 

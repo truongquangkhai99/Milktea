@@ -22,21 +22,17 @@ import java.io.IOException;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import org.joeffice.desktop.file.OfficeDataObject;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.spreadsheet.csv.CSVWorkbook;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
-import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
-import org.openide.loaders.SaveAsCapable;
-import org.openide.nodes.CookieSet;
-import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 
 /**
@@ -108,87 +104,26 @@ import org.openide.util.NbBundle.Messages;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class XlsxDataObject extends OfficeDataObject implements CookieSet.Factory {
-
-    // The document currently edited
-    private Workbook content;
-
-    private XlsxOpenSupport opener;
-    private XlsxSaveCookie saver;
+public class XlsxDataObject extends OfficeDataObject {
 
     public XlsxDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-        CookieSet cookies = getCookieSet();
-        cookies.add(XlsxOpenSupport.class, this);
-        cookies.add(XlsxSaveCookie.class, this);
-        saver = new XlsxSaveCookie();
-        cookies.assign(SaveAsCapable.class, saver);
     }
 
     @Override
-    public synchronized void setContent(Object workbook) {
-        this.content = (Workbook) workbook;
-        if (workbook != null) {
-            setModified(true);
-            getCookieSet().add(saver);
-        } else {
-            setModified(false);
-            getCookieSet().remove(saver);
-        }
+    public OfficeTopComponent open(OfficeDataObject dataObject) {
+        return new SpreadsheetTopComponent(dataObject);
     }
 
     @Override
-    public <T extends Node.Cookie> T createCookie(Class<T> type) {
-        if (type.isAssignableFrom(XlsxOpenSupport.class)) {
-            if (opener == null) {
-                opener = new XlsxOpenSupport(getPrimaryEntry());
+    public synchronized void save(File file) throws IOException {
+        Workbook workbook = (Workbook) getDocument();
+        try (FileOutputStream xslxOutputStream = new FileOutputStream(file)) {
+            if (workbook instanceof CSVWorkbook) {
+                ((CSVWorkbook) workbook).write2(xslxOutputStream);
+            } else {
+                workbook.write(xslxOutputStream);
             }
-            return (T) opener;
-        }
-        if (type.isAssignableFrom(XlsxSaveCookie.class)) {
-            if (saver == null) {
-                saver = new XlsxSaveCookie();
-            }
-            return (T) saver;
-        }
-        return null;
-    }
-
-    /**
-     * Cookie invoked when the file is saved.
-     * Note that if the file is not edited, no save cookie is in the cookies set.
-     */
-    private class XlsxSaveCookie implements SaveCookie, SaveAsCapable {
-
-        @Override
-        public void save() throws IOException {
-            save(getPrimaryFile());
-        }
-
-        public void save(FileObject file) throws IOException {
-            Workbook workbook;
-            synchronized (XlsxDataObject.this) {
-                //synchronize access to the content field
-                workbook = content;
-                setContent(null);
-            }
-            File xslxFile = FileUtil.toFile(file);
-            try (FileOutputStream xslxOutputStream  = new FileOutputStream(xslxFile)) {
-                if (workbook instanceof CSVWorkbook) {
-                    ((CSVWorkbook) workbook).write2(xslxOutputStream);
-                } else {
-                    workbook.write(xslxOutputStream);
-                }
-            }
-        }
-
-        @Override
-        public void saveAs(FileObject folder, String fileName) throws IOException {
-            FileObject newFile = folder.getFileObject(fileName);
-            if (newFile == null) {
-                newFile = folder.createData(fileName);
-            }
-            save(newFile);
         }
     }
 }
