@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
+import org.joeffice.desktop.file.OfficeDataObject;
 
 import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.desktop.ui.OfficeUIUtils;
@@ -62,7 +63,7 @@ public final class JDBCTopComponent extends OfficeTopComponent {
     public JDBCTopComponent() {
     }
 
-    public JDBCTopComponent(H2DataObject h2DataObject) {
+    public JDBCTopComponent(OfficeDataObject h2DataObject) {
         super(h2DataObject);
     }
 

@@ -15,9 +15,11 @@
  */
 package org.joeffice.database;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.joeffice.desktop.file.OfficeDataObject;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -100,29 +102,19 @@ import org.openide.util.NbBundle.Messages;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class H2DataObject extends OfficeDataObject implements CookieSet.Factory {
-
-    private transient DatabaseOpenSupport opener;
+public class H2DataObject extends OfficeDataObject {
 
     public H2DataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-        CookieSet cookies = getCookieSet();
-        cookies.add(DatabaseOpenSupport.class, this);
    }
 
     @Override
-    public <T extends Node.Cookie> T createCookie(Class<T> type) {
-        if (type.isAssignableFrom(DatabaseOpenSupport.class)) {
-            if (opener == null) {
-                opener = new DatabaseOpenSupport(getPrimaryEntry());
-            }
-            return (T) opener;
-        }
-        return null;
+    public OfficeTopComponent open(OfficeDataObject dataObject) {
+        return new JDBCTopComponent(dataObject);
     }
 
     @Override
-    public void setContent(Object document) {
-        // Not editable, using auto-commit
+    public void save(File file) throws IOException {
+        // later connection.commit();
     }
 }
