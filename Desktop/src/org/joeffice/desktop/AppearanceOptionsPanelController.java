@@ -21,6 +21,7 @@ import javax.swing.JComponent;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle.Messages;
 
 /**
  * This class contains the setting controlor for the application appearance settings.
@@ -32,7 +33,7 @@ import org.openide.util.Lookup;
         displayName = "#AdvancedOption_DisplayName_Appearance",
         keywords = "#AdvancedOption_Keywords_Appearance",
         keywordsCategory = "Advanced/Appearance")
-@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_Appearance=Appearance", "AdvancedOption_Keywords_Appearance=appearance,look,feel,language,langue,taal,idioma,lengua,aspect"})
+@Messages({"AdvancedOption_DisplayName_Appearance=Appearance", "AdvancedOption_Keywords_Appearance=appearance,look,feel,language,langue,taal,idioma,lengua,aspect"})
 public final class AppearanceOptionsPanelController extends OptionsPanelController {
 
     private AppearancePanel panel;

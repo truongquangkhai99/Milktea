@@ -9,6 +9,7 @@
       <file name="SeparatorOpen.instance_hidden"/>
       <file name="org-netbeans-modules-project-ui-CloseProject.shadow_hidden"/>
       <file name="org-netbeans-modules-project-ui-CustomizeProject.shadow_hidden"/>
+      <file name="org-netbeans-modules-project-ui-NewFile.shadow_hidden"/>
       <file name="org-netbeans-modules-project-ui-NewProject.shadow_hidden"/>
       <file name="org-netbeans-modules-project-ui-OpenProject.shadow_hidden"/>
       <file name="org-netbeans-modules-project-ui-RecentProjects.shadow_hidden"/>
@@ -17,7 +18,7 @@
     <folder name="Edit">
       <folder name="Gimme More">
         <attr name="displayName" bundlevalue="org.joeffice.desktop.Bundle#Menu/Edit/GimmeMore"/>
-                <attr name="position" intvalue="9999"/>
+        <attr name="position" intvalue="9999"/>
       </folder>
     </folder>
     <file name="GoTo_hidden"/>
@@ -38,9 +39,9 @@
       <file name="toggle-line-numbers.shadow_hidden"/>
     </folder>
     <folder name="Window">
-            <file name="Navigator_hidden"/>
+      <file name="Navigator_hidden"/>
       <file name="Other_hidden"/>
-            <file name="Output_hidden"/>
+      <file name="Output_hidden"/>
       <file name="Web_hidden"/>
       <file name="org-joeffice-database-JDBCTopComponent.shadow_hidden"/>
       <file name="org-joeffice-drawing-DrawingTopComponent.shadow_hidden"/>
@@ -58,23 +59,28 @@
   <folder name="Office">
   </folder>
   <folder name="Services">
-        <folder name="AutoupdateType">
-            <file name="org_joeffice_desktop_update_center.instance">
-                <attr name="displayName" bundlevalue="org.joeffice.desktop.Bundle#Services/AutoupdateType/org_joeffice_desktop_update_center.instance"/>
-                <attr name="enabled" boolvalue="true"/>
-                <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
-                <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
-                <attr name="url" bundlevalue="org.joeffice.desktop.Bundle#org_joeffice_desktop_update_center"/>
-            </file>
-        </folder>
+    <folder name="AutoupdateType">
+      <file name="org_joeffice_desktop_update_center.instance">
+        <attr name="displayName" bundlevalue="org.joeffice.desktop.Bundle#Services/AutoupdateType/org_joeffice_desktop_update_center.instance"/>
+        <attr name="enabled" boolvalue="true"/>
+        <attr name="instanceCreate" methodvalue="org.netbeans.modules.autoupdate.updateprovider.AutoupdateCatalogFactory.createUpdateProvider"/>
+        <attr name="instanceOf" stringvalue="org.netbeans.spi.autoupdate.UpdateProvider"/>
+        <attr name="url" bundlevalue="org.joeffice.desktop.Bundle#org_joeffice_desktop_update_center"/>
+      </file>
     </folder>
-    <folder name="Toolbars">
+  </folder>
+  <folder name="Toolbars">
     <file name="Build_hidden"/>
     <folder name="File">
+      <file name="org-joeffice-desktop-actions-NewFileAction.shadow">
+        <attr name="originalFile" stringvalue="Actions/File/org-joeffice-desktop-actions-NewFileAction.instance"/>
+        <attr name="position" intvalue="90"/>
+      </file>
       <file name="org-netbeans-modules-openfile-OpenFileAction.shadow">
         <attr name="originalFile" stringvalue="Actions/System/org-netbeans-modules-openfile-OpenFileAction.instance"/>
         <attr name="position" intvalue="150"/>
       </file>
+      <file name="org-netbeans-modules-project-ui-NewFile.shadow_hidden"/>
       <file name="org-netbeans-modules-project-ui-NewProject.shadow_hidden"/>
       <file name="org-netbeans-modules-project-ui-OpenProject.shadow_hidden"/>
     </folder>

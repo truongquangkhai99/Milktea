@@ -29,21 +29,19 @@ import javax.swing.JToolBar;
 import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
 
 import org.joeffice.desktop.file.OfficeDataObject;
-import org.openide.awt.UndoRedo;
-import org.openide.explorer.ExplorerUtils;
 
+import org.openide.awt.UndoRedo;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.util.RequestProcessor;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
-import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 import org.openide.windows.CloneableTopComponent;
+import org.openide.windows.TopComponent;
 
 /**
  * Generic TopComponent to show the opened documents.
@@ -119,6 +117,15 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
 
     public InstanceContent getServices() {
         return services;
+    }
+
+    public static <T> T getSelectedComponent(Class<T> expectedTopComponent) {
+        TopComponent selected = TopComponent.getRegistry().getActivated();
+        if (selected.getClass().isAssignableFrom(expectedTopComponent)) {
+            return (T) selected;
+        } else {
+            return null;
+        }
     }
 
     @Override
