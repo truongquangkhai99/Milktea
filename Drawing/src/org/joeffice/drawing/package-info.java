@@ -1,4 +1,4 @@
-@TemplateRegistration(folder = "Other", content = "SvgTemplate.svg")
+@TemplateRegistration(folder = "Other", content = "SvgTemplate.svg", position = 400)
 package org.joeffice.drawing;
 
 import org.netbeans.api.templates.TemplateRegistration;
