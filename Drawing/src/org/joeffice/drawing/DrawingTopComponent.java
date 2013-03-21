@@ -100,16 +100,6 @@ public final class DrawingTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    public void setModified(boolean modified) {
-        if (modified) {
-            Document svgDocument = ((JSVGCanvas) getMainComponent()).getSVGDocument();
-            getDataObject().setContent(svgDocument);
-        } else {
-            getDataObject().setContent(null);
-        }
-    }
-
-    @Override
     public void writeProperties(Properties properties) {
         super.writeProperties(properties);
     }
