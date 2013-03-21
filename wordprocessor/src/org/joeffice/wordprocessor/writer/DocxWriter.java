@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class DocxWriter {
 
-    /**ico
+    /**
      * document instance to the writing.
      */
     protected Document document;

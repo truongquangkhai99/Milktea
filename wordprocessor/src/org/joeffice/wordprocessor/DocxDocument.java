@@ -15,6 +15,7 @@
  */
 package org.joeffice.wordprocessor;
 
+import static javax.swing.text.DefaultStyledDocument.BUFFER_SIZE_DEFAULT;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
@@ -26,7 +27,7 @@ import java.util.Vector;
 /**
  * This is the document for the JEditorPane.
  *
- * @author  Stanislav Lapitsky
+ * @author Stanislav Lapitsky
  */
 public class DocxDocument extends DefaultStyledDocument {
 
@@ -37,19 +38,15 @@ public class DocxDocument extends DefaultStyledDocument {
     private Insets margins = new Insets(0, 0, 0, 0);
 
     /**
-     * Constructs a word document.
+     * Constructs a default styled document. This buffers input content by a size of BUFFER_SIZE_DEFAULT and has a style
+     * context that is scoped by the lifetime of the document and is not shared with other documents.
      */
-    /* For NbDocument public DocxDocument() {
-        super("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-    }*/
-
-    public DocxDocument(Content c, StyleContext styles) {
-        super(c, styles);
+    public DocxDocument() {
+        this(new GapContent(BUFFER_SIZE_DEFAULT), new StyleContext());
     }
 
     /**
-     * Constructs a styled document with the default content
-     * storage implementation and a shared set of styles.
+     * Constructs a styled document with the default content storage implementation and a shared set of styles.
      *
      * @param styles The styles.
      */
@@ -58,23 +55,23 @@ public class DocxDocument extends DefaultStyledDocument {
     }
 
     /**
-     * Constructs a default styled document.  This buffers
-     * input content by a size of BUFFER_SIZE_DEFAULT
-     * and has a style context that is scoped by the lifetime
-     * of the document and is not shared with other documents.
+     * Constructs a word document.
      */
-    public DocxDocument() {
-        this(new GapContent(BUFFER_SIZE_DEFAULT), new StyleContext());
+    /* For NbDocument public DocxDocument() {
+     super("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+     }*/
+    public DocxDocument(Content c, StyleContext styles) {
+        super(c, styles);
     }
 
     /**
      * Inserts a new table in the document.
      *
-     * @param offset     The document offset where table will be inserted.
-     * @param rowCount   The number of rows in the table.
-     * @param colCount   The number of columns in the table.
-     * @param attr       The table attributes. (contains border parameters)
-     * @param colWidths  Widths for each table's column.
+     * @param offset The document offset where table will be inserted.
+     * @param rowCount The number of rows in the table.
+     * @param colCount The number of columns in the table.
+     * @param attr The table attributes. (contains border parameters)
+     * @param colWidths Widths for each table's column.
      * @param rowHeights heights for each table's row.
      */
     public Element insertTable(int offset, int rowCount, int colCount, AttributeSet attr, int[] colWidths, int[] rowHeights) {
@@ -152,7 +149,7 @@ public class DocxDocument extends DefaultStyledDocument {
      * Inserts picture to specified document offset.
      *
      * @param icon picture for inserting.
-     * @param pos  offset in the document.
+     * @param pos offset in the document.
      */
     public void insertPicture(ImageIcon icon, int pos) {
         SimpleAttributeSet attrs = new SimpleAttributeSet();
@@ -166,9 +163,8 @@ public class DocxDocument extends DefaultStyledDocument {
     }
 
     /**
-     * Deletes table from the document. Method tries to find a deepest table
-     * for given offset and deletes it.
-     * If no table found method does nothing.
+     * Deletes table from the document. Method tries to find a deepest table for given offset and deletes it. If no
+     * table found method does nothing.
      *
      * @param offset offset in the document.
      */
@@ -178,8 +174,9 @@ public class DocxDocument extends DefaultStyledDocument {
         Element table = null;
         //search for the deepest table
         while (!elem.isLeaf()) {
-            if (elem.getName().equals("table"))
+            if (elem.getName().equals("table")) {
                 table = elem;
+            }
             elem = elem.getElement(elem.getElementIndex(offset));
         }
         if (table != null) {
@@ -207,9 +204,8 @@ public class DocxDocument extends DefaultStyledDocument {
     }
 
     /**
-     * Deletes row from table. Method tries to find a deepest table for given
-     * offset and deletes row which contains given offset.
-     * If no table found method does nothing.
+     * Deletes row from table. Method tries to find a deepest table for given offset and deletes row which contains
+     * given offset. If no table found method does nothing.
      *
      * @param offset offset in the document.
      */
@@ -219,8 +215,9 @@ public class DocxDocument extends DefaultStyledDocument {
         Element row = null;
         //search for the deepest table
         while (!elem.isLeaf()) {
-            if (elem.getName().equals("row"))
+            if (elem.getName().equals("row")) {
                 row = elem;
+            }
             elem = elem.getElement(elem.getElementIndex(offset));
         }
         if (row != null) {
@@ -233,7 +230,6 @@ public class DocxDocument extends DefaultStyledDocument {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                ;
             }
             int start = row.getStartOffset();
             int end = row.getEndOffset();
@@ -254,9 +250,8 @@ public class DocxDocument extends DefaultStyledDocument {
     }
 
     /**
-     * Deletes column from table. Method tries to find a deepest table for given
-     * offset and deletes column which contains given offset. It means that we
-     * get index of cell which contains given offset and for each table's row
+     * Deletes column from table. Method tries to find a deepest table for given offset and deletes column which
+     * contains given offset. It means that we get index of cell which contains given offset and for each table's row
      * delete cell with this index.
      * <p/>
      * If no table found method does nothing.
@@ -270,13 +265,15 @@ public class DocxDocument extends DefaultStyledDocument {
         Element table = null;
         //search for the deepest table
         while (!elem.isLeaf()) {
-            if (elem.getName().equals("table"))
+            if (elem.getName().equals("table")) {
                 table = elem;
-            if (elem.getName().equals("cell"))
+            }
+            if (elem.getName().equals("cell")) {
                 cell = elem;
+            }
             elem = elem.getElement(elem.getElementIndex(offset));
         }
-        if (cell != null) {
+        if (table != null && cell != null) {
             Element row = cell.getParentElement();
             //if table contains only one column delete whole table
             if (row.getElementCount() == 1) {
@@ -311,13 +308,12 @@ public class DocxDocument extends DefaultStyledDocument {
     }
 
     /**
-     * Inserts new row into deepest table for specified offset. Method tries to
-     * find a deepest table for given offset than defines row which contains
-     * given offset and inserts new row above or below (depends on flag) current.
+     * Inserts new row into deepest table for specified offset. Method tries to find a deepest table for given offset
+     * than defines row which contains given offset and inserts new row above or below (depends on flag) current.
      * <p/>
      * If no table found method does nothing.
      *
-     * @param offset      offset in the document.
+     * @param offset offset in the document.
      * @param insertAbove if true inserts row above current row
      */
     public void insertRow(int offset, boolean insertAbove) {
@@ -326,8 +322,9 @@ public class DocxDocument extends DefaultStyledDocument {
         Element row = null;
         //search for the deepest table
         while (!elem.isLeaf()) {
-            if (elem.getName().equals("row"))
+            if (elem.getName().equals("row")) {
                 row = elem;
+            }
             elem = elem.getElement(elem.getElementIndex(offset));
         }
         if (row != null) {
@@ -406,15 +403,13 @@ public class DocxDocument extends DefaultStyledDocument {
     }
 
     /**
-     * Inserts new column into deepest table for specified offset. Method tries
-     * to find a deepest table for given offset than defines column which
-     * contains given offset and inserts new column before or after (depends on
-     * flag) current.
+     * Inserts new column into deepest table for specified offset. Method tries to find a deepest table for given offset
+     * than defines column which contains given offset and inserts new column before or after (depends on flag) current.
      * <p/>
      * If no table found method does nothing.
      *
-     * @param offset       offset in the document.
-     * @param colWidth     width of new column.
+     * @param offset offset in the document.
+     * @param colWidth width of new column.
      * @param insertBefore if true inserts column before current column
      */
     public void insertColumn(int offset, int colWidth, boolean insertBefore) {
@@ -423,13 +418,15 @@ public class DocxDocument extends DefaultStyledDocument {
         Element row = null;
         Element table = null;
         while (!elem.isLeaf()) {
-            if (elem.getName().equals("table"))
+            if (elem.getName().equals("table")) {
                 table = elem;
-            if (elem.getName().equals("row"))
+            }
+            if (elem.getName().equals("row")) {
                 row = elem;
+            }
             elem = elem.getElement(elem.getElementIndex(offset));
         }
-        if (row != null) {
+        if (table != null && row != null) {
             int colNum = row.getElementIndex(offset);
             if (!insertBefore) {
                 colNum++;
@@ -533,19 +530,17 @@ public class DocxDocument extends DefaultStyledDocument {
     }
 
     /**
-     * Removes some content from the document.
-     * Removing content causes a write lock to be held while the
-     * actual changes are taking place.  Observers are notified
-     * of the change on the thread that called this method.
+     * Removes some content from the document. Removing content causes a write lock to be held while the actual changes
+     * are taking place. Observers are notified of the change on the thread that called this method.
      * <p/>
-     * This method is thread safe, although most Swing methods
-     * are not. Please see
-     * <A HREF="http://java.sun.com/products/jfc/swingdoc-archive/threads.html">Threads
-     * and Swing</A> for more information.
+     * This method is thread safe, although most Swing methods are not. Please see
+     * <A HREF="http://java.sun.com/products/jfc/swingdoc-archive/threads.html">Threads and Swing</A> for more
+     * information.
      *
      * @param offset the starting offset >= 0
      * @param length the number of characters to remove >= 0
      */
+    @Override
     public void remove(int offset, int length) throws BadLocationException {
         //--- checking delete table element ---
         Element startCell = getCell(offset);
@@ -580,10 +575,9 @@ public class DocxDocument extends DefaultStyledDocument {
         }
 
         Vector tableList = getInnerTableList(offset, offset + length);
-        if (tableList.size() == 0) {
+        if (tableList.isEmpty()) {
             super.remove(offset, length);
         } else {
-            int currentLength = length;
             boolean flag = true;
             for (int i = 0; i < tableList.size(); i++) {
                 Element table = (Element) tableList.get(i);
@@ -608,8 +602,9 @@ public class DocxDocument extends DefaultStyledDocument {
         Element elem = getDefaultRootElement();
 
         while (!elem.isLeaf()) {
-            if (elem.getName().equals("cell"))
+            if (elem.getName().equals("cell")) {
                 cell = elem;
+            }
             elem = elem.getElement(elem.getElementIndex(offset));
         }
         return cell;
@@ -625,8 +620,9 @@ public class DocxDocument extends DefaultStyledDocument {
         Element elem = getDefaultRootElement();
 
         while (!elem.isLeaf()) {
-            if (elem.getName().equals("row"))
+            if (elem.getName().equals("row")) {
                 row = elem;
+            }
             elem = elem.getElement(elem.getElementIndex(offset));
         }
         return row;
@@ -642,8 +638,9 @@ public class DocxDocument extends DefaultStyledDocument {
         Element elem = getDefaultRootElement();
 
         while (!elem.isLeaf()) {
-            if (elem.getName().equals("paragraph"))
+            if (elem.getName().equals("paragraph")) {
                 paragraph = elem;
+            }
             elem = elem.getElement(elem.getElementIndex(offset));
         }
         return paragraph;
@@ -653,7 +650,7 @@ public class DocxDocument extends DefaultStyledDocument {
      * Gets the list of tables which placed in the definite interval.
      *
      * @param startOffset The start interval offset.
-     * @param endOffset   The end interval offset.
+     * @param endOffset The end interval offset.
      */
     public Vector getInnerTableList(int startOffset, int endOffset) {
         Vector result = new Vector();
@@ -714,15 +711,14 @@ public class DocxDocument extends DefaultStyledDocument {
     }
 
     /**
-     * Sets attributes for a paragraphs.
-     * This method is thread safe, although most Swing methods
-     * are not.
+     * Sets attributes for a paragraphs. This method is thread safe, although most Swing methods are not.
      *
-     * @param offset  the offset into the paragraph >= 0
-     * @param length  the number of characters affected >= 0
-     * @param s       the attributes
+     * @param offset the offset into the paragraph >= 0
+     * @param length the number of characters affected >= 0
+     * @param s the attributes
      * @param replace whether to replace existing attributes, or merge them
      */
+    @Override
     public void setParagraphAttributes(int offset, int length, AttributeSet attrs, boolean replace) {
         try {
             writeLock();
@@ -746,8 +742,9 @@ public class DocxDocument extends DefaultStyledDocument {
                     attr.removeAttributes(attr);
                 }
                 attr.addAttributes(attrs);
-                if (pos == getLength())
+                if (pos == getLength()) {
                     break;
+                }
                 pos = paragraph.getEndOffset();
                 paragraph = getParagraph(pos);
             }
@@ -769,24 +766,24 @@ public class DocxDocument extends DefaultStyledDocument {
         fireChangedUpdate(e);
     }
 
-//--- INNER CLASSES-------------------------------------------------------------
-//--- TABLE --------------------------------------------------------------------
-
+    //--- INNER CLASSES-------------------------------------------------------------
+    //--- TABLE --------------------------------------------------------------------
     /**
      * Represents table element.
      */
     public class TableElement extends BranchElement {
+
         /**
          * Conscructs a new table element in the document.
          *
          * @param rowOffsets The start offsets for each table row.
          * @param rowLengths Lengths (char length) for each row.
-         * @param parent     The parent element.
-         * @param attr       The attributes for the table.
-         * @param rowCount   The number of rows.
-         * @param colCount   The number of columns.
-         * @param widths     The list of column's widths.
-         * @param heights    The list of rows' heights.
+         * @param parent The parent element.
+         * @param attr The attributes for the table.
+         * @param rowCount The number of rows.
+         * @param colCount The number of columns.
+         * @param widths The list of column's widths.
+         * @param heights The list of rows' heights.
          */
         public TableElement(int[] rowOffsets, int[] rowLengths, Element parent, AttributeSet attr, int rowCount, int colCount, int[] widths, int[] heights) {
             super(parent, attr);
@@ -928,9 +925,9 @@ public class DocxDocument extends DefaultStyledDocument {
             writeUnlock();
         }
     }
-//----- end TABLE --------------------------------------------------------------
-//--- ROW ----------------------------------------------------------------------
+    //----- end TABLE --------------------------------------------------------------
 
+    //--- ROW ----------------------------------------------------------------------
     /**
      * Represents table's row element.
      */
@@ -939,13 +936,13 @@ public class DocxDocument extends DefaultStyledDocument {
         /**
          * Conscructs a new row element in the table.
          *
-         * @param parent      The parent table element.
-         * @param attr        The row attributes.
-         * @param cellCount   The number of cells.
+         * @param parent The parent table element.
+         * @param attr The row attributes.
+         * @param cellCount The number of cells.
          * @param cellOffsets Offsets for each cell.
          * @param cellLengths Lengths (char length) for each cell.
-         * @param widths      Widths (in pixels) for each cell.
-         * @param height      row height.
+         * @param widths Widths (in pixels) for each cell.
+         * @param height row height.
          */
         public RowElement(Element parent, AttributeSet attr, int cellCount, int[] cellOffsets, int[] cellLengths, int[] widths, int height) {
             super(parent, attr);
@@ -976,6 +973,7 @@ public class DocxDocument extends DefaultStyledDocument {
         /**
          * Gets element name.
          */
+        @Override
         public String getName() {
             return "row";
         }
@@ -985,6 +983,7 @@ public class DocxDocument extends DefaultStyledDocument {
          *
          * @return true if a leaf.
          */
+        @Override
         public boolean isLeaf() {
             return false;
         }
@@ -1082,22 +1081,21 @@ public class DocxDocument extends DefaultStyledDocument {
             writeUnlock();
         }
     }
-//--- CELL ---------------------------------------------------------------------
 
+    //--- CELL ---------------------------------------------------------------------
     /**
      * Represents table's cell element.
      */
     public class CellElement extends BranchElement {
+
         /**
          * Cell width (in pixels).
          */
         private int width = 1;
-
         /**
          * Cell height (in pixels).
          */
         private int height = 1;
-
         /**
          * Initial margin value.
          */
@@ -1110,11 +1108,11 @@ public class DocxDocument extends DefaultStyledDocument {
         /**
          * Constructs new empty cell element (cell without content) in the row.
          *
-         * @param parent      The parent row element.
-         * @param attr        The cell's attributes.
+         * @param parent The parent row element.
+         * @param attr The cell's attributes.
          * @param startOffset The start offset in the document content.
-         * @param length      The length of cell (in chars).
-         * @param width       The cell width (in pixels).
+         * @param length The length of cell (in chars).
+         * @param width The cell width (in pixels).
          */
         public CellElement(Element parent, AttributeSet attr, int startOffset, int length, int width, int height) {
             super(parent, attr);
@@ -1134,11 +1132,11 @@ public class DocxDocument extends DefaultStyledDocument {
         /**
          * Constructs cell element with definite content.
          *
-         * @param parent           The parent row.
-         * @param attr             The row attributes.
+         * @param parent The parent row.
+         * @param attr The row attributes.
          * @param paragraphOffsets Offsets of inner elements.
          * @param paragraphLenghts Lengths of inner elements.
-         * @param width            The cell width.
+         * @param width The cell width.
          */
         public CellElement(Element parent, AttributeSet attr, int[] paragraphOffsets, int[] paragraphLenghts, int width) {
             super(parent, attr);
@@ -1148,6 +1146,7 @@ public class DocxDocument extends DefaultStyledDocument {
         /**
          * Gets element name.
          */
+        @Override
         public String getName() {
             return "cell";
         }
@@ -1203,13 +1202,12 @@ public class DocxDocument extends DefaultStyledDocument {
         }
 
         /**
-         * Sets the cell's margins.
-         * Limits is between 5 and 300.
+         * Sets the cell's margins. Limits is between 5 and 300.
          *
-         * @param top    - the top margin.
-         * @param left   - the left margin.
+         * @param top - the top margin.
+         * @param left - the left margin.
          * @param bottom - the bottom margin.
-         * @param right  - the right margin.
+         * @param right - the right margin.
          */
         public void setMargins(int top, int left, int bottom, int right) {
             this.m_margins.top = top;
@@ -1230,9 +1228,7 @@ public class DocxDocument extends DefaultStyledDocument {
             cellBorders.borderBottom = ba.borderBottom;
             cellBorders.borderLeft = ba.borderLeft;
             cellBorders.borderRight = ba.borderRight;
-            DefaultDocumentEvent dde = new DefaultDocumentEvent(Math.max(getStartOffset() - 1, 0)
-                    , getEndOffset()
-                    , DocumentEvent.EventType.CHANGE);
+            DefaultDocumentEvent dde = new DefaultDocumentEvent(Math.max(getStartOffset() - 1, 0), getEndOffset(), DocumentEvent.EventType.CHANGE);
             dde.end();
             fireChangedUpdate(dde);
         }
@@ -1241,5 +1237,5 @@ public class DocxDocument extends DefaultStyledDocument {
             return (BorderAttributes) this.getAttribute("BorderAttributes");
         }
     }
-//--- end CELL -----------------------------------------------------------------
+    //--- end CELL -----------------------------------------------------------------
 }

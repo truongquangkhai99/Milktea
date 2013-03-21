@@ -32,16 +32,13 @@ import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.modules.spellchecker.api.Spellchecker;
-import org.openide.actions.CutAction;
-import org.openide.actions.FindAction;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.UndoRedo;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
-import org.openide.util.actions.CallbackSystemAction;
-import org.openide.util.actions.SystemAction;
 
 /**
  * Top component which displays the docx documents.
@@ -72,7 +69,7 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
     public WordpTopComponent() {
     }
 
-    public WordpTopComponent(DocxDataObject dataObject) {
+    public WordpTopComponent(OfficeDataObject dataObject) {
         super(dataObject);
     }
 
@@ -98,7 +95,7 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
                     document = wordProcessor.getDocument();
                     document.addDocumentListener(WordpTopComponent.this);
                     document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
-                    Spellchecker.register(wordProcessor); // Doesn't do anything (yet)
+                    //Spellchecker.register(wordProcessor); // Doesn't do anything (yet)
                     /*FindAction find = new FindAction();
                     getActionMap().put(find.getName(), find);
                     ReplaceAction replace = new ReplaceAction();
@@ -128,17 +125,6 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
     protected void componentDeactivated() {
         getServices().remove(styleable);
         super.componentDeactivated();
-    }
-
-    @Override
-    public void setModified(boolean modified) {
-        super.setModified(modified);
-         OfficeDataObject docxDataObject = getDataObject();
-        if (modified) {
-            docxDataObject.setContent(document);
-        } else {
-            docxDataObject.setContent(null);
-        }
     }
 
     @Override

@@ -15,10 +15,12 @@
  */
 package org.joeffice.wordprocessor.nb;
 
+import java.io.File;
 import java.io.IOException;
 import javax.swing.text.Document;
 
 import org.joeffice.desktop.file.OfficeDataObject;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.wordprocessor.writer.DocxWriter;
 
 import org.openide.awt.ActionID;
@@ -105,67 +107,31 @@ import org.openide.util.NbBundle.Messages;
             @ActionID(category = "System", id = "org.openide.actions.PropertiesAction"),
             position = 1400)
 })
-public class DocxDataObject extends OfficeDataObject implements CookieSet.Factory {
-
-    // The document currently edited
-    private Document content;
-
-    private OpenCookie opener;
-    private DocxSaveCookie saver;
+public class DocxDataObject extends OfficeDataObject {
 
     public DocxDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException {
         super(pf, loader);
-        CookieSet cookies = getCookieSet();
-        cookies.add(DocxEditorSupport.class, this);
-        cookies.add(DocxSaveCookie.class, this);
-    }
-
-    @Override
-    public synchronized void setContent(Object document) {
-        this.content = (Document) document;
-        if (document != null) {
-            setModified(true);
-            getCookieSet().add(saver);
-        } else {
-            setModified(false);
-            getCookieSet().remove(saver);
-        }
+        getCookieSet().add(DocxEditorSupport.class, this);
     }
 
     @Override
     public <T extends Node.Cookie> T createCookie(Class<T> type) {
         if (type.isAssignableFrom(DocxEditorSupport.class)) {
-            if (opener == null) {
-                opener = new DocxEditorSupport(this, getLookup());
-            }
-            return (T) opener;
+            return (T) new DocxEditorSupport(this, getLookup());
         }
-        if (type.isAssignableFrom(DocxSaveCookie.class)) {
-            if (saver == null) {
-                saver = new DocxSaveCookie();
-            }
-            return (T) saver;
-        }
+        return super.createCookie(type);
+    }
+
+    @Override
+    public OfficeTopComponent open(OfficeDataObject dataObject) {
+        //return new WordpTopComponent(dataObject);
         return null;
     }
 
-    /**
-     * Cookie invoked when the file is saved.
-     * Note that if the file is not edited, no save cookie is in the cookies set.
-     */
-    private class DocxSaveCookie implements SaveCookie {
-
-        @Override
-        public void save() throws IOException {
-            Document doc;
-            synchronized (DocxDataObject.this) {
-                //synchronize access to the content field
-                doc = content;
-                setContent(null);
-            }
-            DocxWriter writer = new DocxWriter(doc);
-            FileObject fo = getPrimaryFile();
-            writer.write(FileUtil.toFile(fo).getAbsolutePath());
-        }
+    @Override
+    public void save(File file) throws IOException {
+        Document doc = (Document) getDocument();
+        DocxWriter writer = new DocxWriter(doc);
+        writer.write(file.getAbsolutePath());
     }
 }
