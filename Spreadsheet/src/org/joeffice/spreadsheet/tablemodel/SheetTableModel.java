@@ -114,8 +114,10 @@ public class SheetTableModel extends AbstractTableModel {
         }
         for (int i = rowsBefore.length - 1; i >= 0; i--) {
             int rowBefore = rowsBefore[i];
-            sheet.shiftRows(rowBefore + 1, sheet.getLastRowNum(), numberOfRows);
-            fireTableRowsInserted(rowBefore + 1, rowBefore + 1 + numberOfRows);
+            if (rowBefore < sheet.getLastRowNum()) {
+                sheet.shiftRows(rowBefore + 1, sheet.getLastRowNum(), numberOfRows);
+                fireTableRowsInserted(rowBefore + 1, rowBefore + 1 + numberOfRows);
+            }
         }
     }
 

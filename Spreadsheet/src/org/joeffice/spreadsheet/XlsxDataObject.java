@@ -185,6 +185,9 @@ public class XlsxDataObject extends OfficeDataObject implements CookieSet.Factor
         @Override
         public void saveAs(FileObject folder, String fileName) throws IOException {
             FileObject newFile = folder.getFileObject(fileName);
+            if (newFile == null) {
+                newFile = folder.createData(fileName);
+            }
             save(newFile);
         }
     }
