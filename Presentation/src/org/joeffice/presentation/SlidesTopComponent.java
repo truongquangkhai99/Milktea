@@ -98,7 +98,7 @@ public final class SlidesTopComponent extends OfficeTopComponent {
                 slideNumber++;
             }
             selectedSlide = 0;
-            ((PptxDataObject) getDataObject()).setContent(null);
+            getDataObject().setDocument(presentation);
         } catch (IOException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + pptxFile.getAbsolutePath());
             Exceptions.printStackTrace(ex);

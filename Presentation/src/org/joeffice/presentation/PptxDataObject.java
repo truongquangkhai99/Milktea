@@ -22,6 +22,7 @@ import java.io.IOException;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 
 import org.joeffice.desktop.file.OfficeDataObject;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -108,66 +109,20 @@ import org.openide.util.NbBundle.Messages;
 })
 public class PptxDataObject extends OfficeDataObject implements CookieSet.Factory {
 
-    // The presentation currently edited (null if not edited yet)
-    private XMLSlideShow content;
-    private PptxOpenSupport opener;
-    private PptxSaveCookie saver;
-
     public PptxDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-        CookieSet cookies = getCookieSet();
-        cookies.add(PptxOpenSupport.class, this);
-        cookies.add(PptxSaveCookie.class, this);
     }
 
     @Override
-    public synchronized void setContent(Object document) {
-        this.content = (XMLSlideShow) document;
-        if (document != null) {
-            setModified(true);
-            getCookieSet().add(saver);
-        } else {
-            setModified(false);
-            if (saver != null) {
-                getCookieSet().remove(saver);
-            }
-        }
+    public OfficeTopComponent open(OfficeDataObject dataObject) {
+        return new SlidesTopComponent(dataObject);
     }
 
     @Override
-    public <T extends Node.Cookie> T createCookie(Class<T> type) {
-        if (type.isAssignableFrom(PptxOpenSupport.class)) {
-            if (opener == null) {
-                opener = new PptxOpenSupport(getPrimaryEntry());
-            }
-            return (T) opener;
-        }
-        if (type.isAssignableFrom(PptxSaveCookie.class)) {
-            if (saver == null) {
-                saver = new PptxSaveCookie();
-            }
-            return (T) saver;
-        }
-        return null;
-    }
-
-    /**
-     * Cookie invoked when the file is saved. Note that if the file is not edited, no save cookie is in the cookies set.
-     */
-    private class PptxSaveCookie implements SaveCookie {
-
-        @Override
-        public void save() throws IOException {
-            XMLSlideShow presentation;
-            synchronized (PptxDataObject.this) {
-                //synchronize access to the content field
-                presentation = content;
-                setContent(null);
-            }
-            File pptxFile = FileUtil.toFile(getPrimaryFile());
-            try (FileOutputStream pptxOutputStream = new FileOutputStream(pptxFile)) {
-                presentation.write(pptxOutputStream);
-            }
+    public void save(File file) throws IOException {
+        XMLSlideShow presentation = (XMLSlideShow) getDocument();
+        try (FileOutputStream pptxOutputStream = new FileOutputStream(file)) {
+            presentation.write(pptxOutputStream);
         }
     }
 }
