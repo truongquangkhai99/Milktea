@@ -18,10 +18,7 @@ package org.joeffice.presentation.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.joeffice.desktop.ui.OfficeTopComponent;
-
-import org.joeffice.presentation.FullScreenFrame;
 import org.joeffice.presentation.SlidesTopComponent;
 
 import org.openide.awt.ActionID;
@@ -30,29 +27,27 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-/**
- * Action that launch the presentation in full screen mode when invoked.
- *
- * @author Anthony Goubard - Japplis
- */
 @ActionID(
         category = "View/Office/Presentation",
-        id = "org.joeffice.presentation.actions.LaunchPresentationAction")
+        id = "org.joeffice.presentation.actions.LastSlideAction")
 @ActionRegistration(
-        iconBase = "org/joeffice/presentation/actions/picture_empty.png",
-        displayName = "#CTL_LaunchPresentationAction")
-@ActionReferences(value = {
-    @ActionReference(path = "Office/Presentation/Toolbar", position = 500)})
-@Messages("CTL_LaunchPresentationAction=Launch Presentation")
-public final class LaunchPresentationAction extends AbstractAction {
+        displayName = "#CTL_LastSlideAction")
+@ActionReferences({
+    @ActionReference(path = "Shortcuts", name = "End")
+})
+@Messages("CTL_LastSlideAction=Last Slide")
+public class LastSlideAction extends AbstractAction {
 
     @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void actionPerformed(ActionEvent e) {
+        lastSlide();
+    }
+
+    public void lastSlide() {
         SlidesTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
         if (currentTopComponent != null) {
-            XMLSlideShow currentPresentation = currentTopComponent.getPresentation();
-            FullScreenFrame presentationFrame = new FullScreenFrame();
-            presentationFrame.showSlides(currentPresentation);
+            int lastSlide = currentTopComponent.getPresentation().getSlides().length - 1;
+            currentTopComponent.setSelectedSlide(lastSlide);
         }
     }
 }

@@ -15,7 +15,9 @@
  */
 package org.joeffice.presentation;
 
+import java.awt.CardLayout;
 import java.io.*;
+import java.util.List;
 import java.util.Properties;
 import javax.swing.*;
 
@@ -31,6 +33,7 @@ import org.openide.awt.ActionReference;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.Utilities;
 
 /**
  * Top component which displays the toolbar and the presentation slides in edit mode.
@@ -56,6 +59,7 @@ import org.openide.util.NbBundle.Messages;
 public final class SlidesTopComponent extends OfficeTopComponent {
 
     private transient XMLSlideShow presentation;
+    private int selectedSlide;
 
     public SlidesTopComponent() {
     }
@@ -65,9 +69,19 @@ public final class SlidesTopComponent extends OfficeTopComponent {
     }
 
     @Override
+    protected JToolBar createToolbar() {
+        JToolBar spreadsheetToolbar = new JToolBar();
+        List<? extends Action> spreadsheetToolbarActions = Utilities.actionsForPath("Office/Presentation/Toolbar");
+        for (Action action : spreadsheetToolbarActions) {
+            spreadsheetToolbar.add(action);
+        }
+        return spreadsheetToolbar;
+    }
+
+    @Override
     protected JComponent createMainComponent() {
         JPanel slidesHolder = new JPanel();
-        slidesHolder.setLayout(new BoxLayout(slidesHolder, BoxLayout.Y_AXIS));
+        slidesHolder.setLayout(new CardLayout());
         return slidesHolder;
     }
 
@@ -76,17 +90,14 @@ public final class SlidesTopComponent extends OfficeTopComponent {
         try (FileInputStream fis = new FileInputStream(pptxFile)) {
             presentation = new XMLSlideShow(fis);
 
-            // Add the slides
             XSLFSlide[] slides = presentation.getSlides();
-            if (slides.length > 0) {
-                getMainComponent().add(new SlideSeparator());
-            }
+            int slideNumber = 0;
             for (XSLFSlide slide : slides) {
                 SlideComponent slideComp = new SlideComponent(slide, this);
-                getMainComponent().add(slideComp);
-                // getMainComponent().add(new JSeparator(JSeparator.HORIZONTAL));
-                getMainComponent().add(new SlideSeparator());
+                getMainComponent().add(slideComp, String.valueOf(slideNumber));
+                slideNumber++;
             }
+            selectedSlide = 0;
             ((PptxDataObject) getDataObject()).setContent(null);
         } catch (IOException ex) {
             Exceptions.attachMessage(ex, "Failed to load: " + pptxFile.getAbsolutePath());
@@ -96,6 +107,17 @@ public final class SlidesTopComponent extends OfficeTopComponent {
 
     public XMLSlideShow getPresentation() {
         return presentation;
+    }
+
+    public int getSelectedSlide() {
+        return selectedSlide;
+    }
+
+    public void setSelectedSlide(int selectedSlide) {
+        this.selectedSlide = selectedSlide;
+        JComponent mainComponent = getMainComponent();
+        CardLayout slidesLayout = (CardLayout) mainComponent.getLayout();
+        slidesLayout.show(mainComponent, String.valueOf(selectedSlide));
     }
 
     @Override

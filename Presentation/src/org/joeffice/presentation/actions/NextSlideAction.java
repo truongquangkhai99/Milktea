@@ -18,10 +18,7 @@ package org.joeffice.presentation.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.joeffice.desktop.ui.OfficeTopComponent;
-
-import org.joeffice.presentation.FullScreenFrame;
 import org.joeffice.presentation.SlidesTopComponent;
 
 import org.openide.awt.ActionID;
@@ -30,29 +27,31 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-/**
- * Action that launch the presentation in full screen mode when invoked.
- *
- * @author Anthony Goubard - Japplis
- */
 @ActionID(
         category = "View/Office/Presentation",
-        id = "org.joeffice.presentation.actions.LaunchPresentationAction")
+        id = "org.joeffice.presentation.actions.NextSlideAction")
 @ActionRegistration(
-        iconBase = "org/joeffice/presentation/actions/picture_empty.png",
-        displayName = "#CTL_LaunchPresentationAction")
+        iconBase = "org/joeffice/presentation/actions/arrow_right.png",
+        displayName = "#CTL_NextSlideAction")
 @ActionReferences(value = {
-    @ActionReference(path = "Office/Presentation/Toolbar", position = 500)})
-@Messages("CTL_LaunchPresentationAction=Launch Presentation")
-public final class LaunchPresentationAction extends AbstractAction {
+    @ActionReference(path = "Office/Presentation/Toolbar", position = 200),
+    @ActionReference(path = "Shortcuts", name = "Page_Down")
+})
+@Messages("CTL_NextSlideAction=Next Slide")
+public class NextSlideAction extends AbstractAction {
 
     @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void actionPerformed(ActionEvent e) {
+        nextSlide();
+    }
+
+    public void nextSlide() {
         SlidesTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
         if (currentTopComponent != null) {
-            XMLSlideShow currentPresentation = currentTopComponent.getPresentation();
-            FullScreenFrame presentationFrame = new FullScreenFrame();
-            presentationFrame.showSlides(currentPresentation);
+            int currentSlide = currentTopComponent.getSelectedSlide();
+            if (currentSlide < currentTopComponent.getPresentation().getSlides().length - 1) {
+                currentTopComponent.setSelectedSlide(currentSlide + 1);
+            }
         }
     }
 }

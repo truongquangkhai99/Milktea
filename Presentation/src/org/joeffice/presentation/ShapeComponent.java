@@ -33,6 +33,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -99,6 +100,8 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         JTextPane textField = new JTextPane();
         textField.setBorder(BorderFactory.createEmptyBorder());
         textField.setOpaque(false);
+        textField.getActionMap().remove(DefaultEditorKit.pageDownAction); // used to move to next or previous slide
+        textField.getActionMap().remove(DefaultEditorKit.pageUpAction);
         java.util.List<XSLFTextParagraph> paragraphs = textShape.getTextParagraphs();
         boolean newLine = false;
         for (XSLFTextParagraph paragraph : paragraphs) {
