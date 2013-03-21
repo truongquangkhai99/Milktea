@@ -31,6 +31,8 @@ import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
 import org.joeffice.desktop.file.OfficeDataObject;
 
 import org.openide.awt.UndoRedo;
+import org.openide.explorer.ExplorerManager;
+import org.openide.explorer.ExplorerUtils;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
@@ -71,7 +73,8 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
 
     protected void init(OfficeDataObject dataObject) {
         services = new InstanceContent();
-        Lookup lookup = new ProxyLookup(dataObject.getLookup(), new AbstractLookup(services));
+        Lookup actionsLookup = ExplorerUtils.createLookup(new ExplorerManager(), getActionMap());
+        Lookup lookup = new ProxyLookup(actionsLookup, dataObject.getLookup(), new AbstractLookup(services));
         associateLookup(lookup);
 
         initComponents();
@@ -141,23 +144,13 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         return null;
     }
 
-    // http://wiki.netbeans.org/DevFaqEditorTopComponent
-    @Override
-    public String getHtmlDisplayName() {
-        DataObject dob = getLookup().lookup(DataObject.class);
-        if (dob != null && dob.isModified()) {
-            return "<html><body><b>" + dob.getName() + "</b></body></html>";
-        }
-        return super.getHtmlDisplayName();
-    }
-
     @Override
     protected boolean closeLast() {
         OfficeDataObject dataObject = getDataObject();
         int answer = OfficeUIUtils.checkSaveBeforeClosing(dataObject, this);
         boolean canClose = answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION;
         if (canClose && dataObject != null) {
-            dataObject.setContent(null);
+            dataObject.setModified(false);
         }
         return canClose;
     }
@@ -174,6 +167,11 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
 
     public void setModified(boolean modified) {
         getDataObject().setModified(modified);
+        if (modified) {
+            setHtmlDisplayName("<html><body><b>" + getDataObject().getName() + "</b></body></html>");
+        } else {
+            setHtmlDisplayName("<html><body>" + getDataObject().getName() + "</body></html>");
+        }
     }
 
     @Override

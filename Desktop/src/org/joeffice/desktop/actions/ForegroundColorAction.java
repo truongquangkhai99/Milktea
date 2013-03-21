@@ -17,17 +17,22 @@ package org.joeffice.desktop.actions;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
+import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.util.Map;
 import javax.swing.AbstractAction;
+import javax.swing.JColorChooser;
+
 import org.joeffice.desktop.ui.Styleable;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.WindowManager;
 
 /**
  * Change the font color.
@@ -44,7 +49,7 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Menu/Edit", position = 1550),
     @ActionReference(path = "Toolbars/Font", position = 3300)
 })
-@Messages("CTL_ForegroundColorAction=Color")
+@Messages({"CTL_ForegroundColorAction=Color", "MSG_ColorTitle=Choose color"})
 public class ForegroundColorAction extends AbstractAction {
 
     private Styleable styleable;
@@ -55,8 +60,19 @@ public class ForegroundColorAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AttributedString attributes = new AttributedString("ForegroundColor");
-        attributes.addAttribute(TextAttribute.FOREGROUND, Color.RED);
-        styleable.setFontAttributes(attributes);
+        AttributedString currentAttributes = styleable.getCommonFontAttributes();
+        Color defaultColor = Color.BLACK;
+        Map<AttributedCharacterIterator.Attribute,Object> colorAttr =
+                currentAttributes.getIterator(new TextAttribute[] { TextAttribute.FOREGROUND }).getAttributes();
+        if (!colorAttr.isEmpty()) {
+            defaultColor = (Color) colorAttr.get(TextAttribute.FOREGROUND);
+        }
+        String title = NbBundle.getMessage(ForegroundColorAction.class, "MSG_ColorTitle");
+        Color chosenColor = JColorChooser.showDialog(WindowManager.getDefault().getMainWindow(), title, defaultColor);
+        if (chosenColor != null) {
+            AttributedString attributes = new AttributedString("ForegroundColor");
+            attributes.addAttribute(TextAttribute.FOREGROUND, chosenColor);
+            styleable.setFontAttributes(attributes);
+        }
     }
 }

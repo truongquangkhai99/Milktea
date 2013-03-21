@@ -15,12 +15,15 @@
  */
 package org.joeffice.desktop.actions;
 
-import java.awt.Font;
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
+import org.joeffice.desktop.ui.FontListTopComponent;
 import org.joeffice.desktop.ui.Styleable;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -53,9 +56,20 @@ public class ChooseFontAction extends AbstractAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent ae) {
         AttributedString attributes = new AttributedString("ChangeFont");
-        attributes.addAttribute(TextAttribute.FAMILY, Font.MONOSPACED);
-        styleable.setFontAttributes(attributes);
+        String fontName = ae.getActionCommand();
+        if (fontName == null || fontName.isEmpty()) {
+            FontListTopComponent fontList = new FontListTopComponent();
+            fontList.noSelectionListener();
+            DialogDescriptor dialogDesc = new DialogDescriptor(fontList, "Choose font", true, DialogDescriptor.OK_CANCEL_OPTION, null, null);
+            Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDesc);
+            dialog.setVisible(true);
+            fontName = fontList.getSelectedFontName();
+        }
+        if (fontName != null) {
+            attributes.addAttribute(TextAttribute.FAMILY, fontName);
+            styleable.setFontAttributes(attributes);
+        }
     }
 }
