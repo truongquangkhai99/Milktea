@@ -22,6 +22,7 @@ import java.util.Properties;
 import javax.swing.*;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.joeffice.desktop.file.OfficeDataObject;
 
@@ -88,6 +89,10 @@ public final class SpreadsheetTopComponent extends OfficeTopComponent {
 
     public JTable getSelectedTable() {
         return getSpreadsheetComponent().getSelectedSheet().getTable();
+    }
+
+    public Sheet getCurentSheet() {
+        return getSpreadsheetComponent().getSelectedSheet().getSheet();
     }
 
     @Override

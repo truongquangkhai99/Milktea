@@ -22,9 +22,10 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultEditorKit;
@@ -192,6 +193,21 @@ public class SheetComponent extends JPanel {
             @Override
             public void tableChanged(TableModelEvent e) {
                 getSpreadsheetComponent().setModified(true);
+            }
+        });
+        sheetTable.addPropertyChangeListener("singleRowHeight", new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                int rowChanged = (Integer) evt.getNewValue();
+                int newHeight = sheetTable.getRowHeight(rowChanged);
+                if (newHeight != sheetTable.getRowHeight(rowChanged)) {
+                    Row row = sheet.getRow(rowChanged);
+                    if (row == null) {
+                        row = sheet.createRow(rowChanged);
+                    }
+                    row.setHeight((short) newHeight);
+                }
             }
         });
     }

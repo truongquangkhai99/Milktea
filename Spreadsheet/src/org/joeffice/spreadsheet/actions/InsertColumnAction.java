@@ -18,6 +18,7 @@ package org.joeffice.spreadsheet.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
 import org.openide.awt.ActionID;
@@ -39,9 +40,9 @@ public final class InsertColumnAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        TopComponent currentTopComponent = TopComponent.getRegistry().getActivated();
-        if (currentTopComponent instanceof SpreadsheetTopComponent) {
-            JTable currentTable = ((SpreadsheetTopComponent) currentTopComponent).getSelectedTable();
+        SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
+        if (currentTopComponent != null) {
+            JTable currentTable = currentTopComponent.getSelectedTable();
             int selectedColumn = currentTable.getSelectedColumn();
             ((SheetTableModel) currentTable.getModel()).insertColumn(selectedColumn);
         }

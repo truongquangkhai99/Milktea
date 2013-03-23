@@ -99,9 +99,8 @@ public class CellRenderer extends DefaultTableCellRenderer {
     public static void decorateComponent(Cell cell, JComponent renderingComponent, JComponent defaultRenderer) {
         CellStyle style = cell.getCellStyle();
 
-        // Background
-        short backgroundIndex = style.getFillBackgroundColor();
-        Color backgroundColor = POIUtils.shortToColor(backgroundIndex);
+        // Background neither the index or the color works for XSSF cells
+        Color backgroundColor = POIUtils.poiToAwtColor(style.getFillBackgroundColorColor());
         if (backgroundColor != null) {
             renderingComponent.setBackground(backgroundColor);
         } else {

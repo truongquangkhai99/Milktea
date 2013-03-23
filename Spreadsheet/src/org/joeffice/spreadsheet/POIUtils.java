@@ -21,6 +21,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 
 /**
  * Utility methods for Cell and Row manipulation.
@@ -43,7 +44,24 @@ public class POIUtils {
             if (xlsColor != null) {
                 short[] rgb = xlsColor.getTriplet();
                 return new Color(rgb[0], rgb[1], rgb[2]);
+                //return Color.decode(xlsColor.getHexString());
             }
+        }
+        return null;
+    }
+
+    /**
+     * Converts a POI color to an AWT color.
+     */
+    public static Color poiToAwtColor(org.apache.poi.ss.usermodel.Color poiColor) {
+        if (poiColor instanceof XSSFColor) {
+            byte[] rgb = ((XSSFColor) poiColor).getARgb();
+            if (rgb != null)  {
+                return new Color(rgb[0], rgb[1], rgb[2]);
+            }
+        } else if (poiColor instanceof HSSFColor && !(poiColor instanceof HSSFColor.AUTOMATIC)) {
+            short[] rgb = ((HSSFColor) poiColor).getTriplet();
+            return new Color(rgb[0], rgb[1], rgb[2]);
         }
         return null;
     }
@@ -128,6 +146,9 @@ public class POIUtils {
     }
 
     public static String getFormattedText(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
         int type = cell.getCellType();
         if (type == Cell.CELL_TYPE_STRING) {
             return cell.getStringCellValue();

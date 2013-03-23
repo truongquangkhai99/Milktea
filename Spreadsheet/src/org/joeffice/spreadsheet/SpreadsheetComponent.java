@@ -152,10 +152,9 @@ public class SpreadsheetComponent extends JTabbedPane implements ChangeListener 
     }
 
     public static SpreadsheetComponent getSelectedInstance() {
-        TopComponent currentTopComponent = TopComponent.getRegistry().getActivated();
-        if (currentTopComponent instanceof SpreadsheetTopComponent) {
-
-            return (SpreadsheetComponent) ((OfficeTopComponent) currentTopComponent).getMainComponent();
+        SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
+        if (currentTopComponent != null) {
+            return (SpreadsheetComponent) currentTopComponent.getMainComponent();
         }
         return null;
     }

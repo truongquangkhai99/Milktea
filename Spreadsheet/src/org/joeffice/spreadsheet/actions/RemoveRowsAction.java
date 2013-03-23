@@ -15,11 +15,10 @@
  */
 package org.joeffice.spreadsheet.actions;
 
-import static javax.swing.Action.NAME;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
 import org.openide.awt.ActionID;
@@ -27,7 +26,6 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.TopComponent;
 
 /**
  * Remove the selected row(s).
@@ -48,9 +46,9 @@ public final class RemoveRowsAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        TopComponent currentTopComponent = TopComponent.getRegistry().getActivated();
-        if (currentTopComponent instanceof SpreadsheetTopComponent) {
-            JTable currentTable = ((SpreadsheetTopComponent) currentTopComponent).getSelectedTable();
+        SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
+        if (currentTopComponent != null) {
+            JTable currentTable = currentTopComponent.getSelectedTable();
             int[] selectedRows = currentTable.getSelectedRows();
 
             // This is no necessary true as the database may use another model
