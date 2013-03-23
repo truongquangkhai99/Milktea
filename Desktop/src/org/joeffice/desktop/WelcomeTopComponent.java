@@ -22,7 +22,7 @@ import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Top component which displays something.
+ * Top component which displays a welcome page (disabled for the moment).
  */
 @ConvertAsProperties(
         dtd = "-//org.joeffice.desktop//Welcome//EN",
@@ -31,7 +31,7 @@ import org.openide.util.NbBundle.Messages;
         preferredID = "WelcomeTopComponent")
         //iconBase="SET/PATH/TO/ICON/HERE",
         //persistenceType = TopComponent.PERSISTENCE_ALWAYS)
-@TopComponent.Registration(mode = "editor", openAtStartup = true)
+@TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.desktop.WelcomeTopComponent")
 @ActionReference(path = "Menu/Help" , position = 350)
 @TopComponent.OpenActionRegistration(
