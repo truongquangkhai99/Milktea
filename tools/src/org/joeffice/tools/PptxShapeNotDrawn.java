@@ -39,11 +39,8 @@ public class PptxShapeNotDrawn {
         JFrame mainFrame = new JFrame();
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setTitle(title);
-        JPanel contentPanel = new JPanel(new BorderLayout());
 
-        contentPanel.add(demo);
-
-        mainFrame.add(contentPanel);
+        mainFrame.add(demo);
         mainFrame.pack();
         mainFrame.setVisible(true);
     }
