@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.wordprocessor.view    ;
+package org.joeffice.wordprocessor.view;
 
 import org.joeffice.wordprocessor.DocxDocument;
 
@@ -46,85 +46,77 @@ public class SectionView extends BoxView {
      * @param height the height (inside of the insets) >= 0
      */
     protected void layout(int width, int height) {
-        DocxDocument doc=(DocxDocument)getDocument();
-        Insets margins=doc.getDocumentMargins();
-        this.setInsets((short)margins.top,(short)margins.left,(short)margins.bottom,(short)margins.right );
+        DocxDocument doc = (DocxDocument) getDocument();
+        Insets margins = doc.getDocumentMargins();
+        setInsets((short) margins.top, (short) margins.left, (short) margins.bottom, (short) margins.right);
 
-        if (doc.DOCUMENT_WIDTH>0) {
-            super.layout(doc.DOCUMENT_WIDTH-margins.left-margins.right,height);
-        }
-        else {
-            super.layout(width,height);
+        if (doc.DOCUMENT_WIDTH > 0) {
+            super.layout(doc.DOCUMENT_WIDTH - margins.left - margins.right, height);
+        } else {
+            super.layout(width, height);
         }
     }
+
     /**
-     * Determines the minimum span for this view along an
-     * axis.
+     * Determines the minimum span for this view along an axis.
      *
      * @param axis may be either View.X_AXIS or View.Y_AXIS
-     * @returns  the span the view would like to be rendered into >= 0.
-     *           Typically the view is told to render into the span
-     *           that is returned, although there is no guarantee.
-     *           The parent may choose to resize or break the view.
+     * @returns the span the view would like to be rendered into >= 0. Typically the view is told to render into the
+     * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      * @exception IllegalArgumentException for an invalid axis type
      */
     public float getMinimumSpan(int axis) {
-        if (axis==View.X_AXIS) {
-            DocxDocument doc=(DocxDocument)this.getDocument();
-            if (doc.DOCUMENT_WIDTH>0)
+        if (axis == View.X_AXIS) {
+            DocxDocument doc = (DocxDocument) getDocument();
+            if (doc.DOCUMENT_WIDTH > 0) {
                 return doc.DOCUMENT_WIDTH;
-            else
+            } else {
                 return super.getMinimumSpan(axis);
-        }
-        else {
+            }
+        } else {
             return super.getMinimumSpan(axis);
         }
     }
+
     /**
-     * Determines the maximum span for this view along an
-     * axis.
+     * Determines the maximum span for this view along an axis.
      *
      * @param axis may be either View.X_AXIS or View.Y_AXIS
-     * @returns  the span the view would like to be rendered into >= 0.
-     *           Typically the view is told to render into the span
-     *           that is returned, although there is no guarantee.
-     *           The parent may choose to resize or break the view.
+     * @returns the span the view would like to be rendered into >= 0. Typically the view is told to render into the
+     * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      * @exception IllegalArgumentException for an invalid axis type
      */
     public float getMaximumSpan(int axis) {
-        if (axis==View.X_AXIS) {
-            DocxDocument doc=(DocxDocument)this.getDocument();
-            if (doc.DOCUMENT_WIDTH>0)
+        if (axis == View.X_AXIS) {
+            DocxDocument doc = (DocxDocument) getDocument();
+            if (doc.DOCUMENT_WIDTH > 0) {
                 return doc.DOCUMENT_WIDTH;
-            else
+            } else {
                 return super.getMinimumSpan(axis);
-        }
-        else {
+            }
+        } else {
             return super.getMaximumSpan(axis);
         }
     }
+
     /**
-     * Determines the preferred span for this view along an
-     * axis.
+     * Determines the preferred span for this view along an axis.
      *
      * @param axis may be either View.X_AXIS or View.Y_AXIS
-     * @returns  the span the view would like to be rendered into >= 0.
-     *           Typically the view is told to render into the span
-     *           that is returned, although there is no guarantee.
-     *           The parent may choose to resize or break the view.
+     * @returns the span the view would like to be rendered into >= 0. Typically the view is told to render into the
+     * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      * @exception IllegalArgumentException for an invalid axis type
      */
     public float getPreferredSpan(int axis) {
-        if (axis==View.X_AXIS) {
-            DocxDocument doc=(DocxDocument)this.getDocument();
-            if (doc.DOCUMENT_WIDTH>0)
+        if (axis == View.X_AXIS) {
+            DocxDocument doc = (DocxDocument) getDocument();
+            if (doc.DOCUMENT_WIDTH > 0) {
                 return doc.DOCUMENT_WIDTH;
-            else
+            } else {
                 return super.getMinimumSpan(axis);
-        }
-        else {
+            }
+        } else {
             return super.getPreferredSpan(axis);
         }
     }
-
 }

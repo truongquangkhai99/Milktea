@@ -57,7 +57,7 @@ public class InsertTableDialog extends JDialog {
      */
     protected void init() {
         setModal(true);
-        this.setTitle("Insert table dialog");
+        setTitle("Insert table dialog");
 
         Color[] colors=new Color[4];
         colors[0]=Color.black;
@@ -66,14 +66,14 @@ public class InsertTableDialog extends JDialog {
         colors[3]=Color.blue;
         cbColors=new JComboBox(colors);
         cbColors.setRenderer(new ColorComboRenderer());
-        this.getContentPane().setLayout(new GridBagLayout());
-        this.getContentPane().add(new JLabel("Row count:"),new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE,new Insets(5,5,0,0),0,0));
-        this.getContentPane().add(new JLabel("Column count:"),new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE,new Insets(0,5,0,0),0,0));
-        this.getContentPane().add(new JLabel("Border color:"),new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE,new Insets(0,5,0,0),0,0));
+        getContentPane().setLayout(new GridBagLayout());
+        getContentPane().add(new JLabel("Row count:"),new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE,new Insets(5,5,0,0),0,0));
+        getContentPane().add(new JLabel("Column count:"),new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE,new Insets(0,5,0,0),0,0));
+        getContentPane().add(new JLabel("Border color:"),new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE,new Insets(0,5,0,0),0,0));
 
-        this.getContentPane().add(cbRowCount,new GridBagConstraints(1,0,2,1,1,0,GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH,new Insets(5,0,0,5),0,0));
-        this.getContentPane().add(cbColCount,new GridBagConstraints(1,1,2,1,1,0,GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH,new Insets(0,0,0,5),0,0));
-        this.getContentPane().add(cbColors,new GridBagConstraints(1,2,2,1,1,0,GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH,new Insets(0,0,0,5),0,0));
+        getContentPane().add(cbRowCount,new GridBagConstraints(1,0,2,1,1,0,GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH,new Insets(5,0,0,5),0,0));
+        getContentPane().add(cbColCount,new GridBagConstraints(1,1,2,1,1,0,GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH,new Insets(0,0,0,5),0,0));
+        getContentPane().add(cbColors,new GridBagConstraints(1,2,2,1,1,0,GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH,new Insets(0,0,0,5),0,0));
 
         JPanel p=new JPanel();
         JButton b=new JButton("Ok");
@@ -96,11 +96,11 @@ public class InsertTableDialog extends JDialog {
         b.addActionListener(lst);
         p.add(b);
 
-        this.getContentPane().add(p,new GridBagConstraints(2,3,1,1,0,0,GridBagConstraints.NORTHEAST,GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));
+        getContentPane().add(p,new GridBagConstraints(2,3,1,1,0,0,GridBagConstraints.NORTHEAST,GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));
 
-        this.getContentPane().add(new JLabel(),new GridBagConstraints(1,4,1,1,0,1,GridBagConstraints.NORTHEAST,GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));
+        getContentPane().add(new JLabel(),new GridBagConstraints(1,4,1,1,0,1,GridBagConstraints.NORTHEAST,GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));
 
-        this.pack();
+        pack();
     }
 
     /**

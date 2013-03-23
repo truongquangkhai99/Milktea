@@ -22,7 +22,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.SortedMap;
+import javax.swing.ImageIcon;
 
 import org.joeffice.wordprocessor.DocxDocument;
 
@@ -33,8 +36,14 @@ import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHighlight;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGridCol;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
 
 /**
  * Implements reader of document.
@@ -49,16 +58,20 @@ public class POIDocxReader {
      * document instance to the building (for the editor kit).
      */
     private DocxDocument document;
+
     /**
      * Document as read from POI library
      */
     private XWPFDocument poiDocument;
+
     /**
      * Current offset in the document for insert action.
      */
     private int currentOffset = 0;
     private SimpleAttributeSet parAttrs;
     private SimpleAttributeSet charAttrs;
+
+    private List<XWPFRun> runs = new ArrayList<>();
 
     /**
      * Builds new instance of reader.
@@ -92,7 +105,8 @@ public class POIDocxReader {
         iteratePart(poiDocument.getBodyElements());
 
         this.currentOffset = offset;
-        document.getDocumentProperties().put("XWPFDocument", poiDocument);
+        document.putProperty("XWPFDocument", poiDocument);
+        document.putProperty("XWPFRun", runs);
     }
 
     public void iteratePart(List<IBodyElement> content) throws BadLocationException {
@@ -208,47 +222,86 @@ public class POIDocxReader {
                 StyleConstants.setForeground(charAttrs, color);
             }
         }
-        // Not supported in POI
-            /*if (run.getHighlight() != null) {
-         String name = rPr.getHighlight().getVal();
-         Color color = decodeHighlightName(name);
-         StyleConstants.setBackground(charAttrs, color);
-         }*/
 
-        //iteratePictures(run.getEmbeddedPictures());
+        // Not working
+        if (run.getCTR().getRPr() != null && run.getCTR().getRPr().getHighlight() != null) {
+            STHighlightColor.Enum colorEnum = run.getCTR().getRPr().getHighlight().getVal();
+            Color color = decodeHighlightName(colorEnum);
+            StyleConstants.setBackground(charAttrs, color);
+        }
+
+        for (XWPFPicture picture : run.getEmbeddedPictures()) {
+            processPicture(picture);
+        }
         String text = run.toString();
         document.insertString(currentOffset, text, charAttrs);
         currentOffset += text.length();
+        runs.add(run);
     }
 
-    protected Color decodeHighlightName(String name) {
-        switch (name.toLowerCase()) {
-            case "yellow":
+    protected Color decodeHighlightName(STHighlightColor.Enum colorEnum) {
+        switch (colorEnum.intValue()) {
+            case STHighlightColor.INT_YELLOW:
+            case STHighlightColor.INT_DARK_YELLOW:
                 return Color.YELLOW;
-            case "blue":
+            case STHighlightColor.INT_BLUE:
+            case STHighlightColor.INT_DARK_BLUE:
                 return Color.BLUE;
-            case "cyan":
+            case STHighlightColor.INT_CYAN:
+            case STHighlightColor.INT_DARK_CYAN:
                 return Color.CYAN;
-            case "gray":
-                return Color.GRAY;
-            case "green":
+            case STHighlightColor.INT_LIGHT_GRAY:
+                return Color.LIGHT_GRAY;
+            case STHighlightColor.INT_DARK_GRAY:
+                return Color.DARK_GRAY;
+            case STHighlightColor.INT_GREEN:
+            case STHighlightColor.INT_DARK_GREEN:
                 return Color.GREEN;
-            case "magenta":
+            case STHighlightColor.INT_MAGENTA:
+            case STHighlightColor.INT_DARK_MAGENTA:
                 return Color.MAGENTA;
-            case "orange":
-                return Color.ORANGE;
-            case "pink":
-                return Color.PINK;
-            case "red":
+            case STHighlightColor.INT_RED:
+            case STHighlightColor.INT_DARK_RED:
                 return Color.RED;
-            case "white":
+            case STHighlightColor.INT_WHITE:
                 return Color.WHITE;
+            case STHighlightColor.INT_BLACK:
+                return Color.BLACK;
         }
         return null;
     }
 
     protected void processTable(XWPFTable table) throws BadLocationException {
+        int rowCount = table.getNumberOfRows();
+        int columnCount = 0;
+        for (XWPFTableRow row : table.getRows()) {
+            columnCount = Math.max(columnCount, row.getTableCells().size());
+        }
+        int[] rowsHeight = new int[rowCount];
+        int[] columnsWidth = new int[columnCount];
+        for (int i = 0; i < rowCount; i++) {
+            rowsHeight[i] = 1;
+        }
+        for (int i = 0; i < columnCount; i++) {
+            List<CTTblGridCol> colList = table.getCTTbl().getTblGrid().getGridColList();
+            columnsWidth[i] = colList.get(i).getW().intValue() / INDENTS_MULTIPLIER;
+        }
+        SimpleAttributeSet tableAttrs = new SimpleAttributeSet();
+        document.insertTable(currentOffset, rowCount, columnCount, tableAttrs, columnsWidth, rowsHeight);
+        for (XWPFTableRow row : table.getRows()) {
+            for (XWPFTableCell cell : row.getTableCells()) {
+                iteratePart(cell.getBodyElements());
+                currentOffset++;
+            }
+        }
+    }
 
+    protected void processPicture(XWPFPicture picture) throws BadLocationException {
+        byte[] pictureBytes = picture.getPictureData().getData();
+        ImageIcon image = new ImageIcon(pictureBytes);
+        image.setDescription(picture.getDescription());
+        document.insertPicture(image, currentOffset);
+        currentOffset++;
     }
 
     /*protected void processTable(XWPFTable table) throws BadLocationException {
@@ -309,9 +362,9 @@ public class POIDocxReader {
             }
         }
         return res;
-    }
+    }*/
 
-    protected void processDrawing(Drawing drawing) throws BadLocationException {
+    /*protected void processDrawing(Drawing drawing) throws BadLocationException {
         for (Object obj : drawing.getAnchorOrInline()) {
             if (obj instanceof Inline) {
                 Inline inline = (Inline) obj;
