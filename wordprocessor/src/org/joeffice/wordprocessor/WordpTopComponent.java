@@ -18,20 +18,14 @@ package org.joeffice.wordprocessor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.ElementIterator;
-import org.apache.poi.xwpf.usermodel.IBodyElement;
+
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
@@ -100,10 +94,11 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
                     JTextPane wordProcessor = (JTextPane) getMainComponent();
                     wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
                     document = wordProcessor.getDocument();
-                    document.addDocumentListener(WordpTopComponent.this);
-                    document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
                     poiDocument = (XWPFDocument) document.getProperty("XWPFDocument");
                     getDataObject().setDocument(poiDocument);
+                    document.addDocumentListener(WordpTopComponent.this);
+                    document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
+                    document.addDocumentListener(new DocumentUpdater(poiDocument));
                     //Spellchecker.register(wordProcessor); // Doesn't do anything (yet)
                     /*FindAction find = new FindAction();
                      getActionMap().put(find.getName(), find);
@@ -136,6 +131,11 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
         super.componentDeactivated();
     }
 
+    public static JTextPane getTextPane() {
+        WordpTopComponent wordProcessor = OfficeTopComponent.getSelectedComponent(WordpTopComponent.class);
+        return (JTextPane) wordProcessor.getMainComponent();
+    }
+
     @Override
     public void writeProperties(java.util.Properties properties) {
         super.writeProperties(properties);
@@ -148,56 +148,16 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
 
     @Override
     public void insertUpdate(DocumentEvent de) {
-        int offset = de.getOffset();
-        int length = de.getLength();
-        try {
-            String addedText = de.getDocument().getText(offset, length);
-            XWPFRun run = getRunAt(offset, de.getDocument());
-            if (run != null) {
-                //run.setText(addedText);
-                run.getCTR().getTArray(0).setStringValue(addedText); // modified text
-            }
-        } catch (BadLocationException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        setModified(true);
-    }
-
-    public XWPFRun getRunAt(int offset, Document doc) {
-        List<XWPFRun> runs = (List<XWPFRun>) doc.getProperty("XWPFRun");
-        int currentOffet = 0;
-        for (XWPFRun run : runs) {
-            currentOffet += run.toString().length();
-            if (currentOffet >= offset) {
-                return run;
-            }
-        }
-        return null;
+        getDataObject().setModified(true);
     }
 
     @Override
     public void removeUpdate(DocumentEvent de) {
-        setModified(true);
+        getDataObject().setModified(true);
     }
 
     @Override
     public void changedUpdate(DocumentEvent de) {
-        DefaultStyledDocument doc = (DefaultStyledDocument) de.getDocument();
-        System.out.println("de " + de);
-        System.out.println("de type " + de.getType());
-        System.out.println("de length " + de.getLength());
-        ElementIterator iter = new ElementIterator(de.getDocument());
-        for (Element elem = iter.first(); elem != null; elem = iter.next()) {
-            DocumentEvent.ElementChange change = de.getChange(elem);
-            if (change != null) { // null means there was no change in elem
-                System.out.println("Element " + elem.getName() + " (depth "
-                        + iter.depth() + ") changed its children: "
-                        + change.getChildrenRemoved().length
-                        + " children removed, "
-                        + change.getChildrenAdded().length
-                        + " children added.\n");
-            }
-        }
-        setModified(true);
+        getDataObject().setModified(true);
     }
 }

@@ -15,12 +15,12 @@
  */
 package org.joeffice.wordprocessor.app;
 
-import org.joeffice.wordprocessor.BorderAttributes;
-
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import java.awt.*;
+
+import org.joeffice.wordprocessor.BorderAttributes;
 
 /**
  * Contains border attributes properties. BorderColor and values.
@@ -30,6 +30,7 @@ import java.awt.*;
 public class BorderControl extends JPanel {
 
     public JComboBox colorCombo;
+
     public JCheckBox checkLeft = new JCheckBox("Left", true);
     public JCheckBox checkRight = new JCheckBox("Right", true);
     public JCheckBox checkTop = new JCheckBox("Top", true);

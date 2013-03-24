@@ -71,8 +71,6 @@ public class POIDocxReader {
     private SimpleAttributeSet parAttrs;
     private SimpleAttributeSet charAttrs;
 
-    private List<XWPFRun> runs = new ArrayList<>();
-
     /**
      * Builds new instance of reader.
      *
@@ -106,7 +104,6 @@ public class POIDocxReader {
 
         this.currentOffset = offset;
         document.putProperty("XWPFDocument", poiDocument);
-        document.putProperty("XWPFRun", runs);
     }
 
     public void iteratePart(List<IBodyElement> content) throws BadLocationException {
@@ -236,7 +233,6 @@ public class POIDocxReader {
         String text = run.toString();
         document.insertString(currentOffset, text, charAttrs);
         currentOffset += text.length();
-        runs.add(run);
     }
 
     protected Color decodeHighlightName(STHighlightColor.Enum colorEnum) {
@@ -304,98 +300,11 @@ public class POIDocxReader {
         currentOffset++;
     }
 
-    /*protected void processTable(XWPFTable table) throws BadLocationException {
-        TblPr tblPr = table.getTblPr();
-        TblGrid tblGrid = table.getTblGrid();
-        SimpleAttributeSet tableAttrs = new SimpleAttributeSet();
-        int cellCount = 0;
-        int rowCount = 0;
-        for (Object tblObj : table.getContent()) {
-            if (tblObj instanceof Tr) {
-                rowCount++;
-                Tr row = (Tr) tblObj;
-                cellCount = Math.max(cellCount, processRow(row));
-            }
-        }
-
-        int[] rowHeights = new int[rowCount];
-        for (int i = 0; i < rowHeights.length; i++) {
-            rowHeights[i] = 1;
-        }
-        int[] colWidths = new int[cellCount];
-        int i = 0;
-        for (TblGridCol col : tblGrid.getGridCol()) {
-            colWidths[i] = col.getW().intValue() / INDENTS_MULTIPLIER;
-            i++;
-        }
-
-        document.insertTable(currentOffset, rowCount, cellCount, tableAttrs, colWidths, rowHeights);
-        for (Object tblObj : table.getContent()) {
-            if (tblObj instanceof Tr) {
-                Tr row = (Tr) tblObj;
-                for (Object rowObj : row.getContent()) {
-                    if (rowObj instanceof Tc) {
-                        Tc cell = (Tc) rowObj;
-                        iteratePart(cell.getContent());
-                        currentOffset++;
-                    } else if (rowObj instanceof JAXBElement) {
-                        JAXBElement el = (JAXBElement) rowObj;
-                        if (el.getDeclaredType().equals(Tc.class)) {
-                            Tc cell = (Tc) el.getValue();
-                            iteratePart(cell.getContent());
-                            currentOffset++;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    protected int processRow(Tr row) throws BadLocationException {
-        int res = 0;
-        for (Object rowObj : row.getContent()) {
-            res++;
-            if (rowObj instanceof Tc) {
-                Tc cell = (Tc) rowObj;
-                TcPr tcPr = cell.getTcPr();
-//                iteratePart(cell.getContent());
-            }
-        }
-        return res;
-    }*/
-
-    /*protected void processDrawing(Drawing drawing) throws BadLocationException {
-        for (Object obj : drawing.getAnchorOrInline()) {
-            if (obj instanceof Inline) {
-                Inline inline = (Inline) obj;
-                String id = inline.getGraphic().getGraphicData().getPic().getBlipFill().getBlip().getEmbed();
-                insertImageFromId(id);
-            } else if (obj instanceof Anchor) {
-                Anchor anchor = (Anchor) obj;
-                String id = anchor.getGraphic().getGraphicData().getPic().getBlipFill().getBlip().getEmbed();
-                insertImageFromId(id);
-            }
-        }
-    }
-
-    private void insertImageFromId(String id) {
-        Relationship rel = wordMLPackage.getMainDocumentPart().getRelationshipsPart().getRelationshipByID(id);
-
-        Part p = wordMLPackage.getMainDocumentPart().getRelationshipsPart().getPart(rel);
-        ByteBuffer bb = ((BinaryPartAbstractImage) p).getBuffer();
-        byte[] bytes = new byte[bb.remaining()];
-        bb.get(bytes);
-        ImageIcon ii = new ImageIcon(bytes);
-        document.insertPicture(ii, currentOffset);
-        currentOffset++;
-    }*/
-
     public static void main(String[] args) throws Exception {
         if (args.length > 0) {
             String filePath = args[0];
             POIDocxReader reader = new POIDocxReader(new DocxDocument());
             reader.read(filePath, 0);
-
             System.out.println(reader.document.getText(0, reader.document.getLength()));
         }
     }

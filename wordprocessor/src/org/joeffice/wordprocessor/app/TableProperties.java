@@ -33,7 +33,7 @@ import java.awt.event.ActionListener;
  *
  * @author Stanislav Lapitsky
  */
-public class TableProperties extends JDialog {
+public class TableProperties extends JPanel {
 
     BorderControl bc = new BorderControl();
 
@@ -66,7 +66,7 @@ public class TableProperties extends JDialog {
      * Performs layout of dialog's inner controls.
      */
     protected void init() {
-        getContentPane().setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
         JPanel pAlign = new JPanel();
         pAlign.setBorder(new TitledBorder(new EtchedBorder(), "Align:"));
         pAlign.add(alignLeft);
@@ -76,15 +76,15 @@ public class TableProperties extends JDialog {
         group.add(alignCenter);
         group.add(alignRight);
 
-        getContentPane().add(pAlign, new GridBagConstraints(0, 0, 3, 1, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(pAlign, new GridBagConstraints(0, 0, 3, 1, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
-        getContentPane().add(bc, new GridBagConstraints(0, 1, 1, 3, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(bc, new GridBagConstraints(0, 1, 1, 3, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
-        getContentPane().add(new JLabel("Width:"), new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-        getContentPane().add(widthSpin, new GridBagConstraints(2, 1, 1, 1, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
-        getContentPane().add(new JLabel("Height:"), new GridBagConstraints(1, 2, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
-        getContentPane().add(heightSpin, new GridBagConstraints(2, 2, 1, 1, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 10, 0), 0, 0));
-        getContentPane().add(mc, new GridBagConstraints(1, 3, 2, 1, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+        add(new JLabel("Width:"), new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+        add(widthSpin, new GridBagConstraints(2, 1, 1, 1, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
+        add(new JLabel("Height:"), new GridBagConstraints(1, 2, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+        add(heightSpin, new GridBagConstraints(2, 2, 1, 1, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 10, 0), 0, 0));
+        add(mc, new GridBagConstraints(1, 3, 2, 1, 1, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
         JPanel p = new JPanel(new GridLayout(1, 2));
         JButton bOk = new JButton("Ok");
@@ -105,10 +105,9 @@ public class TableProperties extends JDialog {
             }
         };
         bCancel.addActionListener(lst);
-        getContentPane().add(p, new GridBagConstraints(2, 4, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+        add(p, new GridBagConstraints(2, 4, 1, 1, 0, 0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
-        getContentPane().add(new JLabel(""), new GridBagConstraints(2, 5, 1, 1, 0, 1, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-        pack();
+        add(new JLabel(""), new GridBagConstraints(2, 5, 1, 1, 0, 1, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
 
     /**
@@ -119,7 +118,6 @@ public class TableProperties extends JDialog {
      * @param el table element
      */
     public void setTable(Element el) {
-        setTitle("Table properties");
         table = (DocxDocument.TableElement) el;
         widthSpin.setValue(table.getWidth());
         widthSpin.setEnabled(false);
@@ -156,7 +154,6 @@ public class TableProperties extends JDialog {
      * @param el row element
      */
     public void setRow(Element el) {
-        setTitle("Row properties");
         row = (DocxDocument.RowElement) el;
         widthSpin.setValue(row.getWidth());
         widthSpin.setEnabled(false);
@@ -177,7 +174,6 @@ public class TableProperties extends JDialog {
      * @param el cell element
      */
     public void setCell(Element el) {
-        setTitle("Cell properties");
         cell = (DocxDocument.CellElement) el;
         widthSpin.setValue(cell.getWidth());
         widthSpin.setEnabled(true);

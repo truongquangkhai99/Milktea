@@ -31,70 +31,67 @@ import java.awt.event.FocusListener;
  *
  * @author	Stanislav Lapitsky
  */
-public class ParagraphDialog extends JDialog {
+public class ParagraphPanel extends JPanel {
 
     /**
      * return option value
      */
-    protected int m_option = JOptionPane.CLOSED_OPTION;
+    protected int option = JOptionPane.CLOSED_OPTION;
     /**
      * Paragraph attributes
      */
-    protected MutableAttributeSet m_attributes;
+    protected MutableAttributeSet attributes;
     /**
      * contains line spacing value
      */
-    protected DoubleSpinEdit m_lineSpacing;
+    protected DoubleSpinEdit lineSpacing;
     /**
      * contains value of above spacing
      */
-    protected DoubleSpinEdit m_spaceAbove;
+    protected DoubleSpinEdit spaceAbove;
     /**
      * contains value of below spacing
      */
-    protected DoubleSpinEdit m_spaceBelow;
+    protected DoubleSpinEdit spaceBelow;
     /**
      * contains value of indent of first line of paragraph text
      */
-    protected DoubleSpinEdit m_firstIndent;
+    protected DoubleSpinEdit firstIndent;
     /**
      * contains value of left paragraph indent
      */
-    protected DoubleSpinEdit m_leftIndent;
+    protected DoubleSpinEdit leftIndent;
     /**
      * contains value of right paragraph indent
      */
-    protected DoubleSpinEdit m_rightIndent;
+    protected DoubleSpinEdit rightIndent;
     /**
      * if button is pressed then paragraph alignment sets to the left
      */
-    protected JToggleButton m_btLeft;
+    protected JToggleButton btLeft;
     /**
      * if button is pressed then paragraph alignment sets to the center
      */
-    protected JToggleButton m_btCenter;
+    protected JToggleButton btCenter;
     /**
      * if button is pressed then paragraph alignment sets to the right
      */
-    protected JToggleButton m_btRight;
+    protected JToggleButton btRight;
     /**
      * if button is pressed then paragraph alignment sets to the justify
      */
-    protected JToggleButton m_btJustified;
+    protected JToggleButton btJustified;
     /**
      * reflects paragraph with specified attributes view
      */
-    protected JEditorPane m_preview;
+    protected JEditorPane preview;
 
-    /**
-     * constructs instance of dialog
-     *
-     * @param	parent parent window frame
-     */
-    public ParagraphDialog(JFrame parent) {
-        super(parent, "Paragraph properties", true);
-        setModal(true);
-        getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+    public ParagraphPanel() {
+        init();
+    }
+
+    protected void init() {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         JPanel p = new JPanel(new GridLayout(1, 2, 5, 2));
 
@@ -102,82 +99,82 @@ public class ParagraphDialog extends JDialog {
         ps.setBorder(new TitledBorder(new EtchedBorder(), "Space"));
         ps.add(new JLabel("Line spacing"));
         //space between lines
-        m_lineSpacing = new DoubleSpinEdit();
-        m_lineSpacing.setMinValue(1);
-        m_lineSpacing.setMaxValue(5);
-        ps.add(m_lineSpacing);
+        lineSpacing = new DoubleSpinEdit();
+        lineSpacing.setMinValue(1);
+        lineSpacing.setMaxValue(5);
+        ps.add(lineSpacing);
         ps.add(new JLabel("Space above"));
         //space above the paragraph
-        m_spaceAbove = new DoubleSpinEdit();
-        m_spaceAbove.setMinValue(0);
-        m_spaceAbove.setMaxValue(500);
-        ps.add(m_spaceAbove);
+        spaceAbove = new DoubleSpinEdit();
+        spaceAbove.setMinValue(0);
+        spaceAbove.setMaxValue(500);
+        ps.add(spaceAbove);
         ps.add(new JLabel("Space below"));
         //space below the paragraph
-        m_spaceBelow = new DoubleSpinEdit();
-        m_spaceBelow.setMinValue(0);
-        m_spaceBelow.setMaxValue(500);
-        ps.add(m_spaceBelow);
+        spaceBelow = new DoubleSpinEdit();
+        spaceBelow.setMinValue(0);
+        spaceBelow.setMaxValue(500);
+        ps.add(spaceBelow);
         p.add(ps);
 
         JPanel pi = new JPanel(new GridLayout(3, 2, 10, 2));
         pi.setBorder(new TitledBorder(new EtchedBorder(), "Indent"));
         pi.add(new JLabel("First line indent"));
         // ident before first line
-        m_firstIndent = new DoubleSpinEdit();
-        m_firstIndent.setMinValue(-500);
-        m_firstIndent.setMaxValue(500);
-        pi.add(m_firstIndent);
+        firstIndent = new DoubleSpinEdit();
+        firstIndent.setMinValue(-500);
+        firstIndent.setMaxValue(500);
+        pi.add(firstIndent);
         pi.add(new JLabel("Left indent"));
         //left paragraph ident
-        m_leftIndent = new DoubleSpinEdit();
-        m_leftIndent.setMinValue(0);
-        m_leftIndent.setMaxValue(500);
-        pi.add(m_leftIndent);
+        leftIndent = new DoubleSpinEdit();
+        leftIndent.setMinValue(0);
+        leftIndent.setMaxValue(500);
+        pi.add(leftIndent);
         pi.add(new JLabel("Right indent"));
         //right paragraph ident
-        m_rightIndent = new DoubleSpinEdit();
-        m_rightIndent.setMinValue(0);
-        m_rightIndent.setMaxValue(500);
-        pi.add(m_rightIndent);
+        rightIndent = new DoubleSpinEdit();
+        rightIndent.setMinValue(0);
+        rightIndent.setMaxValue(500);
+        pi.add(rightIndent);
         p.add(pi);
-        getContentPane().add(p);
+        add(p);
 
         p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
         p.add(new JLabel("Alignment"));
 
         ButtonGroup bg = new ButtonGroup();
-        m_btLeft = new JToggleButton("Left");
-        bg.add(m_btLeft);
-        p.add(m_btLeft);
-        m_btCenter = new JToggleButton("Center");
-        bg.add(m_btCenter);
-        p.add(m_btCenter);
-        m_btRight = new JToggleButton("Right");
-        bg.add(m_btRight);
-        p.add(m_btRight);
-        m_btJustified = new JToggleButton("Justified");
-        bg.add(m_btJustified);
-        p.add(m_btJustified);
-        getContentPane().add(p);
+        btLeft = new JToggleButton("Left");
+        bg.add(btLeft);
+        p.add(btLeft);
+        btCenter = new JToggleButton("Center");
+        bg.add(btCenter);
+        p.add(btCenter);
+        btRight = new JToggleButton("Right");
+        bg.add(btRight);
+        p.add(btRight);
+        btJustified = new JToggleButton("Justified");
+        bg.add(btJustified);
+        p.add(btJustified);
+        add(p);
 
         p = new JPanel();
         p.setLayout(new BorderLayout());
         p.setBorder(new TitledBorder(new EtchedBorder(), "Preview"));
-        m_preview = new JEditorPane();
-        m_preview.setEditorKit(new StyledEditorKit());
-        m_preview.setEnabled(false);
-        m_preview.setText("Previous paragraph\nParagraph preview, paragraph preview, paragraph preview, paragraph preview\nNext paragraph");
+        preview = new JEditorPane();
+        preview.setEditorKit(new StyledEditorKit());
+        preview.setEnabled(false);
+        preview.setText("Previous paragraph\nParagraph preview, paragraph preview, paragraph preview, paragraph preview\nNext paragraph");
 
-        StyledDocument styled = (StyledDocument) m_preview.getDocument();
+        StyledDocument styled = (StyledDocument) preview.getDocument();
         SimpleAttributeSet attr = new SimpleAttributeSet();
         StyleConstants.setFontSize(attr, 6);
         styled.setCharacterAttributes(0, styled.getLength(), attr, false);
 
-        JScrollPane scroll = new JScrollPane(m_preview);
+        JScrollPane scroll = new JScrollPane(preview);
         p.add(scroll, BorderLayout.CENTER);
-        getContentPane().add(p);
+        add(p);
 
         p = new JPanel(); //new FlowLayout());
         //JPanel p1 = new JPanel(new GridLayout(1, 2, 10, 2));
@@ -187,7 +184,7 @@ public class ParagraphDialog extends JDialog {
                 /*
                  * processing OK button pressing
                  */
-                m_option = JOptionPane.OK_OPTION;
+                option = JOptionPane.OK_OPTION;
                 setVisible(false);
             }
         };
@@ -201,7 +198,7 @@ public class ParagraphDialog extends JDialog {
                 /*
                  * processing CANCEL button pressing
                  */
-                m_option = JOptionPane.CANCEL_OPTION;
+                option = JOptionPane.CANCEL_OPTION;
                 setVisible(false);
             }
         };
@@ -210,17 +207,7 @@ public class ParagraphDialog extends JDialog {
         //p.add(p1);
         p.add(btCancel);
 
-        getContentPane().add(p);
-
-        pack();
-        /*
-         * place dialog in the center of container
-         */
-        Dimension d1 = getSize();
-        Dimension d2 = parent.getSize();
-        int x = Math.max((d2.width - d1.width) / 2, 0);
-        int y = Math.max((d2.height - d1.height) / 2, 0);
-        setBounds(x, y, d1.width, d1.height + 50);
+        add(p);
 
         /*
          * when we lost focus of paragraph properties controls we should update
@@ -234,22 +221,22 @@ public class ParagraphDialog extends JDialog {
                 updatePreview();
             }
         };
-        m_lineSpacing.addFocusListener(flst);
-        m_spaceAbove.addFocusListener(flst);
-        m_spaceBelow.addFocusListener(flst);
-        m_firstIndent.addFocusListener(flst);
-        m_leftIndent.addFocusListener(flst);
-        m_rightIndent.addFocusListener(flst);
+        lineSpacing.addFocusListener(flst);
+        spaceAbove.addFocusListener(flst);
+        spaceBelow.addFocusListener(flst);
+        firstIndent.addFocusListener(flst);
+        leftIndent.addFocusListener(flst);
+        rightIndent.addFocusListener(flst);
 
         lst = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updatePreview();
             }
         };
-        m_btLeft.addActionListener(lst);
-        m_btCenter.addActionListener(lst);
-        m_btRight.addActionListener(lst);
-        m_btJustified.addActionListener(lst);
+        btLeft.addActionListener(lst);
+        btCenter.addActionListener(lst);
+        btRight.addActionListener(lst);
+        btJustified.addActionListener(lst);
     }
 
     /**
@@ -258,7 +245,7 @@ public class ParagraphDialog extends JDialog {
      * @param	a settable attributes
      */
     public void setAttributes(AttributeSet a) {
-        m_attributes = new SimpleAttributeSet(a);
+        attributes = new SimpleAttributeSet(a);
 
         float newValue;
 
@@ -266,32 +253,32 @@ public class ParagraphDialog extends JDialog {
         if (value < 1) {
             value = 1;
         }
-        m_lineSpacing.setValue(value);
+        lineSpacing.setValue(value);
 
         newValue = StyleConstants.getSpaceAbove(a);
-        m_spaceAbove.setValue(PixelConverter.converPixelsToInches((int) newValue));
+        spaceAbove.setValue(PixelConverter.converPixelsToInches((int) newValue));
 
         newValue = StyleConstants.getSpaceBelow(a);
-        m_spaceBelow.setValue(PixelConverter.converPixelsToInches((int) newValue));
+        spaceBelow.setValue(PixelConverter.converPixelsToInches((int) newValue));
 
         newValue = StyleConstants.getFirstLineIndent(a);
-        m_firstIndent.setValue(PixelConverter.converPixelsToInches((int) newValue));
+        firstIndent.setValue(PixelConverter.converPixelsToInches((int) newValue));
 
         newValue = StyleConstants.getLeftIndent(a);
-        m_leftIndent.setValue(PixelConverter.converPixelsToInches((int) newValue));
+        leftIndent.setValue(PixelConverter.converPixelsToInches((int) newValue));
 
         newValue = StyleConstants.getRightIndent(a);
-        m_rightIndent.setValue(PixelConverter.converPixelsToInches((int) newValue));
+        rightIndent.setValue(PixelConverter.converPixelsToInches((int) newValue));
 
         int alignment = StyleConstants.getAlignment(a);
         if (alignment == StyleConstants.ALIGN_LEFT) {
-            m_btLeft.setSelected(true);
+            btLeft.setSelected(true);
         } else if (alignment == StyleConstants.ALIGN_CENTER) {
-            m_btCenter.setSelected(true);
+            btCenter.setSelected(true);
         } else if (alignment == StyleConstants.ALIGN_RIGHT) {
-            m_btRight.setSelected(true);
+            btRight.setSelected(true);
         } else if (alignment == StyleConstants.ALIGN_JUSTIFIED) {
-            m_btJustified.setSelected(true);
+            btJustified.setSelected(true);
         }
 
         updatePreview();
@@ -301,40 +288,49 @@ public class ParagraphDialog extends JDialog {
      * @return current paragraph attributes
      */
     public AttributeSet getAttributes() {
-        if (m_attributes == null) {
+        if (attributes == null) {
             return null;
         }
 
         double newValue;
 
-        newValue = (double) m_lineSpacing.getValue();
-        StyleConstants.setLineSpacing(m_attributes, (float) newValue);
+        newValue = (double) lineSpacing.getValue();
+        StyleConstants.setLineSpacing(attributes, (float) newValue);
 
-        newValue = (double) m_spaceAbove.getValue();
-        StyleConstants.setSpaceAbove(m_attributes, PixelConverter.converInchesToPixels(newValue));
+        newValue = (double) spaceAbove.getValue();
+        StyleConstants.setSpaceAbove(attributes, PixelConverter.converInchesToPixels(newValue));
 
-        newValue = (double) m_spaceBelow.getValue();
-        StyleConstants.setSpaceBelow(m_attributes, PixelConverter.converInchesToPixels(newValue));
+        newValue = (double) spaceBelow.getValue();
+        StyleConstants.setSpaceBelow(attributes, PixelConverter.converInchesToPixels(newValue));
 
-        newValue = (double) m_firstIndent.getValue();
-        StyleConstants.setFirstLineIndent(m_attributes, PixelConverter.converInchesToPixels(newValue));
+        newValue = (double) firstIndent.getValue();
+        StyleConstants.setFirstLineIndent(attributes, PixelConverter.converInchesToPixels(newValue));
 
-        newValue = (double) m_leftIndent.getValue();
-        StyleConstants.setLeftIndent(m_attributes, PixelConverter.converInchesToPixels(newValue));
+        newValue = (double) leftIndent.getValue();
+        StyleConstants.setLeftIndent(attributes, PixelConverter.converInchesToPixels(newValue));
 
-        newValue = (double) m_rightIndent.getValue();
-        StyleConstants.setRightIndent(m_attributes, PixelConverter.converInchesToPixels(newValue));
+        newValue = (double) rightIndent.getValue();
+        StyleConstants.setRightIndent(attributes, PixelConverter.converInchesToPixels(newValue));
 
-        StyleConstants.setAlignment(m_attributes, getAlignment());
+        StyleConstants.setAlignment(attributes, getAlignment());
 
-        return m_attributes;
+        return attributes;
+    }
+
+    public JDialog showDialog(JFrame parent) {
+        JDialog dialog = new JDialog(parent, "Paragraph properties", true);
+        dialog.setModal(true);
+        dialog.add(this);
+        dialog.pack();
+        dialog.setVisible(true);
+        return dialog;
     }
 
     /**
      * return how user closed the dialog
      */
     public int getOption() {
-        return m_option;
+        return option;
     }
 
     /**
@@ -342,22 +338,22 @@ public class ParagraphDialog extends JDialog {
      */
     protected void updatePreview() {
         AttributeSet a = getAttributes();
-        StyledDocument styled = (StyledDocument) m_preview.getDocument();
+        StyledDocument styled = (StyledDocument) preview.getDocument();
         styled.setParagraphAttributes(20, 0, a, false);
-//    m_preview.repaint();
+//    preview.repaint();
     }
 
     /**
      * @return paragraph alignment
-   *
+     *
      */
     protected int getAlignment() {
-        if (m_btLeft.isSelected()) {
+        if (btLeft.isSelected()) {
             return StyleConstants.ALIGN_LEFT;
         }
-        if (m_btCenter.isSelected()) {
+        if (btCenter.isSelected()) {
             return StyleConstants.ALIGN_CENTER;
-        } else if (m_btRight.isSelected()) {
+        } else if (btRight.isSelected()) {
             return StyleConstants.ALIGN_RIGHT;
         } else {
             return StyleConstants.ALIGN_JUSTIFIED;

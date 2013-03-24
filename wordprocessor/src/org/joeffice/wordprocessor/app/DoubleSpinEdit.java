@@ -19,6 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -32,31 +33,37 @@ public class DoubleSpinEdit extends JPanel {
     /**
      * Text field to user's input.
      */
-    protected JTextField m_textValue;
+    protected JTextField textValue;
+
     /**
      * current value.
      */
     protected double value = 0;
+
     /**
      * least value of SpinEdit.
      */
     protected double minValue = 0;
+
     /**
      * greatest value of SpinEdit.
      */
     protected double maxValue = 0;
+
     /**
      * step value to increase/decrease.
      */
     protected double step = 1;
+
     /**
      * if user press this button value is increased.
      */
-    protected JButton m_bUp;
+    protected JButton bUp;
+
     /**
      * if user press this button value is decreased.
      */
-    protected JButton m_bDown;
+    protected JButton bDown;
 
     /**
      * Constructs new instance with specified minimum and maximum values.
@@ -90,14 +97,13 @@ public class DoubleSpinEdit extends JPanel {
      */
     public DoubleSpinEdit() {
         super(new BorderLayout());
-        ActionListener lst;
-        FocusListener lst_;
 
-        m_textValue = new JTextField("0");
-        lst_ = new FocusListener() {
+        textValue = new JTextField("0");
+        FocusListener focusLostListener = new FocusAdapter() {
+            @Override
             public void focusLost(FocusEvent e) {
                 try {
-                    double v = new Double(m_textValue.getText()).doubleValue();
+                    double v = new Double(textValue.getText()).doubleValue();
                     if ((v <= maxValue) && (v >= minValue) && (minValue < maxValue)) {
                         value = v;
                     } else if (v > maxValue) {
@@ -109,18 +115,16 @@ public class DoubleSpinEdit extends JPanel {
                 }
                 draw();
             }
-
-            public void focusGained(FocusEvent e) {
-            }
         };
-        m_textValue.addFocusListener(lst_);
-        add(m_textValue, BorderLayout.CENTER);
+        textValue.addFocusListener(focusLostListener);
+        add(textValue, BorderLayout.CENTER);
 
         JPanel p = new JPanel(new GridLayout(2, 1));
-        m_bUp = new UpButton();
-        m_bUp.setMargin(new Insets(0, 0, 0, 0));
-        m_bUp.setPreferredSize(new Dimension(20, 5));
-        lst = new ActionListener() {
+        bUp = new UpButton();
+        bUp.setMargin(new Insets(0, 0, 0, 0));
+        bUp.setPreferredSize(new Dimension(20, 5));
+        ActionListener upAction = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if ((value + step <= maxValue) && (value + step >= minValue) && (minValue < maxValue)) {
                     value += step;
@@ -128,13 +132,14 @@ public class DoubleSpinEdit extends JPanel {
                 }
             }
         };
-        m_bUp.addActionListener(lst);
-        p.add(m_bUp);
+        bUp.addActionListener(upAction);
+        p.add(bUp);
 
-        m_bDown = new DownButton();
-        m_bDown.setMargin(new Insets(0, 0, 0, 0));
-        m_bDown.setPreferredSize(new Dimension(20, 5));
-        lst = new ActionListener() {
+        bDown = new DownButton();
+        bDown.setMargin(new Insets(0, 0, 0, 0));
+        bDown.setPreferredSize(new Dimension(20, 5));
+        ActionListener downAction = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if ((value - step <= maxValue) && (value - step >= minValue) && (minValue < maxValue)) {
                     value -= step;
@@ -142,8 +147,8 @@ public class DoubleSpinEdit extends JPanel {
                 }
             }
         };
-        m_bDown.addActionListener(lst);
-        p.add(m_bDown);
+        bDown.addActionListener(downAction);
+        p.add(bDown);
         add(p, BorderLayout.EAST);
     }
 
@@ -151,7 +156,7 @@ public class DoubleSpinEdit extends JPanel {
      * repaint text presentation of double value.
      */
     private void draw() {
-        m_textValue.setText(Double.toString(value));
+        textValue.setText(Double.toString(value));
     }
 
     /**
@@ -219,16 +224,19 @@ public class DoubleSpinEdit extends JPanel {
         step = newValue;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        m_textValue.setEnabled(enabled);
-        m_bUp.setEnabled(enabled);
-        m_bDown.setEnabled(enabled);
+        textValue.setEnabled(enabled);
+        bUp.setEnabled(enabled);
+        bDown.setEnabled(enabled);
     }
-//--- inner classes ------------------------------------------------------------
+
+    //--- inner classes ------------------------------------------------------------
 
     protected class UpButton extends JButton {
 
+        @Override
         public void paint(Graphics g) {
             super.paint(g);
             Color old = g.getColor();
@@ -243,6 +251,7 @@ public class DoubleSpinEdit extends JPanel {
 
     protected class DownButton extends JButton {
 
+        @Override
         public void paint(Graphics g) {
             super.paint(g);
             Color old = g.getColor();

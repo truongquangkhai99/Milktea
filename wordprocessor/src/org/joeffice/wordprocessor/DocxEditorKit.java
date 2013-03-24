@@ -20,10 +20,10 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.ViewFactory;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import org.joeffice.wordprocessor.reader.POIDocxReader;
 import org.joeffice.wordprocessor.view.DocxViewFactory;
-import org.joeffice.wordprocessor.writer.DocxWriter;
 
 /**
  * This is the implementation of editing functionality.
@@ -107,8 +107,8 @@ public class DocxEditorKit extends StyledEditorKit {
     @Override
     public void write(OutputStream out, Document doc, int pos, int len)
             throws IOException, BadLocationException {
-        DocxWriter writer = new DocxWriter(doc);
-        writer.write(out, pos, len);
+        XWPFDocument poiDocument = (XWPFDocument) doc.getProperty("XWPFDocument");
+        poiDocument.write(out);
     }
 
     /**
@@ -138,8 +138,10 @@ public class DocxEditorKit extends StyledEditorKit {
      */
     public void write(String fileName, Document doc)
             throws IOException, BadLocationException {
-        DocxWriter writer = new DocxWriter(doc);
-        writer.write(fileName);
+        XWPFDocument poiDocument = (XWPFDocument) doc.getProperty("XWPFDocument");
+        try (FileOutputStream out = new FileOutputStream(fileName)) {
+            poiDocument.write(out);
+        }
     }
 
     /**
