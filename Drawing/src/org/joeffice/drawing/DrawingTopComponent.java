@@ -85,14 +85,6 @@ public final class DrawingTopComponent extends OfficeTopComponent {
         JSVGCanvas svgCanvas = (JSVGCanvas) getMainComponent();
         try {
             String uri = Utilities.toURI(svgFile).toURL().toString();
-            svgCanvas.addSVGDocumentLoaderListener(new SVGDocumentLoaderAdapter() {
-
-                @Override
-                public void documentLoadingCompleted(SVGDocumentLoaderEvent svgdle) {
-                    // The loaded document is a org.apache.batik.dom.svg.SVGOMDocument
-                    setModified(false);
-                }
-            });
             svgCanvas.setURI(uri);
         } catch (MalformedURLException ex) {
             Exceptions.printStackTrace(ex);
