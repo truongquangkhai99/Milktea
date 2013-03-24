@@ -236,7 +236,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     public void changedUpdate(DocumentEvent de) {
         try {
             ((XSLFTextShape) shape).setText(de.getDocument().getText(0, de.getDocument().getLength()));
-            getSlideComponent().getSlidesComponent().setModified(true);
+            getSlideComponent().getSlidesComponent().getDataObject().setModified(true);
         } catch (BadLocationException ex) {
             Exceptions.printStackTrace(ex);
         }
