@@ -17,6 +17,9 @@ package org.joeffice.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
@@ -29,12 +32,10 @@ import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
-import org.openide.nodes.CookieSet;
-import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * The data object to deal with .h2.db (H2 database)  files.
+ * The data object to deal with .h2.db (H2 database) files.
  *
  * @author Anthony Goubard - Japplis
  */
@@ -106,7 +107,7 @@ public class H2DataObject extends OfficeDataObject {
 
     public H2DataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
-   }
+    }
 
     @Override
     public OfficeTopComponent open(OfficeDataObject dataObject) {
@@ -116,5 +117,15 @@ public class H2DataObject extends OfficeDataObject {
     @Override
     public void save(File file) throws IOException {
         // later connection.commit();
+    }
+
+    public static Connection getConnection(File h2File) throws ClassNotFoundException, SQLException {
+        Class.forName("org.h2.Driver");
+        String filePath = h2File.getAbsolutePath().replace('\\', '/');
+        if (filePath.endsWith(".h2.db")) {
+            filePath = filePath.substring(0, filePath.length() - 6);
+        }
+        Connection dbConnection = DriverManager.getConnection("jdbc:h2:" + filePath, "sa", "");
+        return dbConnection;
     }
 }

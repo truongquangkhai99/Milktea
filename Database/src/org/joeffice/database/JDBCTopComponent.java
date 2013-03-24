@@ -17,9 +17,10 @@ package org.joeffice.database;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -59,6 +60,7 @@ import org.openide.util.NbBundle.Messages;
 public final class JDBCTopComponent extends OfficeTopComponent {
 
     private transient Connection dbConnection;
+    private List<String> tableNames;
 
     public JDBCTopComponent() {
     }
@@ -77,15 +79,12 @@ public final class JDBCTopComponent extends OfficeTopComponent {
     @Override
     public void loadDocument(File h2File) {
         try {
-            Class.forName("org.h2.Driver");
-            String filePath = h2File.getAbsolutePath().replace('\\', '/');
-            if (filePath.endsWith(".h2.db")) {
-                filePath = filePath.substring(0, filePath.length() - 6);
-            }
-            dbConnection = DriverManager.getConnection("jdbc:h2:" + filePath, "sa", "");
+            dbConnection = H2DataObject.getConnection(h2File);
             ResultSet rsTableNames = dbConnection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
+            tableNames = new ArrayList<>();
             while (rsTableNames.next()) {
                 String nextTableName = rsTableNames.getString("TABLE_NAME");
+                tableNames.add(nextTableName);
 
                 TableComponent tableComp = new TableComponent(dbConnection, nextTableName);
 
@@ -98,11 +97,6 @@ public final class JDBCTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    public void componentOpened() {
-        // TODO add custom code on component opening
-    }
-
-    @Override
     public void componentClosed() {
         if (dbConnection != null) {
             try {
@@ -111,6 +105,10 @@ public final class JDBCTopComponent extends OfficeTopComponent {
                 Exceptions.printStackTrace(ex);
             }
         }
+    }
+
+    public List<String> getTableNames() {
+        return tableNames;
     }
 
     @Override

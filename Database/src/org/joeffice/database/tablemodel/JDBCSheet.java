@@ -15,9 +15,7 @@
  */
 package org.joeffice.database.tablemodel;
 
-import com.sun.rowset.JdbcRowSetImpl;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -27,6 +25,7 @@ import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
+
 import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.openide.util.Exceptions;
