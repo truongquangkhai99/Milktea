@@ -16,6 +16,8 @@
 package org.joeffice.desktop.ui;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,6 +27,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
 
@@ -84,6 +88,20 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         setName(documentFileObject.getName());
         File documentFile = FileUtil.toFile(documentFileObject);
         loadDocument(documentFile);
+        getDataObject().addPropertyChangeListener(new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals(DataObject.PROP_MODIFIED)) {
+                    boolean modified = (Boolean) evt.getNewValue();
+                    if (modified) {
+                        setHtmlDisplayName("<html><body><b>" + getDataObject().getName());
+                    } else {
+                        setHtmlDisplayName("<html><body>" + getDataObject().getName());
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -163,15 +181,6 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     @Override
     public void componentClosed() {
         // TODO add custom code on component closing
-    }
-
-    public void setModified(boolean modified) {
-        getDataObject().setModified(modified);
-        if (modified) {
-            setHtmlDisplayName("<html><body><b>" + getDataObject().getName() + "</b></body></html>");
-        } else {
-            setHtmlDisplayName("<html><body>" + getDataObject().getName() + "</body></html>");
-        }
     }
 
     @Override

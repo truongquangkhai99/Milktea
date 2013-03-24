@@ -97,6 +97,15 @@
     <file name="D-O.shadow">
       <attr name="originalFile" stringvalue="Actions/System/org-netbeans-modules-openfile-OpenFileAction.instance"/>
     </file>
+    <file name="D-S.shadow">
+      <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAction.instance"/>
+    </file>
+    <file name="DS-S.shadow">
+      <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAllAction.instance"/>
+    </file>
+    <file name="A-S.shadow">
+      <attr name="originalFile" stringvalue="Actions/System/org-openide-actions-SaveAsAction.instance"/>
+    </file>
     <file name="D-Z.shadow">
       <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-UndoAction.instance"/>
     </file>
