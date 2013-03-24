@@ -22,6 +22,7 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -60,12 +61,12 @@ public class RowEventsListeners implements PropertyChangeListener, ListSelection
     @Override
     public void valueChanged(ListSelectionEvent lse) {
         ListSelectionModel rowSelectionModel = rowTable.getSelectionModel();
-        ListSelectionModel dataSelectionModel = rowTable.getDataTable().getSelectionModel();
-        for(int i = lse.getFirstIndex(); i<=lse.getLastIndex(); i++) {
+        JTable dataTable = rowTable.getDataTable();
+        for (int i = lse.getFirstIndex(); i <= lse.getLastIndex(); i++) {
             if (rowSelectionModel.isSelectedIndex(i)) {
-                dataSelectionModel.addSelectionInterval(i, i);
+                dataTable.addRowSelectionInterval(i, i);
             } else {
-                dataSelectionModel.removeSelectionInterval(i, i);
+                dataTable.removeRowSelectionInterval(i, i);
             }
         }
     }
@@ -73,15 +74,15 @@ public class RowEventsListeners implements PropertyChangeListener, ListSelection
     private void showPopup(MouseEvent me) {
         if (me.isPopupTrigger()) {
             /*Action insertAction = Utilities.actionsForPath("Actions/Build/org-joeffice-spreadsheet-actions-InsertRowsAction").get(0);
-            Action removeAction = Utilities.actionsForPath("Actions/Build/org-joeffice-spreadsheet-actions-RemoveRowsAction").get(0);
-            JPopupMenu menu = Utilities.actionsToPopup(new Action[] {insertAction, removeAction}, me.getComponent());*/
+             Action removeAction = Utilities.actionsForPath("Actions/Build/org-joeffice-spreadsheet-actions-RemoveRowsAction").get(0);
+             JPopupMenu menu = Utilities.actionsToPopup(new Action[] {insertAction, removeAction}, me.getComponent());*/
             List<? extends Action> buildActions = Utilities.actionsForPath("Office/Spreadsheet/Rows/Popup");
             JPopupMenu menu = Utilities.actionsToPopup(buildActions.toArray(new Action[buildActions.size()]), me.getComponent());
             /*int row = rowTable.rowAtPoint(me.getPoint());
-            rowTable.getSelectionModel().addSelectionInterval(row, row);
-            JPopupMenu menu = new JPopupMenu();
-            menu.add(removeRows);
-            menu.add(insertRows);*/
+             rowTable.getSelectionModel().addSelectionInterval(row, row);
+             JPopupMenu menu = new JPopupMenu();
+             menu.add(removeRows);
+             menu.add(insertRows);*/
             menu.show(me.getComponent(), me.getX(), me.getY());
         }
     }

@@ -16,8 +16,10 @@
 package org.joeffice.spreadsheet;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
@@ -29,8 +31,8 @@ import javax.swing.table.TableModel;
  */
 public class SheetTable extends JTable {
 
-    private List<Point> selectedCells = new ArrayList<>();
-    private Point previousCell;
+    private Map<Integer, Set<Integer>> selectedCells = new HashMap<>();
+    private Point firstExtendCell;
 
     public SheetTable(TableModel tableModel) {
         super(tableModel);
@@ -46,11 +48,51 @@ public class SheetTable extends JTable {
 
     @Override
     public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
-        Point cell = new Point(rowIndex, columnIndex);
-        if (!cell.equals(previousCell) && !selectedCells.contains(cell)) {
-            selectedCells.add(cell);
+        if (toggle && isCellSelected(rowIndex, columnIndex) && !extend) {
+            selectedCells.get(rowIndex).remove(columnIndex);
+        } else {
+            if (!toggle && !extend) {
+                selectedCells.clear();
+            }
+            Set<Integer> selectedColumns = selectedCells.get(rowIndex);
+            if (selectedColumns == null) {
+                selectedColumns = new TreeSet<>();
+                selectedCells.put(rowIndex, selectedColumns);
+            }
+            selectedColumns.add(columnIndex);
+            if (!extend) {
+                firstExtendCell = new Point(rowIndex, columnIndex);
+            } else {
+                for (int i = Math.min(firstExtendCell.x, rowIndex); i <= Math.max(firstExtendCell.x, rowIndex); i++) {
+                    for (int j = Math.min(firstExtendCell.y, columnIndex); j <= Math.max(firstExtendCell.y, columnIndex); j++) {
+                        selectedCells.get(i).add(j);
+                    }
+                }
+            }
         }
         super.changeSelection(rowIndex, columnIndex, toggle, extend);
+    }
+
+    @Override
+    public void addRowSelectionInterval(int index0, int index1) {
+        for (int i = index0; i < index1; i++) {
+            selectedCells.remove(i);
+        }
+        super.addRowSelectionInterval(index0, index1);
+    }
+
+    @Override
+    public void removeRowSelectionInterval(int index0, int index1) {
+        for (int i = index0; i < index1; i++) {
+            selectedCells.remove(i);
+        }
+        super.removeRowSelectionInterval(index0, index1);
+    }
+
+    @Override
+    public void selectAll() {
+        selectedCells.clear();
+        super.selectAll();
     }
 
     @Override
@@ -62,37 +104,13 @@ public class SheetTable extends JTable {
     }
 
     @Override
-    public void addRowSelectionInterval(int index0, int index1) {
-        int columnCount = getColumnCount();
-        for (int i = index0; i <= index1; i++) {
-            for (int j = 0; j < columnCount; j++) {
-                Point cell = new Point(i, j);
-                if (!selectedCells.contains(cell)) {
-                    selectedCells.add(cell);
-                }
-            }
-        }
-        super.addRowSelectionInterval(index0, index1);
-    }
-
-    @Override
-    public void removeRowSelectionInterval(int index0, int index1) {
-        for (Point cell : selectedCells) {
-            if (cell.x >= index0 && cell.x <= index1) {
-                selectedCells.remove(cell);
-            }
-        }
-        super.removeRowSelectionInterval(index0, index1);
-    }
-
-    @Override
-    public void selectAll() {
-        addRowSelectionInterval(0, getRowCount());
-        super.selectAll();
-    }
-
-    @Override
     public boolean isCellSelected(int row, int column) {
-        return selectedCells.contains(new Point(row, column));
+        if (!getSelectionModel().isSelectedIndex(row)) {
+            return false;
+        }
+        if (getSelectionModel().isSelectedIndex(row) && selectedCells.get(row) == null) {
+            return true;
+        }
+        return selectedCells.get(row).contains(column);
     }
 }

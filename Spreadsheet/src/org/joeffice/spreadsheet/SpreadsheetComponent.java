@@ -130,7 +130,7 @@ public class SpreadsheetComponent extends JTabbedPane implements ChangeListener 
     }
 
     public void setModified(boolean modified) {
-        spreadsheetAndToolbar.setModified(modified);
+        spreadsheetAndToolbar.getDataObject().setModified(modified);
     }
 
     /**
