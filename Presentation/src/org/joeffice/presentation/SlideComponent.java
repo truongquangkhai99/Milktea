@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 
 import org.apache.poi.xslf.usermodel.XSLFBackground;
 import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSheet;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
 /**
@@ -31,28 +32,30 @@ import org.apache.poi.xslf.usermodel.XSLFSlide;
  */
 public class SlideComponent extends JPanel {
 
-    private XSLFSlide slide;
+    private XSLFSheet slide;
 
     private SlidesTopComponent slidesComponent;
 
-    private double scale;
+    private double scale = 1.0;
 
     private BufferedImage backgroundImage;
 
-    public SlideComponent(XSLFSlide slide, SlidesTopComponent slidesComponent) {
+    public SlideComponent(XSLFSheet slide, SlidesTopComponent slidesComponent) {
         this(slide, slidesComponent, new Dimension(1280, 720));
     }
 
-    public SlideComponent(XSLFSlide slide, SlidesTopComponent slidesComponent, Dimension maxSize) {
+    public SlideComponent(XSLFSheet slide, SlidesTopComponent slidesComponent, Dimension maxSize) {
         this.slide = slide;
         this.slidesComponent = slidesComponent;
 
-        Rectangle2D backgroundSize = slide.getBackground().getAnchor();
-        double scaleX = maxSize.getWidth() / backgroundSize.getWidth();
-        double scaleY = maxSize.getHeight() / backgroundSize.getHeight();
-        scale = Math.min(scaleX, scaleY);
-        Dimension preferredSize = new Dimension((int) (backgroundSize.getWidth() * scale), (int) (backgroundSize.getHeight() * scale));
-        setPreferredSize(preferredSize);
+        if (slide.getBackground() != null) {
+            Rectangle2D backgroundSize = slide.getBackground().getAnchor();
+            double scaleX = maxSize.getWidth() / backgroundSize.getWidth();
+            double scaleY = maxSize.getHeight() / backgroundSize.getHeight();
+            scale = Math.min(scaleX, scaleY);
+            Dimension preferredSize = new Dimension((int) (backgroundSize.getWidth() * scale), (int) (backgroundSize.getHeight() * scale));
+            setPreferredSize(preferredSize);
+        }
         initComponent();
     }
 
@@ -86,7 +89,7 @@ public class SlideComponent extends JPanel {
         return scale;
     }
 
-    public XSLFSlide getSlide() {
+    public XSLFSheet getSlide() {
         return slide;
     }
 

@@ -114,10 +114,12 @@ public final class SlidesTopComponent extends OfficeTopComponent {
     }
 
     public void setSelectedSlide(int selectedSlide) {
+        int oldSlide = this.selectedSlide;
         this.selectedSlide = selectedSlide;
         JComponent mainComponent = getMainComponent();
         CardLayout slidesLayout = (CardLayout) mainComponent.getLayout();
         slidesLayout.show(mainComponent, String.valueOf(selectedSlide));
+        firePropertyChange("slideChanged", oldSlide, selectedSlide);
     }
 
     @Override

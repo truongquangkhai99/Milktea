@@ -20,8 +20,8 @@ import static org.apache.poi.xslf.usermodel.TextAlign.JUSTIFY;
 import static org.apache.poi.xslf.usermodel.TextAlign.RIGHT;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -72,7 +72,9 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     }
 
     private void initComponent() {
-        if (shape instanceof XSLFTextShape && !"".equals(((XSLFTextShape) shape).getText().trim())) {
+        if (shape instanceof XSLFTextShape &&
+                (!"".equals(((XSLFTextShape) shape).getText().trim()) ||
+                ((XSLFTextShape) shape).getSheet() instanceof XSLFNotes)) {
             handleTextShape((XSLFTextShape) shape);
         } else {
 
@@ -102,16 +104,22 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         textField.setOpaque(false);
         textField.getActionMap().remove(DefaultEditorKit.pageDownAction); // used to move to next or previous slide
         textField.getActionMap().remove(DefaultEditorKit.pageUpAction);
-        java.util.List<XSLFTextParagraph> paragraphs = textShape.getTextParagraphs();
+        List<XSLFTextParagraph> paragraphs = textShape.getTextParagraphs();
         boolean newLine = false;
         for (XSLFTextParagraph paragraph : paragraphs) {
             applyAlignment(paragraph, textField);
-            java.util.List<XSLFTextRun> textParts = paragraph.getTextRuns();
+            List<XSLFTextRun> textParts = paragraph.getTextRuns();
             for (XSLFTextRun textPart : textParts) {
                 try {
                     String text = textPart.getText();
-                    AttributeSet attributes = getFontAttributes(textPart);
-                    String simpleBullet = getBullet(paragraph);
+                    AttributeSet attributes = null;
+                    String simpleBullet = "";
+                    try {
+                        attributes = getFontAttributes(textPart);
+                        simpleBullet = getBullet(paragraph);
+                    } catch (Exception ex) {
+                        // ignore
+                    }
                     if (!text.isEmpty()) {
                         text = simpleBullet + text;
                     }
@@ -138,69 +146,67 @@ public class ShapeComponent extends JPanel implements DocumentListener {
 
     private AttributeSet getFontAttributes(XSLFTextRun textPart) {
         SimpleAttributeSet attributes = new SimpleAttributeSet();
-        try {
-            String fontFamily = textPart.getFontFamily();
-            if (fontFamily != null) {
-                StyleConstants.setFontFamily(attributes, fontFamily);
-            }
-            Color textColor = textPart.getFontColor();
-            if (textColor != null) {
-                StyleConstants.setForeground(attributes, textColor);
-            }
-            double fontSize = textPart.getFontSize();
-            if (fontSize > 0) {
-                StyleConstants.setFontSize(attributes, (int) fontSize);
-            }
-            boolean italic = textPart.isItalic();
-            if (italic) {
-                StyleConstants.setItalic(attributes, true);
-            }
-            boolean bold = textPart.isBold();
-            if (bold) {
-                StyleConstants.setBold(attributes, true);
-            }
-            boolean underlined = textPart.isUnderline();
-            if (underlined) {
-                StyleConstants.setUnderline(attributes, true);
-            }
-            boolean strikeThrough = textPart.isStrikethrough();
-            if (strikeThrough) {
-                StyleConstants.setStrikeThrough(attributes, true);
-            }
-            boolean subScript = textPart.isSubscript();
-            if (subScript) {
-                StyleConstants.setSubscript(attributes, true);
-            }
-            boolean superScript = textPart.isSuperscript();
-            if (superScript) {
-                StyleConstants.setSuperscript(attributes, true);
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, null, ex);
+        String fontFamily = textPart.getFontFamily();
+        if (fontFamily != null) {
+            StyleConstants.setFontFamily(attributes, fontFamily);
+        }
+        Color textColor = textPart.getFontColor();
+        if (textColor != null) {
+            StyleConstants.setForeground(attributes, textColor);
+        }
+        double fontSize = textPart.getFontSize();
+        if (fontSize > 0) {
+            fontSize = fontSize * slideComponent.getScale();
+            StyleConstants.setFontSize(attributes, (int) fontSize);
+        }
+        boolean italic = textPart.isItalic();
+        if (italic) {
+            StyleConstants.setItalic(attributes, true);
+        }
+        boolean bold = textPart.isBold();
+        if (bold) {
+            StyleConstants.setBold(attributes, true);
+        }
+        boolean underlined = textPart.isUnderline();
+        if (underlined) {
+            StyleConstants.setUnderline(attributes, true);
+        }
+        boolean strikeThrough = textPart.isStrikethrough();
+        if (strikeThrough) {
+            StyleConstants.setStrikeThrough(attributes, true);
+        }
+        boolean subScript = textPart.isSubscript();
+        if (subScript) {
+            StyleConstants.setSubscript(attributes, true);
+        }
+        boolean superScript = textPart.isSuperscript();
+        if (superScript) {
+            StyleConstants.setSuperscript(attributes, true);
         }
         return attributes;
     }
 
     private void applyAlignment(XSLFTextParagraph paragraph, JTextPane textField) {
+        TextAlign alignment;
         try {
-            TextAlign alignment = paragraph.getTextAlign();
-            switch (alignment) {
-                case CENTER:
-                    align(textField, StyleConstants.ALIGN_CENTER);
-                    break;
-                case RIGHT:
-                    align(textField, StyleConstants.ALIGN_RIGHT);
-                    break;
-                case LEFT:
-                    align(textField, StyleConstants.ALIGN_LEFT);
-                    break;
-                case JUSTIFY:
-                case JUSTIFY_LOW:
-                    align(textField, StyleConstants.ALIGN_JUSTIFIED);
-                    break;
-            }
+            alignment = paragraph.getTextAlign();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            return;
+        }
+        switch (alignment) {
+            case CENTER:
+                align(textField, StyleConstants.ALIGN_CENTER);
+                break;
+            case RIGHT:
+                align(textField, StyleConstants.ALIGN_RIGHT);
+                break;
+            case LEFT:
+                align(textField, StyleConstants.ALIGN_LEFT);
+                break;
+            case JUSTIFY:
+            case JUSTIFY_LOW:
+                align(textField, StyleConstants.ALIGN_JUSTIFIED);
+                break;
         }
     }
 

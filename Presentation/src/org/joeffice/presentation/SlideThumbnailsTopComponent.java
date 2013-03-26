@@ -51,27 +51,28 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#CTL_SlideThumbnailsAction",
         preferredID = "SlideThumbnailsTopComponent")
 @Messages({
-    "CTL_SlideThumbnailsAction=SlideThumbnails",
-    "CTL_SlideThumbnailsTopComponent=SlideThumbnails Window",
-    "HINT_SlideThumbnailsTopComponent=This is a SlideThumbnails window"
+    "CTL_SlideThumbnailsAction=Slide Thumbnails",
+    "CTL_SlideThumbnailsTopComponent=Slide Thumbnails Window",
+    "HINT_SlideThumbnailsTopComponent=This is a Slide Thumbnails window"
 })
 public final class SlideThumbnailsTopComponent extends TopComponent implements ListSelectionListener {
 
     private JList slidesList;
+    private SlidesTopComponent slidesEditor;
 
     public SlideThumbnailsTopComponent() {
         initComponents();
         setName(Bundle.CTL_SlideThumbnailsTopComponent());
         setToolTipText(Bundle.HINT_SlideThumbnailsTopComponent());
         putClientProperty(TopComponent.PROP_KEEP_PREFERRED_SIZE_WHEN_SLIDED_IN, Boolean.TRUE);
-
     }
 
     private void initComponents() {
         setLayout(new BorderLayout());
-        SlidesTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
-        if (currentTopComponent == null) return;
-        XSLFSlide[] slides = currentTopComponent.getPresentation().getSlides();
+        slidesEditor = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
+        if (slidesEditor == null) return;
+        associateLookup(slidesEditor.getLookup());
+        XSLFSlide[] slides = slidesEditor.getPresentation().getSlides();
         slidesList = new JList(slides);
         slidesList.setCellRenderer(new DefaultListCellRenderer() {
 
@@ -92,10 +93,7 @@ public final class SlideThumbnailsTopComponent extends TopComponent implements L
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        SlidesTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
-        if (currentTopComponent != null) {
-            currentTopComponent.setSelectedSlide(slidesList.getSelectedIndex());
-        }
+        slidesEditor.setSelectedSlide(slidesList.getSelectedIndex());
     }
 
     void writeProperties(java.util.Properties p) {
