@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.database;
+package org.joeffice.database.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.JTabbedPane;
+import org.joeffice.database.JDBCTopComponent;
+import org.joeffice.database.ManageTableTopComponent;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -33,6 +35,7 @@ import org.openide.windows.WindowManager;
         category = "Edit/Office/Database",
         id = "org.joeffice.database.ManageTableAction")
 @ActionRegistration(
+        iconBase = "org/joeffice/database/actions/database_gear.png",
         displayName = "#CTL_ManageTableAction")
 @ActionReferences({
     @ActionReference(path = "Menu/Tools", position = 1460),

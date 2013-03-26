@@ -38,10 +38,13 @@ import org.netbeans.swing.etable.ETableTransferHandler;
  */
 public class TableComponent extends JPanel {
 
+    private JDBCSheet sheet;
+    private ETable databaseTable;
+
     public TableComponent(Connection conn, String tableName) {
         setLayout(new BorderLayout());
-        JDBCSheet sheet = new JDBCSheet(conn, tableName); // Table model
-        ETable databaseTable = new ETable(sheet);
+        sheet = new JDBCSheet(conn, tableName); // Table model
+        databaseTable = new ETable(sheet);
 
         // TODO move this code to the rows spreadsheet package
         JScrollPane scrolling = new JScrollPane(databaseTable);
@@ -56,5 +59,13 @@ public class TableComponent extends JPanel {
         databaseTable.setDragEnabled(true); // Dragging not working yet
 
         add(scrolling);
+    }
+
+    public JDBCSheet getSheet() {
+        return sheet;
+    }
+
+    public JTable getDataTable() {
+        return databaseTable;
     }
 }

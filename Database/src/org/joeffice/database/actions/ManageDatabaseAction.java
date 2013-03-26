@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.database;
+package org.joeffice.database.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +21,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import org.h2.tools.Console;
+import org.joeffice.database.H2DataObject;
 import org.openide.loaders.DataObject;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -39,6 +40,7 @@ import org.openide.util.NbBundle.Messages;
         category = "Tools",
         id = "org.joeffice.database.ManageDatabaseAction")
 @ActionRegistration(
+        iconBase = "org/joeffice/database/actions/database_edit.png",
         displayName = "#CTL_ManageDatabaseAction")
 @ActionReferences({
     @ActionReference(path = "Menu/Tools", position = 1450),

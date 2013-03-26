@@ -40,10 +40,14 @@ import org.openide.util.Exceptions;
 public class JDBCSheet extends AbstractTableModel {
 
     public final static String BINARY_DATA_LABEL = "<binary data...>"; // No I18N
+    public final static int MAX_RESULTS = 100;
+
     private Connection conn;
     private String tableName;
+
     private ResultSetMetaData columnsMetaData;
     private RowSet dataModel;
+    private long offset = 0;
 
     public JDBCSheet(Connection conn, String tableName) {
         this.conn = conn;
@@ -52,7 +56,7 @@ public class JDBCSheet extends AbstractTableModel {
     }
 
     private void init() {
-        fillWithQuery("select * from " + tableName);
+        fillWithQuery("SELECT * FROM " + tableName + " LIMIT " + MAX_RESULTS + " OFFSET " + offset);
     }
 
     private void fillWithQuery(String query) {
@@ -68,7 +72,7 @@ public class JDBCSheet extends AbstractTableModel {
 
             columnsMetaData = dataModel.getMetaData();
 
-            // TODO not go through the whole table
+            fireTableDataChanged();
 
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -216,5 +220,26 @@ public class JDBCSheet extends AbstractTableModel {
                 break;
         }
         rows.updateRow();
+    }
+
+    public void removeRows(int[] rows) {
+        for (int i = 0; i < rows.length; i++) {
+            int row = rows[rows.length - i - 1];
+            try {
+                dataModel.absolute(row + 1);
+                dataModel.deleteRow();
+            } catch (SQLException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }
+
+    public long getOffset() {
+        return offset;
+    }
+
+    public void setOffset(long offset) {
+        this.offset = offset;
+        init();
     }
 }
