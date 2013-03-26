@@ -56,14 +56,72 @@ public class DocumentUpdater implements DocumentListener {
         try {
             currentOffset = 0;
             DocumentPosition position = searchPart(document.getBodyElements(), offset);
+            currentOffset = 0;
+            DocumentPosition endPosition = searchPart(document.getBodyElements(), offset + length);
             if (position != null) {
-                String oldValue = position.text.getStringValue();
-                String newValue = oldValue.substring(0, position.offsetInText)
-                        + oldValue.substring(position.offsetInText + length);
-                position.text.setStringValue(newValue);
+                boolean deleted = deleteFromSameText(position, endPosition);
+                if (!deleted) {
+                    deleteFromSameText(position, null);
+                    deleteInBetween(position, endPosition);
+                    String endText = endPosition.text.getStringValue();
+                    String newEndText = endText.substring(endPosition.offsetInText);
+                    endPosition.text.setStringValue(newEndText);
+                }
             }
+
         } catch (BadLocationException ex) {
             Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private boolean deleteFromSameText(DocumentPosition position, DocumentPosition endPosition) {
+        boolean sameText = endPosition == null || position.text == endPosition.text;
+        if (sameText) {
+            String oldValue = position.text.getStringValue();
+            String newValue = oldValue.substring(0, position.offsetInText)
+                    + (endPosition == null ? "" : oldValue.substring(endPosition.offsetInText));
+            position.text.setStringValue(newValue);
+        }
+        return sameText;
+    }
+
+    private void deleteInBetween(DocumentPosition startPosition, DocumentPosition endPosition) {
+        XWPFDocument doc = startPosition.run.getParagraph().getDocument();
+        boolean deletePart = false;
+        for (int elemIndex = 0; elemIndex  < doc.getBodyElements().size(); elemIndex++) {
+            IBodyElement elem = doc.getBodyElements().get(elemIndex);
+            if (!deletePart && startPosition.run.getParagraph() != elem) {
+                // Skip
+            } else if (!deletePart) {
+                deletePart = true;
+                deleteRuns(startPosition, true);
+            } else if (elem != endPosition.run.getParagraph()) {
+                doc.removeBodyElement(elemIndex);
+                elemIndex--;
+            } else {
+                deleteRuns(endPosition, false);
+                return;
+            }
+        }
+    }
+
+    private void deleteRuns(DocumentPosition position, boolean fromPosition) {
+        boolean deleteRun = false;
+        List<CTText> texts = position.run.getCTR().getTList();
+        for (int textIndex = 0; textIndex < texts.size(); textIndex++) {
+            CTText text = texts.get(textIndex);
+            if (!fromPosition && text != position.text) {
+                position.run.getCTR().removeT(0);
+                textIndex--;
+            } else if (!fromPosition) {
+                return;
+            }
+            if (deleteRun) {
+                position.run.getCTR().removeT(position.positionInRun + 1);
+                textIndex--;
+            } else if (fromPosition && text == position.text) {
+                deleteRun = true;
+            }
         }
     }
 
