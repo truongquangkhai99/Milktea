@@ -41,6 +41,19 @@ public class CreateH2Database {
         createSimpleDatabase(test2Path, true, true);
     }
 
+    public void createTest3() throws SQLException {
+        String test3Path = "C:/Java/projects/Joeffice/tools/tests/Database - 500 items";
+        Connection conn = createSimpleDatabase(test3Path, true, true);
+        for (int i = 0; i < 500; i++) {
+            PreparedStatement insertValue = conn.prepareStatement("INSERT INTO TEST_TABLE VALUES(" + i + ", 'Hello World " + i + "');");
+            insertValue.execute();
+            insertValue.close();
+        }
+        PreparedStatement createTable = conn.prepareStatement("CREATE TABLE TEST_TABLE2 (ID INT PRIMARY KEY, SOME_NUMBER DECIMAL);");
+        createTable.execute();
+        createTable.close();
+    }
+
     public static Connection createSimpleDatabase(String path, boolean withTable, boolean withData) throws SQLException {
         if (!new File(path + ".h2.db").exists()) {
             try {
