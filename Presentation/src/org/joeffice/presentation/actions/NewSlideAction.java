@@ -21,6 +21,7 @@ import javax.swing.AbstractAction;
 import org.apache.poi.xslf.usermodel.*;
 
 import org.joeffice.desktop.ui.OfficeTopComponent;
+import org.joeffice.presentation.SlideComponent;
 import org.joeffice.presentation.SlidesTopComponent;
 
 import org.openide.awt.ActionID;
@@ -49,14 +50,16 @@ public final class NewSlideAction extends AbstractAction {
             XMLSlideShow presentation = currentTopComponent.getPresentation();
             XSLFSlideMaster defaultMaster = presentation.getSlideMasters()[0];
             XSLFSlideLayout slideLayout = defaultMaster.getLayout(SlideLayout.TITLE_AND_CONTENT);
-            XSLFSlide newSlide;
             if (slideLayout == null) {
-                newSlide = presentation.createSlide();
-            } else {
-                newSlide = presentation.createSlide(slideLayout);
+                slideLayout = defaultMaster.getLayout(SlideLayout.BLANK);
             }
+            XSLFSlide newSlide = presentation.createSlide(slideLayout);
             int selectedSlide = currentTopComponent.getSelectedSlide();
             presentation.setSlideOrder(newSlide, selectedSlide);
+
+            SlideComponent slideComp = new SlideComponent(newSlide, currentTopComponent);
+            String indexInCard = String.valueOf(presentation.getSlides().length);
+            currentTopComponent.getMainComponent().add(slideComp, indexInCard);
         }
     }
 }

@@ -41,16 +41,7 @@ public class FullScreenFrame extends JFrame {
     public FullScreenFrame() {
         setUndecorated(true);
         eventListener = new FullScreenListener(this);
-        JPanel transparentPanel = new JPanel() {
-            public Dimension getPreferredSize() {
-                GraphicsDevice screen = getScreen();
-                return new Dimension(screen.getDisplayMode().getWidth(), screen.getDisplayMode().getHeight());
-            }
-        };
-        JLayeredPane layeredPane = getRootPane().getLayeredPane();
         Component glassPane = getRootPane().getGlassPane();
-        layeredPane.add(transparentPanel, JLayeredPane.PALETTE_LAYER);
-        layeredPane.setVisible(true);
         glassPane.addKeyListener(eventListener);
         glassPane.addMouseListener(eventListener);
         glassPane.addMouseMotionListener(eventListener);

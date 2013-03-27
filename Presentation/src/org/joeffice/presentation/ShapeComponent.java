@@ -20,15 +20,11 @@ import static org.apache.poi.xslf.usermodel.TextAlign.JUSTIFY;
 import static org.apache.poi.xslf.usermodel.TextAlign.RIGHT;
 
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
@@ -39,6 +35,9 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import org.apache.poi.xslf.usermodel.*;
+import org.joeffice.desktop.actions.EditorStyleable;
+import org.joeffice.desktop.ui.OfficeTopComponent;
+import org.joeffice.desktop.ui.Styleable;
 import org.openide.awt.UndoRedo;
 
 import org.openide.util.Exceptions;
@@ -53,6 +52,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     private XSLFShape shape;
     private SlideComponent slideComponent;
     private boolean editable;
+    private Styleable styleable;
 
     public ShapeComponent(XSLFShape shape, SlideComponent slideComponent) {
         this.shape = shape;
@@ -99,7 +99,7 @@ public class ShapeComponent extends JPanel implements DocumentListener {
     }
 
     private void handleTextShape(XSLFTextShape textShape) {
-        JTextPane textField = new JTextPane();
+        final JTextPane textField = new JTextPane();
         textField.setBorder(BorderFactory.createEmptyBorder());
         textField.setOpaque(false);
         textField.getActionMap().remove(DefaultEditorKit.pageDownAction); // used to move to next or previous slide
@@ -139,6 +139,18 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         if (editable) {
             textField.getDocument().addDocumentListener(this);
             textField.getDocument().addUndoableEditListener((UndoRedo.Manager) getSlideComponent().getSlidesComponent().getUndoRedo());
+            textField.addFocusListener(new FocusListener() {
+
+                @Override
+                public void focusGained(FocusEvent e) {
+                    registerActions(textField);
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    unregisterActions();
+                }
+            });
         } else {
             textField.setEditable(false);
         }
@@ -246,5 +258,29 @@ public class ShapeComponent extends JPanel implements DocumentListener {
         } catch (BadLocationException ex) {
             Exceptions.printStackTrace(ex);
         }
+    }
+
+    public void registerActions(JTextPane textField) {
+        OfficeTopComponent topComponent = getSlideComponent().getSlidesComponent();
+        ActionMap topComponentActions = topComponent.getActionMap();
+        ActionMap textFieldActions = textField.getActionMap();
+
+        // Actives the cut / copy / paste buttons
+        topComponentActions.put(DefaultEditorKit.cutAction, textFieldActions.get(DefaultEditorKit.cutAction));
+        topComponentActions.put(DefaultEditorKit.copyAction, textFieldActions.get(DefaultEditorKit.copyAction));
+        topComponentActions.put(DefaultEditorKit.pasteAction, textFieldActions.get(DefaultEditorKit.pasteAction));
+        styleable = new EditorStyleable(textField);
+        topComponent.getServices().add(styleable);
+    }
+
+    public void unregisterActions() {
+        OfficeTopComponent topComponent = getSlideComponent().getSlidesComponent();
+        ActionMap topComponentActions = topComponent.getActionMap();
+
+        // Deactivates the cut / copy / paste buttons
+        topComponentActions.remove(DefaultEditorKit.cutAction);
+        topComponentActions.remove(DefaultEditorKit.copyAction);
+        topComponentActions.remove(DefaultEditorKit.pasteAction);
+        topComponent.getServices().remove(styleable);
     }
 }
