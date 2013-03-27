@@ -15,6 +15,10 @@
  */
 package org.joeffice.wordprocessor;
 
+import static javax.swing.text.StyleConstants.*;
+
+import java.awt.Color;
+import java.util.Enumeration;
 import java.util.List;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -153,13 +157,28 @@ public class DocumentUpdater implements DocumentListener {
         ElementIterator iter = new ElementIterator(de.getDocument());
         for (Element elem = iter.first(); elem != null; elem = iter.next()) {
             DocumentEvent.ElementChange change = de.getChange(elem);
-            if (change != null) { // null means there was no change in elem
+            if (change != null) {
                 System.out.println("Element " + elem.getName() + " (depth "
                         + iter.depth() + ") changed its children: "
                         + change.getChildrenRemoved().length
                         + " children removed, "
                         + change.getChildrenAdded().length
                         + " children added.\n");
+                Element[] removedElems = change.getChildrenRemoved();
+                for (int i = removedElems.length - 1; i>=0; i--) {
+                    remove(removedElems[i].getStartOffset(), removedElems[i].getEndOffset());
+                }
+                for (Element addedElem : change.getChildrenAdded()) {
+                    try {
+                        DocumentPosition pos = searchPart(document.getBodyElements(), addedElem.getStartOffset());
+                        String text = doc.getText(addedElem.getStartOffset(), addedElem.getEndOffset() - addedElem.getStartOffset());
+                        XWPFRun run = pos.run.getParagraph().createRun();
+                        run.setText(text);
+                        applyAttributes(run, addedElem.getAttributes());
+                    } catch (BadLocationException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
             }
         }
     }
@@ -225,6 +244,48 @@ public class DocumentUpdater implements DocumentListener {
             }
         }
         return null;
+    }
+
+    public void applyAttributes(XWPFRun run, AttributeSet attributes) {
+        Enumeration attributeNames = attributes.getAttributeNames();
+        while (attributeNames.hasMoreElements()) {
+            Object attributeName = attributeNames.nextElement();
+            Object attributeValue = attributes.getAttribute(attributeName);
+            if (attributeName == Bold) {
+                run.setBold((Boolean) attributeValue);
+            } else if (attributeName == Italic) {
+                run.setItalic((Boolean) attributeValue);
+            } else if (attributeName == Italic) {
+                run.setItalic((Boolean) attributeValue);
+            } else if (attributeName == Underline) {
+                run.setUnderline((Boolean) attributeValue ? UnderlinePatterns.SINGLE : UnderlinePatterns.NONE);
+            } else if (attributeName == FontFamily || attributeName == Family) {
+                run.setFontFamily((String) attributeValue);
+            } else if (attributeName == FontSize) {
+                run.setFontSize((Integer) attributeValue);
+            } else if (attributeName == Foreground) {
+                Color color = (Color) attributeValue;
+                String rgb = Integer.toHexString((color.getRGB() & 0xffffff) | 0x1000000).substring(1);
+                run.setColor(rgb);
+            } else if (attributeName == Alignment) {
+                ParagraphAlignment alignment = documentToPOI((Integer) attributeValue);
+                run.getParagraph().setAlignment(alignment);
+            }
+        }
+    }
+
+    private ParagraphAlignment documentToPOI(int alignment) {
+        switch (alignment) {
+            case ALIGN_LEFT:
+                return ParagraphAlignment.LEFT;
+            case ALIGN_RIGHT:
+                return ParagraphAlignment.RIGHT;
+            case ALIGN_CENTER:
+                return ParagraphAlignment.CENTER;
+            case ALIGN_JUSTIFIED:
+                return ParagraphAlignment.DISTRIBUTE;
+        }
+        return ParagraphAlignment.LEFT;
     }
 
     class DocumentPosition {

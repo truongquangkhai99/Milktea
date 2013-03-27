@@ -19,10 +19,16 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 import javax.swing.text.*;
+
 import org.joeffice.wordprocessor.BorderAttributes;
 import org.joeffice.wordprocessor.DocxDocument;
 import org.joeffice.wordprocessor.WordpTopComponent;
 import org.joeffice.wordprocessor.app.*;
+
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle.Messages;
 import org.openide.windows.WindowManager;
 
 /**
@@ -36,8 +42,15 @@ public class SimpleActionsFactory {
      *
      * @return
      */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.insertImageAction")
+    @ActionRegistration(
+            displayName = "#CTL_InsertImageAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word", position = 200)
+    @Messages("CTL_InsertImageAction=Insert image")
     public static Action insertImageAction() {
-        Action a = new AbstractAction("Insert image") {
+        Action action = new AbstractAction("Insert image") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -57,7 +70,7 @@ public class SimpleActionsFactory {
                 doc.insertPicture(icon, edit.getCaretPosition());
             }
         };
-        return a;
+        return action;
     }
 
     /**
@@ -65,17 +78,23 @@ public class SimpleActionsFactory {
      *
      * @return
      */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.paragraphAttributesAction")
+    @ActionRegistration(
+            displayName = "#CTL_ParagraphAttributesAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word", position = 100)
+    @Messages("CTL_ParagraphAttributesAction=Paragraph...")
     public static Action paragraphAttributesAction() {
-        Action a = new AbstractAction("Paragraph...") {
+        Action action = new AbstractAction("Paragraph...") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
                 JFrame mainFrame = (JFrame) WindowManager.getDefault().getMainWindow();
                 ParagraphPanel paragraph = new ParagraphPanel();
-                paragraph.showDialog(mainFrame);
                 AttributeSet attrs = ((DocxDocument) edit.getDocument()).getParagraphElement(edit.getCaretPosition()).getAttributes();
                 paragraph.setAttributes(attrs);
-                paragraph.setVisible(true);
+                paragraph.showDialog(mainFrame);
                 if (paragraph.getOption() == JOptionPane.OK_OPTION) {
                     DocxDocument doc = (DocxDocument) edit.getDocument();
                     AttributeSet attr = paragraph.getAttributes();
@@ -83,7 +102,37 @@ public class SimpleActionsFactory {
                 }
             }
         };
-        return a;
+        return action;
+    }
+
+    /**
+     * Return an Action which sets margins of document. Used for creating menu item.
+     *
+     * @return
+     */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.MarginsAction")
+    @ActionRegistration(
+            displayName = "#CTL_MarginsAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word", position = 1800)
+    @Messages("CTL_MarginsAction=Margins...")
+    public static Action setMarginsAction() {
+        Action action = new AbstractAction("Margins...") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame mainFrame = (JFrame) WindowManager.getDefault().getMainWindow();
+                JTextPane edit = WordpTopComponent.getTextPane();
+                DocxDocument doc = (DocxDocument) edit.getDocument();
+                MarginsPanel marginsPanel = new MarginsPanel();
+                marginsPanel.setMargins(doc.getDocumentMargins());
+                marginsPanel.showDialog(mainFrame);
+                if (marginsPanel.getOption() == JOptionPane.OK_OPTION) {
+                    doc.setDocumentMargins(marginsPanel.getMargins());
+                }
+            }
+        };
+        return action;
     }
 
     /**
@@ -91,8 +140,15 @@ public class SimpleActionsFactory {
      *
      * @return
      */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.insertTableAction")
+    @ActionRegistration(
+            displayName = "#CTL_InsertTableAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 1000)
+    @Messages("CTL_InsertTableAction=Insert table...")
     public static Action insertTableAction() {
-        Action a = new AbstractAction("Table...") {
+        Action action = new AbstractAction("Table...") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -127,7 +183,29 @@ public class SimpleActionsFactory {
                 }
             }
         };
-        return a;
+        return action;
+    }
+
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.insertRowBelowAction")
+    @ActionRegistration(
+            displayName = "#CTL_InsertRowBelowAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 1200)
+    @Messages("CTL_InsertRowBelowAction=Insert row below")
+    public static Action insertRowBelowAction() {
+        return insertRowAction(false);
+    }
+
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.insertRowAboveAction")
+    @ActionRegistration(
+            displayName = "#CTL_InsertRowAboveAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 1300)
+    @Messages("CTL_InsertRowAboveAction=Insert row above")
+    public static Action insertRowAboveAction() {
+        return insertRowAction(true);
     }
 
     /**
@@ -143,7 +221,7 @@ public class SimpleActionsFactory {
         } else {
             label += " below";
         }
-        Action a = new AbstractAction(label) {
+        Action action = new AbstractAction(label) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -151,7 +229,29 @@ public class SimpleActionsFactory {
                 doc.insertRow(edit.getCaretPosition(), above);
             }
         };
-        return a;
+        return action;
+    }
+
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.insertColumnToTheRightAction")
+    @ActionRegistration(
+            displayName = "#CTL_InsertColumnToTheRightAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 1400)
+    @Messages("CTL_InsertColumnToTheRightAction=Insert column to the right")
+    public static Action insertColumnToTheRightAction() {
+        return insertColumnAction(false);
+    }
+
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.insertColumnToTheLeftAction")
+    @ActionRegistration(
+            displayName = "#CTL_InsertColumnToTheLeftAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 1500)
+    @Messages("CTL_InsertColumnToTheLeftAction=Insert column to the left")
+    public static Action insertColumnToTheLeftAction() {
+        return insertColumnAction(true);
     }
 
     /**
@@ -167,7 +267,7 @@ public class SimpleActionsFactory {
         } else {
             label += " to the right";
         }
-        Action a = new AbstractAction(label) {
+        Action action = new AbstractAction(label) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -175,7 +275,7 @@ public class SimpleActionsFactory {
                 doc.insertColumn(edit.getCaretPosition(), 50, before);
             }
         };
-        return a;
+        return action;
     }
 
     /**
@@ -183,8 +283,15 @@ public class SimpleActionsFactory {
      *
      * @return
      */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.deleteTableAction")
+    @ActionRegistration(
+            displayName = "#CTL_DeleteTableAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 2000, separatorBefore = 1990)
+    @Messages("CTL_DeleteTableAction=Delete table")
     public static Action deleteTableAction() {
-        Action a = new AbstractAction("Table") {
+        Action action = new AbstractAction("Table") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -192,7 +299,7 @@ public class SimpleActionsFactory {
                 doc.deleteTable(edit.getCaretPosition());
             }
         };
-        return a;
+        return action;
     }
 
     /**
@@ -200,8 +307,15 @@ public class SimpleActionsFactory {
      *
      * @return
      */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.deleteRowAction")
+    @ActionRegistration(
+            displayName = "#CTL_DeleteRowAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 2100)
+    @Messages("CTL_DeleteRowAction=Delete row")
     public static Action deleteRowAction() {
-        Action a = new AbstractAction("Row") {
+        Action action = new AbstractAction("Row") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -209,7 +323,7 @@ public class SimpleActionsFactory {
                 doc.deleteRow(edit.getCaretPosition());
             }
         };
-        return a;
+        return action;
     }
 
     /**
@@ -217,8 +331,15 @@ public class SimpleActionsFactory {
      *
      * @return
      */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.deleteColumnAction")
+    @ActionRegistration(
+            displayName = "#CTL_DeleteColumnAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 2200)
+    @Messages("CTL_DeleteColumnAction=Delete column")
     public static Action deleteColumnAction() {
-        Action a = new AbstractAction("Column") {
+        Action action = new AbstractAction("Column") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -226,30 +347,7 @@ public class SimpleActionsFactory {
                 doc.deleteColumn(edit.getCaretPosition());
             }
         };
-        return a;
-    }
-
-    /**
-     * Return an Action which sets margins of document. Used for creating menu item.
-     *
-     * @return
-     */
-    public static Action setMarginsAction() {
-        Action a = new AbstractAction("Margins...") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFrame mainFrame = (JFrame) WindowManager.getDefault().getMainWindow();
-                JTextPane edit = WordpTopComponent.getTextPane();
-                DocxDocument doc = (DocxDocument) edit.getDocument();
-                MarginsPanel marginsPanel = new MarginsPanel();
-                marginsPanel.setMargins(doc.getDocumentMargins());
-                JDialog dlg = marginsPanel.showDialog(mainFrame);
-                if (marginsPanel.getOption() == JOptionPane.OK_OPTION) {
-                    doc.setDocumentMargins(marginsPanel.getMargins());
-                }
-            }
-        };
-        return a;
+        return action;
     }
 
     /**
@@ -257,8 +355,15 @@ public class SimpleActionsFactory {
      *
      * @return
      */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.tablePropertiesAction")
+    @ActionRegistration(
+            displayName = "#CTL_TablePropertiesAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 2500, separatorBefore = 2490)
+    @Messages("CTL_TablePropertiesAction=Table Properties...")
     public static Action tablePropertiesAction() {
-        Action a = new AbstractAction("Table...") {
+        Action action = new AbstractAction("Table...") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -273,7 +378,7 @@ public class SimpleActionsFactory {
                 tp.setVisible(true);
             }
         };
-        return a;
+        return action;
     }
 
     /**
@@ -281,8 +386,15 @@ public class SimpleActionsFactory {
      *
      * @return
      */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.rowPropertiesAction")
+    @ActionRegistration(
+            displayName = "#CTL_RowPropertiesAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 2600)
+    @Messages("CTL_RowPropertiesAction=Row Properties...")
     public static Action rowPropertiesAction() {
-        Action a = new AbstractAction("Row...") {
+        Action action = new AbstractAction("Row...") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -297,7 +409,7 @@ public class SimpleActionsFactory {
                 tp.setVisible(true);
             }
         };
-        return a;
+        return action;
     }
 
     /**
@@ -305,8 +417,15 @@ public class SimpleActionsFactory {
      *
      * @return
      */
+    @ActionID(
+            category = "Edit/Office/Word",
+            id = "org.joeffice.wordprocessor.actions.cellPropertiesAction")
+    @ActionRegistration(
+            displayName = "#CTL_CellPropertiesAction")
+    @ActionReference(path = "Menu/Edit/Gimme More/Word/Table", position = 2700)
+    @Messages("CTL_CellPropertiesAction=Cell Properties...")
     public static Action cellPropertiesAction() {
-        Action a = new AbstractAction("Cell...") {
+        Action action = new AbstractAction("Cell...") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextPane edit = WordpTopComponent.getTextPane();
@@ -321,6 +440,6 @@ public class SimpleActionsFactory {
                 tp.setVisible(true);
             }
         };
-        return a;
+        return action;
     }
 }

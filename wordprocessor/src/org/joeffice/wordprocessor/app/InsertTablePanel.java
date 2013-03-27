@@ -80,7 +80,7 @@ public class InsertTablePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 option = JOptionPane.OK_OPTION;
-                setVisible(false);
+                SwingUtilities.getWindowAncestor(InsertTablePanel.this).dispose();
             }
         };
         okButton.addActionListener(lst);
@@ -90,7 +90,7 @@ public class InsertTablePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 option = JOptionPane.CANCEL_OPTION;
-                setVisible(false);
+                SwingUtilities.getWindowAncestor(InsertTablePanel.this).dispose();
             }
         };
         cancelButton.addActionListener(lst);

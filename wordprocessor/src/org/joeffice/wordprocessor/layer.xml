@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+  <folder name="Actions">
+    <folder name="Edit">
+      <folder name="Office">
+        <folder name="Word">
+          <file name="insertImageAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.insertImageAction" />
+          </file>
+          <file name="paragraphAttributesAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.paragraphAttributesAction" />
+          </file>
+          <file name="insertTableAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.insertTableAction" />
+          </file>
+          <file name="insertRowAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.insertRowAction" />
+          </file>
+          <file name="insertColumnAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.insertColumnAction" />
+          </file>
+          <file name="deleteTableAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.deleteTableAction" />
+          </file>
+          <file name="deleteRowAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.deleteRowAction" />
+          </file>
+          <file name="deleteColumnAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.deleteColumnAction" />
+          </file>
+          <file name="setMarginsAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.setMarginsAction" />
+          </file>
+          <file name="tablePropertiesAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.tablePropertiesAction" />
+          </file>
+          <file name="rowPropertiesAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.rowPropertiesAction" />
+          </file>
+          <file name="cellPropertiesAction.instance">
+            <attr name="instanceCreate" methodvalue="org.joeffice.wordprocessor.actions.cellPropertiesAction" />
+          </file>
+        </folder>
+      </folder>
+    </folder>
+  </folder>
+</filesystem>

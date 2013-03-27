@@ -185,7 +185,7 @@ public class ParagraphPanel extends JPanel {
                  * processing OK button pressing
                  */
                 option = JOptionPane.OK_OPTION;
-                setVisible(false);
+                SwingUtilities.getWindowAncestor(ParagraphPanel.this).dispose();
             }
         };
         btOK.addActionListener(lst);
@@ -199,7 +199,7 @@ public class ParagraphPanel extends JPanel {
                  * processing CANCEL button pressing
                  */
                 option = JOptionPane.CANCEL_OPTION;
-                setVisible(false);
+                SwingUtilities.getWindowAncestor(ParagraphPanel.this).dispose();
             }
         };
         btCancel.addActionListener(lst);

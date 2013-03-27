@@ -65,7 +65,7 @@ public class MarginsPanel extends JPanel {
         ActionListener lst = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 option = JOptionPane.OK_OPTION;
-                setVisible(false);
+                SwingUtilities.getWindowAncestor(MarginsPanel.this).dispose();
             }
         };
         b.addActionListener(lst);
@@ -74,7 +74,7 @@ public class MarginsPanel extends JPanel {
         lst = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 option = JOptionPane.CANCEL_OPTION;
-                setVisible(false);
+                SwingUtilities.getWindowAncestor(MarginsPanel.this).dispose();
             }
         };
         b.addActionListener(lst);

@@ -27,6 +27,7 @@ import javax.swing.text.Document;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
+import org.joeffice.desktop.actions.EditorStyleable;
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 
@@ -79,12 +80,13 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
     protected JComponent createMainComponent() {
         JTextPane editor = new JTextPane();
         editor.setEditorKit(new DocxEditorKit());
+        styleable = new EditorStyleable(editor);
+        editor.setTransferHandler(new RichTextTransferHandler());
         return editor;
     }
 
     @Override
     public void loadDocument(final File docxFile) {
-        styleable = new EditorStyleable();
         RequestProcessor.getDefault().post(new Runnable() {
             @Override
             public void run() {
@@ -96,6 +98,7 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
                     document = wordProcessor.getDocument();
                     poiDocument = (XWPFDocument) document.getProperty("XWPFDocument");
                     getDataObject().setDocument(poiDocument);
+                    getServices().add(styleable);
                     document.addDocumentListener(WordpTopComponent.this);
                     document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
                     document.addDocumentListener(new DocumentUpdater(poiDocument));
