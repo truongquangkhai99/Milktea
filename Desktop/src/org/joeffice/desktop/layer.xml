@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
+  <folder name="Loaders">
+    <folder name="content">
+      <folder name="unknown">
+        <folder name="Actions">
+          <file name="OpenAction.shadow_hidden"/>
+          <file name="org-netbeans-core-ui-sysopen-SystemOpenAction.shadow">
+            <attr name="originalFile" stringvalue="Actions/Edit/org-netbeans-core-ui-sysopen-SystemOpenAction.instance"/>
+            <attr name="position" intvalue="100"/>
+          </file>
+          <file name="org-netbeans-core-ui-options-filetypes-OpenAsAction.shadow">
+            <attr name="originalFile" stringvalue="Actions/Edit/org-netbeans-core-ui-options-filetypes-OpenAsAction.instance"/>
+            <attr name="position" intvalue="200"/>
+          </file>
+        </folder>
+      </folder>
+    </folder>
+  </folder>
   <folder name="Menu">
     <file name="BuildProject_hidden"/>
     <folder name="File">
@@ -24,7 +41,7 @@
     <file name="GoTo_hidden"/>
     <folder name="Help">
       <file name="org-joeffice-desktop-WelcomeTopComponent.shadow_hidden"/>
-            <file name="org-netbeans-modules-autoupdate-ui-actions-CheckForUpdatesAction.shadow_hidden"/>
+      <file name="org-netbeans-modules-autoupdate-ui-actions-CheckForUpdatesAction.shadow_hidden"/>
       <file name="shortcuts.xml_hidden"/>
     </folder>
     <file name="RunProject_hidden"/>

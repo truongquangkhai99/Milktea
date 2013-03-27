@@ -49,7 +49,8 @@ import org.openide.windows.WindowManager;
     @ActionReference(path = "Menu/Edit", position = 1550),
     @ActionReference(path = "Toolbars/Font", position = 3300)
 })
-@Messages({"CTL_ForegroundColorAction=Color", "MSG_ColorTitle=Choose color"})
+@Messages({"CTL_ForegroundColorAction=Color",
+    "MSG_ColorTitle=Choose color"})
 public class ForegroundColorAction extends AbstractAction {
 
     private Styleable styleable;
@@ -67,7 +68,7 @@ public class ForegroundColorAction extends AbstractAction {
         if (!colorAttr.isEmpty()) {
             defaultColor = (Color) colorAttr.get(TextAttribute.FOREGROUND);
         }
-        String title = NbBundle.getMessage(ForegroundColorAction.class, "MSG_ColorTitle");
+        String title = NbBundle.getMessage(getClass(), "MSG_ColorTitle");
         Color chosenColor = JColorChooser.showDialog(WindowManager.getDefault().getMainWindow(), title, defaultColor);
         if (chosenColor != null) {
             AttributedString attributes = new AttributedString("ForegroundColor");

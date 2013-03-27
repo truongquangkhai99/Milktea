@@ -29,6 +29,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
 /**
@@ -46,7 +47,8 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Menu/Edit", position = 1510),
     @ActionReference(path = "Toolbars/Font", position = 3000)
 })
-@Messages("CTL_ChooseFontAction=Choose Font...")
+@Messages({"CTL_ChooseFontAction=Choose Font...",
+    "MSG_SelectFontTitle=Select Font"})
 public class ChooseFontAction extends AbstractAction {
 
     private Styleable styleable;
@@ -62,7 +64,8 @@ public class ChooseFontAction extends AbstractAction {
         if (fontName == null || fontName.isEmpty()) {
             FontListTopComponent fontList = new FontListTopComponent();
             fontList.noSelectionListener();
-            DialogDescriptor dialogDesc = new DialogDescriptor(fontList, "Choose font", true, DialogDescriptor.OK_CANCEL_OPTION, null, null);
+            String selectFontTitle = NbBundle.getMessage(getClass(), "MSG_SelectFontTitle");
+            DialogDescriptor dialogDesc = new DialogDescriptor(fontList, selectFontTitle, true, DialogDescriptor.OK_CANCEL_OPTION, null, null);
             Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDesc);
             dialog.setVisible(true);
             fontName = fontList.getSelectedFontName();

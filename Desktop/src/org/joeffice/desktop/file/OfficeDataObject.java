@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.joeffice.desktop.ui.OfficeTopComponent;
+
 import org.openide.cookies.CloseCookie;
 import org.openide.cookies.OpenCookie;
 import org.openide.cookies.SaveCookie;
@@ -26,6 +27,7 @@ import org.openide.cookies.ViewCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.*;
+import org.openide.nodes.Children;
 import org.openide.nodes.CookieSet;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -71,7 +73,7 @@ public abstract class OfficeDataObject extends MultiDataObject implements SaveCo
 
     @Override
     protected Node createNodeDelegate() {
-        return new OfficeDataNode(this, getLookup());
+        return new DataNode(this, Children.LEAF, getLookup());
     }
 
     @Override
