@@ -19,10 +19,10 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Properties;
 import javax.swing.JComponent;
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 
 import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
-import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
+import org.apache.batik.util.XMLResourceDescriptor;
 
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
@@ -30,7 +30,6 @@ import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
@@ -81,14 +80,24 @@ public final class DrawingTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    protected void loadDocument(File svgFile) {
+    protected Object loadDocument(File svgFile) throws Exception {
+
+        String xmlParser = XMLResourceDescriptor.getXMLParserClassName();
+        SAXSVGDocumentFactory svgFactory = new SAXSVGDocumentFactory(xmlParser);
+        String uri = Utilities.toURI(svgFile).toURL().toString();
+        Document document = svgFactory.createDocument(uri);
+        return document;
+    }
+
+    @Override
+    public void documentLoaded() {
         JSVGCanvas svgCanvas = (JSVGCanvas) getMainComponent();
-        try {
-            String uri = Utilities.toURI(svgFile).toURL().toString();
-            svgCanvas.setURI(uri);
-        } catch (MalformedURLException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+        svgCanvas.setDocument(getDocument());
+        svgCanvas.putClientProperty("print.printable", Boolean.TRUE);
+    }
+
+    public Document getDocument() {
+        return (Document) getDataObject().getDocument();
     }
 
     @Override
