@@ -53,7 +53,7 @@ public final class AddPictureAction extends AbstractAction {
             String chosenDirName = chosenPicture.getParentFile().getAbsolutePath();
             NbPreferences.forModule(getClass()).put("picture.directory", chosenDirName);
             ImageIcon icon = new ImageIcon(choosePicture.getSelectedFile().getPath());
-            JTextPane edit = WordpTopComponent.getTextPane();
+            JTextPane edit = WordpTopComponent.findCurrentTextPane();
             DocxDocument doc = (DocxDocument) edit.getDocument();
             doc.insertPicture(icon, edit.getCaretPosition());
         }

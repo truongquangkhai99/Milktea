@@ -53,7 +53,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction("Insert image") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 Frame mainFrame = WindowManager.getDefault().getMainWindow();
                 JFileChooser fc = new JFileChooser();
                 if (fc.showOpenDialog(mainFrame) != JFileChooser.APPROVE_OPTION) {
@@ -89,7 +89,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction("Paragraph...") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 JFrame mainFrame = (JFrame) WindowManager.getDefault().getMainWindow();
                 ParagraphPanel paragraph = new ParagraphPanel();
                 AttributeSet attrs = ((DocxDocument) edit.getDocument()).getParagraphElement(edit.getCaretPosition()).getAttributes();
@@ -122,7 +122,7 @@ public class SimpleActionsFactory {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFrame mainFrame = (JFrame) WindowManager.getDefault().getMainWindow();
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 DocxDocument doc = (DocxDocument) edit.getDocument();
                 MarginsPanel marginsPanel = new MarginsPanel();
                 marginsPanel.setMargins(doc.getDocumentMargins());
@@ -151,7 +151,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction("Table...") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 JFrame mainFrame = (JFrame) WindowManager.getDefault().getMainWindow();
                 InsertTablePanel insertPanel = new InsertTablePanel();
                 insertPanel.showDialog(mainFrame);
@@ -224,7 +224,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction(label) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 DocxDocument doc = (DocxDocument) edit.getDocument();
                 doc.insertRow(edit.getCaretPosition(), above);
             }
@@ -270,7 +270,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction(label) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 DocxDocument doc = (DocxDocument) edit.getDocument();
                 doc.insertColumn(edit.getCaretPosition(), 50, before);
             }
@@ -294,7 +294,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction("Table") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 DocxDocument doc = (DocxDocument) edit.getDocument();
                 doc.deleteTable(edit.getCaretPosition());
             }
@@ -318,7 +318,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction("Row") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 DocxDocument doc = (DocxDocument) edit.getDocument();
                 doc.deleteRow(edit.getCaretPosition());
             }
@@ -342,7 +342,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction("Column") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 DocxDocument doc = (DocxDocument) edit.getDocument();
                 doc.deleteColumn(edit.getCaretPosition());
             }
@@ -366,7 +366,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction("Table...") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 DocxDocument doc = (DocxDocument) edit.getDocument();
                 Element table = doc.getTable(edit.getCaretPosition());
                 if (table == null) {
@@ -397,7 +397,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction("Row...") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 DocxDocument doc = (DocxDocument) edit.getDocument();
                 Element row = doc.getRow(edit.getCaretPosition());
                 if (row == null) {
@@ -428,7 +428,7 @@ public class SimpleActionsFactory {
         Action action = new AbstractAction("Cell...") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextPane edit = WordpTopComponent.getTextPane();
+                JTextPane edit = WordpTopComponent.findCurrentTextPane();
                 DocxDocument doc = (DocxDocument) edit.getDocument();
                 Element cell = doc.getCell(edit.getCaretPosition());
                 if (cell == null) {

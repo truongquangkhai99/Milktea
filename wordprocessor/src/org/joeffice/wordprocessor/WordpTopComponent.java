@@ -65,8 +65,6 @@ import org.openide.util.RequestProcessor;
 })
 public final class WordpTopComponent extends OfficeTopComponent implements DocumentListener {
 
-    private Document document;
-    private XWPFDocument poiDocument;
     private EditorStyleable styleable;
 
     public WordpTopComponent() {
@@ -82,39 +80,34 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
         editor.setEditorKit(new DocxEditorKit());
         styleable = new EditorStyleable(editor);
         editor.setTransferHandler(new RichTextTransferHandler());
+        editor.putClientProperty("print.printable", Boolean.TRUE);
         return editor;
     }
 
     @Override
-    public void loadDocument(final File docxFile) {
-        RequestProcessor.getDefault().post(new Runnable() {
-            @Override
-            public void run() {
-                ProgressHandle progress = ProgressHandleFactory.createHandle("Opening " + docxFile.getName());
-                progress.start();
-                try (FileInputStream docxIS = new FileInputStream(docxFile)) {
-                    JTextPane wordProcessor = (JTextPane) getMainComponent();
-                    wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
-                    document = wordProcessor.getDocument();
-                    poiDocument = (XWPFDocument) document.getProperty("XWPFDocument");
-                    getDataObject().setDocument(poiDocument);
-                    getServices().add(styleable);
-                    document.addDocumentListener(WordpTopComponent.this);
-                    document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
-                    document.addDocumentListener(new DocumentUpdater(poiDocument));
-                    //Spellchecker.register(wordProcessor); // Doesn't do anything (yet)
-                    /*FindAction find = new FindAction();
-                     getActionMap().put(find.getName(), find);
-                     ReplaceAction replace = new ReplaceAction();
-                     getActionMap().put(replace.getName(), replace);*/
-                } catch (IOException | BadLocationException ex) {
-                    Exceptions.attachMessage(ex, "Failed to load: " + docxFile.getAbsolutePath());
-                    Exceptions.printStackTrace(ex);
-                } finally {
-                    progress.finish();
-                }
-            }
-        });
+    public Object loadDocument(final File docxFile) throws Exception {
+        try (FileInputStream docxIS = new FileInputStream(docxFile)) {
+            JTextPane wordProcessor = (JTextPane) getMainComponent();
+            wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
+            Document document = wordProcessor.getDocument();
+            XWPFDocument poiDocument = (XWPFDocument) document.getProperty("XWPFDocument");
+            return poiDocument;
+        } catch (IOException | BadLocationException ex) {
+            throw ex;
+        }
+    }
+
+    @Override
+    public void documentLoaded() {
+        Document document = ((JTextPane) getMainComponent()).getDocument();
+        document.addDocumentListener(this);
+        document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
+        document.addDocumentListener(new DocumentUpdater(getPOIDocument()));
+        //Spellchecker.register(wordProcessor); // Doesn't do anything (yet)
+        /*FindAction find = new FindAction();
+         getActionMap().put(find.getName(), find);
+         ReplaceAction replace = new ReplaceAction();
+         getActionMap().put(replace.getName(), replace);*/
     }
 
     @Override
@@ -134,7 +127,11 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
         super.componentDeactivated();
     }
 
-    public static JTextPane getTextPane() {
+    public XWPFDocument getPOIDocument() {
+        return (XWPFDocument) getDataObject().getDocument();
+    }
+
+    public static JTextPane findCurrentTextPane() {
         WordpTopComponent wordProcessor = OfficeTopComponent.getSelectedComponent(WordpTopComponent.class);
         return (JTextPane) wordProcessor.getMainComponent();
     }

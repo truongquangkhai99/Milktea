@@ -255,18 +255,26 @@ public class DocumentUpdater implements DocumentListener {
                 run.setBold((Boolean) attributeValue);
             } else if (attributeName == Italic) {
                 run.setItalic((Boolean) attributeValue);
-            } else if (attributeName == Italic) {
-                run.setItalic((Boolean) attributeValue);
             } else if (attributeName == Underline) {
                 run.setUnderline((Boolean) attributeValue ? UnderlinePatterns.SINGLE : UnderlinePatterns.NONE);
             } else if (attributeName == FontFamily || attributeName == Family) {
                 run.setFontFamily((String) attributeValue);
             } else if (attributeName == FontSize) {
-                run.setFontSize((Integer) attributeValue);
+                run.setFontSize(((Number) attributeValue).intValue());
             } else if (attributeName == Foreground) {
                 Color color = (Color) attributeValue;
                 String rgb = Integer.toHexString((color.getRGB() & 0xffffff) | 0x1000000).substring(1);
                 run.setColor(rgb);
+            } else if (attributeName == Background) {
+                Color color = (Color) attributeValue;
+                String rgb = Integer.toHexString((color.getRGB() & 0xffffff) | 0x1000000).substring(1);
+                //run.getCTR().getRPr().setHighlight();
+            } else if (attributeName == Subscript) {
+                run.setSubscript((Boolean) attributeValue ? VerticalAlign.SUBSCRIPT : VerticalAlign.BASELINE);
+            } else if (attributeName == Superscript) {
+                run.setSubscript((Boolean) attributeValue ? VerticalAlign.SUPERSCRIPT : VerticalAlign.BASELINE);
+            } else if (attributeName == StrikeThrough) {
+                run.setStrike((Boolean) attributeValue);
             } else if (attributeName == Alignment) {
                 ParagraphAlignment alignment = documentToPOI((Integer) attributeValue);
                 run.getParagraph().setAlignment(alignment);
