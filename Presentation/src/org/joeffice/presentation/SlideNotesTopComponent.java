@@ -71,6 +71,7 @@ public final class SlideNotesTopComponent extends TopComponent implements Proper
         SlideComponent notesComponent = new SlideComponent(notes, slidesEditor, new Dimension(300, 200));
         add(notesComponent);
         slidesEditor.addPropertyChangeListener("slideChanged", this);
+        putClientProperty("print.printable", Boolean.TRUE);
     }
 
     @Override

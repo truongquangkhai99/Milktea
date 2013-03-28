@@ -88,6 +88,7 @@ public final class SlideThumbnailsTopComponent extends TopComponent implements L
         });
         slidesList.setFocusable(false);
         slidesList.addListSelectionListener(this);
+        slidesList.putClientProperty("print.printable", Boolean.TRUE);
         add(new JScrollPane(slidesList));
     }
 

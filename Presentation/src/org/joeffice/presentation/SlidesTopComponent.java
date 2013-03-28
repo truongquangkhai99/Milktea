@@ -58,7 +58,6 @@ import org.openide.util.Utilities;
 })
 public final class SlidesTopComponent extends OfficeTopComponent {
 
-    private transient XMLSlideShow presentation;
     private int selectedSlide;
 
     public SlidesTopComponent() {
@@ -86,27 +85,30 @@ public final class SlidesTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    public void loadDocument(File pptxFile) {
+    public Object loadDocument(File pptxFile) throws Exception {
         try (FileInputStream fis = new FileInputStream(pptxFile)) {
-            presentation = new XMLSlideShow(fis);
-
-            XSLFSlide[] slides = presentation.getSlides();
-            int slideNumber = 0;
-            for (XSLFSlide slide : slides) {
-                SlideComponent slideComp = new SlideComponent(slide, this);
-                getMainComponent().add(slideComp, String.valueOf(slideNumber));
-                slideNumber++;
-            }
-            selectedSlide = 0;
-            getDataObject().setDocument(presentation);
+            XMLSlideShow presentation = new XMLSlideShow(fis);
+            return presentation;
         } catch (IOException ex) {
-            Exceptions.attachMessage(ex, "Failed to load: " + pptxFile.getAbsolutePath());
-            Exceptions.printStackTrace(ex);
+            throw ex;
         }
     }
 
+    @Override
+    public void documentLoaded() {
+        XSLFSlide[] slides = getPresentation().getSlides();
+        int slideNumber = 0;
+        for (XSLFSlide slide : slides) {
+            SlideComponent slideComp = new SlideComponent(slide, this);
+            getMainComponent().add(slideComp, String.valueOf(slideNumber));
+            slideNumber++;
+        }
+        getMainComponent().putClientProperty("print.printable", Boolean.TRUE);
+        selectedSlide = 0;
+    }
+
     public XMLSlideShow getPresentation() {
-        return presentation;
+        return (XMLSlideShow) getDataObject().getDocument();
     }
 
     public int getSelectedSlide() {
