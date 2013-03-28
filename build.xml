@@ -52,15 +52,17 @@
     <mkdir dir="build/classes" />
     <javac destdir="build/classes" srcdir="tools/src" debug="true">
       <classpath location="h2/release/modules/ext/h2-1.3.170.jar" />
+      <classpath location="swingX/release/modules/ext/swingx-all-1.6.5.jar" />
       <classpath>
         <fileset dir="poi/release/modules/ext" includes="*.jar" />
       </classpath>
     </javac>
 
-    <!-- classes are CreateH2Database, CreatePresentationDirectories, JTableCellSelection, UpdateRowSet, PptxShapeNotDrawn -->
+    <!-- classes are CreateH2Database, CreatePresentationDirectories, JTableCellSelection, UpdateRowSet, PptxShapeNotDrawn, FilterJXList -->
     <java classname="org.joeffice.tools.JTableCellSelection">
       <classpath path="build/classes" />
       <classpath location="h2/release/modules/ext/h2-1.3.170.jar" />
+      <classpath location="swingX/release/modules/ext/swingx-all-1.6.5.jar" />
       <classpath>
         <fileset dir="poi/release/modules/ext" includes="*.jar" />
       </classpath>
