@@ -65,10 +65,11 @@ public class ChooseFontAction extends AbstractAction {
             FontListTopComponent fontList = new FontListTopComponent();
             fontList.noSelectionListener();
             String selectFontTitle = NbBundle.getMessage(getClass(), "MSG_SelectFontTitle");
-            DialogDescriptor dialogDesc = new DialogDescriptor(fontList, selectFontTitle, true, DialogDescriptor.OK_CANCEL_OPTION, null, null);
-            Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDesc);
-            dialog.setVisible(true);
-            fontName = fontList.getSelectedFontName();
+            DialogDescriptor dialogDesc = new DialogDescriptor(fontList, selectFontTitle);
+            Object dialogResult = DialogDisplayer.getDefault().notify(dialogDesc);
+            if (dialogResult == DialogDescriptor.OK_OPTION) {
+                fontName = fontList.getSelectedFontName();
+            }
         }
         if (fontName != null) {
             attributes.addAttribute(TextAttribute.FAMILY, fontName);

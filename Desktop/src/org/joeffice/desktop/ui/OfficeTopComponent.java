@@ -22,17 +22,19 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.SwingWorker;
 
 import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
 
 import org.joeffice.desktop.file.OfficeDataObject;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 
 import org.openide.awt.UndoRedo;
 import org.openide.explorer.ExplorerManager;
@@ -43,6 +45,9 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
+import org.openide.util.NbBundle.Messages;
+import org.openide.util.RequestProcessor;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ProxyLookup;
@@ -86,22 +91,7 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         String fileDisplayName = FileUtil.getFileDisplayName(documentFileObject);
         setToolTipText(fileDisplayName);
         setName(documentFileObject.getName());
-        File documentFile = FileUtil.toFile(documentFileObject);
-        loadDocument(documentFile);
-        getDataObject().addPropertyChangeListener(new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(DataObject.PROP_MODIFIED)) {
-                    boolean modified = (Boolean) evt.getNewValue();
-                    if (modified) {
-                        setHtmlDisplayName("<html><body><b>" + getDataObject().getName());
-                    } else {
-                        setHtmlDisplayName("<html><body>" + getDataObject().getName());
-                    }
-                }
-            }
-        });
+        loadDocument(documentFileObject);
     }
 
     /**
@@ -134,7 +124,20 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         return mainComponent;
     }
 
-    protected abstract void loadDocument(File documentFile);
+    @Messages({"# {0} - file name", "MSG_Opening=Opening {0}"})
+    protected void loadDocument(FileObject documentFileObject) {
+        final File documentFile = FileUtil.toFile(documentFileObject);
+        // String openingTitle = NbBundle.getMessage(getClass(), "MSG_Opening", documentFile.getName());
+        final ProgressHandle progress = ProgressHandleFactory.createHandle("Opening " + documentFile.getName());
+        progress.start();
+        SwingWorker loader = new DocumentLoader(documentFile, progress);
+        RequestProcessor.getDefault().post(loader);
+    }
+
+    protected abstract Object loadDocument(File documentFile) throws Exception;
+
+    protected void documentLoaded() {
+    }
 
     public InstanceContent getServices() {
         return services;
@@ -206,6 +209,55 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
             // If the file has moved or has been deleted
         } catch (DataObjectNotFoundException ex) {
             close();
+        }
+    }
+
+    private class ChangeTitleIfModified implements PropertyChangeListener {
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals(DataObject.PROP_MODIFIED)) {
+                boolean modified = (Boolean) evt.getNewValue();
+                if (modified) {
+                    setHtmlDisplayName("<html><body><b>" + getDataObject().getName());
+                } else {
+                    setHtmlDisplayName("<html><body>" + getDataObject().getName());
+                }
+            }
+        }
+    }
+
+    class DocumentLoader extends SwingWorker {
+
+        private boolean successful;
+        private File documentFile;
+        private ProgressHandle progress;
+
+        DocumentLoader(File documentFile, ProgressHandle progress) {
+            this.documentFile = documentFile;
+            this.progress = progress;
+        }
+
+        @Override
+        protected Object doInBackground() throws Exception {
+            try {
+                Object document = loadDocument(documentFile);
+                getDataObject().setDocument(document);
+                successful = true;
+                return document;
+            } catch (Exception ex) {
+                Exceptions.printStackTrace(ex);
+                throw ex;
+            }
+        }
+
+        @Override
+        protected void done() {
+            if (successful) {
+                documentLoaded();
+            }
+            progress.finish();
+            getDataObject().addPropertyChangeListener(new ChangeTitleIfModified());
         }
     }
 }

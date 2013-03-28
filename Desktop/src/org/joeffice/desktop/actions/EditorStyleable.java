@@ -99,6 +99,16 @@ public class EditorStyleable implements Styleable {
         } else if (attribute == JUSTIFICATION) {
             boolean justified = attributeValue == JUSTIFICATION_FULL && !hasAttribute(currentAttributes, attribute, JUSTIFICATION_FULL);
             editorAttributes.addAttribute(Alignment, justified ? ALIGN_JUSTIFIED : ALIGN_LEFT);
+        } else if (attribute == SUPERSCRIPT) {
+            editorAttributes.addAttribute(Subscript, false);
+            editorAttributes.addAttribute(Superscript, false);
+            if (attributeValue.equals(SUPERSCRIPT_SUB)) {
+                editorAttributes.addAttribute(Subscript, true);
+            } else if (attributeValue.equals(SUPERSCRIPT_SUPER)) {
+                editorAttributes.addAttribute(Superscript, true);
+            }
+        } else if (attribute == STRIKETHROUGH) {
+            editorAttributes.addAttribute(StrikeThrough, attributeValue);
         } else if (attribute == ALIGNMENT) {
             editorAttributes.addAttribute(Alignment, attributeValue);
         }
@@ -121,6 +131,9 @@ public class EditorStyleable implements Styleable {
         editorAttributes.removeAttribute(Underline);
         editorAttributes.removeAttribute(Foreground);
         editorAttributes.removeAttribute(Background);
+        editorAttributes.removeAttribute(Subscript);
+        editorAttributes.removeAttribute(Superscript);
+        editorAttributes.removeAttribute(StrikeThrough);
     }
 
     @Override
@@ -156,6 +169,12 @@ public class EditorStyleable implements Styleable {
             attributes.addAttribute(FOREGROUND, value);
         } else if (attribute == Background) {
             attributes.addAttribute(BACKGROUND, value);
+        } else if (attribute == Subscript) {
+            attributes.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUB);
+        } else if (attribute == Superscript) {
+            attributes.addAttribute(SUPERSCRIPT, SUPERSCRIPT_SUPER);
+        } else if (attribute == StrikeThrough) {
+            attributes.addAttribute(STRIKETHROUGH, value);
         } else if (attribute == Alignment) {
             if (value == ALIGN_JUSTIFIED) {
                 attributes.addAttribute(JUSTIFICATION, JUSTIFICATION_FULL);

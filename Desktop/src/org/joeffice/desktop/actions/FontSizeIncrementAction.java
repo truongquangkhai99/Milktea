@@ -16,48 +16,32 @@
 package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
-
 import org.joeffice.desktop.ui.Styleable;
-
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-/**
- * Change the font weight to bold.
- *
- * @author Anthony Goubard - Japplis
- */
+// Not implemented yet in document updater or in editor styleable
 @ActionID(
         category = "Edit/Office",
-        id = "org.joeffice.desktop.actions.PlainStyleAction")
+        id = "org.joeffice.desktop.actions.FontSizeIncrementAction")
 @ActionRegistration(
-        displayName = "#CTL_PlainStyleAction")
-@ActionReferences({
-    @ActionReference(path = "Shortcuts", name = "D-Space")
-})
-@Messages("CTL_PlainStyleAction=Standard")
-public class PlainStyleAction extends AbstractAction {
+        displayName = "#CTL_FontSizeIncrementAction")
+@Messages("CTL_FontSizeIncrementAction=Increase font size")
+public final class FontSizeIncrementAction extends AbstractAction {
 
     private Styleable styleable;
 
-    public PlainStyleAction(Styleable styleable) {
+    public FontSizeIncrementAction(Styleable styleable) {
         this.styleable = styleable;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AttributedString attributes = new AttributedString("Plain");
-        attributes.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_REGULAR);
-        attributes.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_REGULAR);
-        attributes.addAttribute(TextAttribute.UNDERLINE, -1);
-        attributes.addAttribute(TextAttribute.SUPERSCRIPT, 0);
-        attributes.addAttribute(TextAttribute.STRIKETHROUGH, false);
+        AttributedString attributes = new AttributedString("Increase fotn size");
+        attributes.addAttribute(ParagraphAttributes.INCREASE_FONT_SIZE, 1);
         styleable.setFontAttributes(attributes);
     }
 }

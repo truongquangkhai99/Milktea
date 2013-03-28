@@ -15,59 +15,55 @@
  */
 package org.joeffice.desktop.actions;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.font.TextAttribute;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.Map;
 import javax.swing.AbstractAction;
-import javax.swing.JColorChooser;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+
 import org.joeffice.desktop.ui.Styleable;
 
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.WindowManager;
 
-/**
- * Change the background color.
- *
- * @author Anthony Goubard - Japplis
- */
 @ActionID(
         category = "Edit/Office",
-        id = "org.joeffice.desktop.actions.BackgroundColorAction")
+        id = "org.joeffice.desktop.actions.FontSizeAction")
 @ActionRegistration(
-        iconBase = "org/joeffice/desktop/actions/tag_blue_edit.png",
-        displayName = "#CTL_BackgroundColorAction")
-@ActionReference(path = "Menu/Edit", position = 1560)
-@Messages("CTL_BackgroundColorAction=Background Color")
-public class BackgroundColorAction extends AbstractAction {
+        displayName = "#CTL_FontSizeAction")
+@Messages("CTL_FontSizeAction=Font Size")
+public final class FontSizeAction extends AbstractAction {
 
     private Styleable styleable;
 
-    public BackgroundColorAction(Styleable styleable) {
+    public FontSizeAction(Styleable styleable) {
         this.styleable = styleable;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         AttributedString currentAttributes = styleable.getCommonFontAttributes();
-        Color defaultColor = Color.WHITE;
-        Map<AttributedCharacterIterator.Attribute,Object> colorAttr =
-                currentAttributes.getIterator(new TextAttribute[] { TextAttribute.BACKGROUND }).getAttributes();
-        if (!colorAttr.isEmpty()) {
-            defaultColor = (Color) colorAttr.get(TextAttribute.BACKGROUND);
+        double defaultFontSize = 11.0;
+        Map<AttributedCharacterIterator.Attribute,Object> fontSizeAttr =
+                currentAttributes.getIterator(new TextAttribute[] { TextAttribute.SIZE }).getAttributes();
+        if (!fontSizeAttr.isEmpty()) {
+            defaultFontSize = (Double) fontSizeAttr.get(TextAttribute.SIZE);
         }
-        String title = NbBundle.getMessage(getClass(), "MSG_ColorTitle");
-        Color chosenColor = JColorChooser.showDialog(WindowManager.getDefault().getMainWindow(), title, defaultColor);
-        if (chosenColor != null) {
-            AttributedString attributes = new AttributedString("BackgroundColor");
-            attributes.addAttribute(TextAttribute.BACKGROUND, chosenColor);
+        String title = NbBundle.getMessage(getClass(), "CTL_FontSizeAction");
+        SpinnerNumberModel fontSizeModel = new SpinnerNumberModel(defaultFontSize, 1.0, 99.0, 1.0);
+        JSpinner spinner = new JSpinner(fontSizeModel);
+        DialogDescriptor dialogDesc = new DialogDescriptor(spinner, title);
+        Object dialogResult = DialogDisplayer.getDefault().notify(dialogDesc);
+        if (dialogResult == DialogDescriptor.OK_OPTION) {
+            AttributedString attributes = new AttributedString("FontSize");
+            attributes.addAttribute(TextAttribute.SIZE, fontSizeModel.getNumber());
             styleable.setFontAttributes(attributes);
         }
     }

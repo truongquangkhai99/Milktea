@@ -27,6 +27,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.joeffice.desktop.file.OfficeDataObject;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -62,6 +63,7 @@ public final class NewFileAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
+        //if (0 == 0) throw new IllegalArgumentException("This is a test for the error reporting URL. If you read this you can remove the issue as it's not a bug but a test from another Netbeans platforma app.");
         JFileChooser newFileChooser = createFileChooser();
         int saveResult = newFileChooser.showSaveDialog(WindowManager.getDefault().getMainWindow());
         if (saveResult == JFileChooser.APPROVE_OPTION) {
@@ -69,6 +71,7 @@ public final class NewFileAction extends AbstractAction {
             FileObject template = getFileTemplate(savedFile);
             if (template == null) {
                 showChooseExtensionMessage();
+                actionPerformed(ae);
             } else {
                 try {
                     FileObject createdFile = createFileFromTemplate(template, savedFile);
@@ -91,19 +94,9 @@ public final class NewFileAction extends AbstractAction {
 
     private void addFileFilters(JFileChooser chooser) {
         List<DataObject> possibleObjects = findDataObject("Templates/Other");
-        for (final DataObject dataObject : possibleObjects) {
+        for (DataObject dataObject : possibleObjects) {
             if (dataObject instanceof OfficeDataObject) {
-                FileFilter filter = new FileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return file.isDirectory() || file.getName().endsWith(dataObject.getPrimaryFile().getExt());
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return "*." + dataObject.getPrimaryFile().getExt();
-                    }
-                };
+                FileFilter filter = new OfficeFileFilter(dataObject);
                 chooser.addChoosableFileFilter(filter);
             }
         }
@@ -176,6 +169,25 @@ public final class NewFileAction extends AbstractAction {
         OpenCookie openCookie = fileDataObject.getCookie(OpenCookie.class);
         if (openCookie != null) {
             openCookie.open();
+        }
+    }
+
+    private class OfficeFileFilter extends FileFilter {
+
+        private DataObject dataObject;
+
+        private OfficeFileFilter(DataObject dataObject) {
+            this.dataObject = dataObject;
+        }
+
+        @Override
+        public boolean accept(File file) {
+            return file.isDirectory() || file.getName().endsWith(dataObject.getPrimaryFile().getExt());
+        }
+
+        @Override
+        public String getDescription() {
+            return "*." + dataObject.getPrimaryFile().getExt();
         }
     }
 }

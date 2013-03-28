@@ -26,7 +26,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.Document;
 import org.jdesktop.swingx.JXList;
 
 import org.joeffice.desktop.actions.ChooseFontAction;
@@ -98,6 +97,7 @@ public final class FontListTopComponent extends TopComponent implements ListSele
         fontList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         fontList.addListSelectionListener(this);
         fontList.setFocusable(false);
+        //fontList.setSearchable(new JXList.ListSearchable());
         add(new JScrollPane(fontList));
     }
 
