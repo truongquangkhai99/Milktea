@@ -39,7 +39,8 @@ public class CellEditor extends DefaultCellEditor implements TableCellEditor {
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         super.getTableCellEditorComponent(table, value, isSelected, row, column);
         if (value != null) {
-            JComponent defaultComponent = (JComponent) DEFAULT_EDITOR.getTableCellEditorComponent(table, null, isSelected, row, column);
+            JComponent defaultComponent = (JComponent) DEFAULT_EDITOR.
+                    getTableCellEditorComponent(table, null, isSelected, row, column);
             Cell cell = (Cell) value;
             ((JTextField) getComponent()).setText(POIUtils.getFormattedText(cell));
             CellRenderer.decorateComponent(cell, (JComponent) getComponent(), defaultComponent);

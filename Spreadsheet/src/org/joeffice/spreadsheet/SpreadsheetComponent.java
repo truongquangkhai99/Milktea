@@ -17,7 +17,6 @@ package org.joeffice.spreadsheet;
 
 import static javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT;
 
-import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -25,11 +24,14 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultEditorKit;
+
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+
 import org.joeffice.desktop.ui.OfficeTopComponent;
+
 import org.openide.util.Utilities;
-import org.openide.windows.TopComponent;
 
 /**
  * Component that displays several sheets.
@@ -39,6 +41,7 @@ import org.openide.windows.TopComponent;
 public class SpreadsheetComponent extends JTabbedPane implements ChangeListener {
 
     private Workbook workbook;
+    private FormulaEvaluator formulaEvaluator;
     private TableStyleable styleable;
     private SpreadsheetTopComponent spreadsheetAndToolbar;
 
@@ -64,6 +67,7 @@ public class SpreadsheetComponent extends JTabbedPane implements ChangeListener 
             addTab(sheetName, sheetPanel);
         }
         setSelectedIndex(workbook.getActiveSheetIndex());
+        formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
     }
 
     public SpreadsheetTopComponent getSpreadsheetAndToolbar() {
@@ -72,6 +76,10 @@ public class SpreadsheetComponent extends JTabbedPane implements ChangeListener 
 
     public SheetComponent getSelectedSheet() {
         return (SheetComponent) getComponentAt(workbook.getActiveSheetIndex());
+    }
+
+    public FormulaEvaluator getFormulaEvaluator() {
+        return formulaEvaluator;
     }
 
     private void addPopupToTabs() {

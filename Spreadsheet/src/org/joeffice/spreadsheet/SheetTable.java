@@ -15,6 +15,8 @@
  */
 package org.joeffice.spreadsheet;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +50,7 @@ public class SheetTable extends JTable {
 
     @Override
     public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
-        if (toggle && isCellSelected(rowIndex, columnIndex) && !extend) {
+        if (toggle && isCellSelected(rowIndex, columnIndex) && !extend && selectedCells.containsKey(rowIndex)) {
             selectedCells.get(rowIndex).remove(columnIndex);
         } else {
             if (!toggle && !extend) {
@@ -66,6 +68,7 @@ public class SheetTable extends JTable {
                 for (int i = Math.min(firstExtendCell.x, rowIndex); i <= Math.max(firstExtendCell.x, rowIndex); i++) {
                     for (int j = Math.min(firstExtendCell.y, columnIndex); j <= Math.max(firstExtendCell.y, columnIndex); j++) {
                         selectedCells.get(i).add(j);
+                        getColumnModel().getSelectionModel().addSelectionInterval(j, j);
                     }
                 }
             }
@@ -75,7 +78,7 @@ public class SheetTable extends JTable {
 
     @Override
     public void addRowSelectionInterval(int index0, int index1) {
-        for (int i = index0; i < index1; i++) {
+        for (int i = index0; i <= index1; i++) {
             selectedCells.remove(i);
         }
         super.addRowSelectionInterval(index0, index1);
@@ -83,7 +86,7 @@ public class SheetTable extends JTable {
 
     @Override
     public void removeRowSelectionInterval(int index0, int index1) {
-        for (int i = index0; i < index1; i++) {
+        for (int i = index0; i <= index1; i++) {
             selectedCells.remove(i);
         }
         super.removeRowSelectionInterval(index0, index1);
@@ -113,4 +116,15 @@ public class SheetTable extends JTable {
         }
         return selectedCells.get(row).contains(column);
     }
+
+    @Override
+    public void print(Graphics g) {
+        boolean showHGrid = getShowHorizontalLines();
+        boolean showVGrid = getShowVerticalLines();
+        setShowGrid(false);
+        super.print(g);
+        setShowHorizontalLines(showHGrid);
+        setShowVerticalLines(showVGrid);
+    }
+
 }

@@ -58,7 +58,7 @@ import org.openide.util.Utilities;
 })
 public final class SpreadsheetTopComponent extends OfficeTopComponent {
 
-    private Workbook workbook;
+    private boolean loaded;
 
     public SpreadsheetTopComponent() {
     }
@@ -96,21 +96,27 @@ public final class SpreadsheetTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    public void loadDocument(File xslxFile) {
-        try {
-            workbook = JoefficeWorkbookFactory.create(xslxFile);
+    public Object loadDocument(File xslxFile) throws Exception {
+        Workbook workbook = JoefficeWorkbookFactory.create(xslxFile);
+        return workbook;
+    }
 
-            ((SpreadsheetComponent) getMainComponent()).load(workbook);
-            getDataObject().setDocument(workbook);
-        } catch (IOException | InvalidFormatException ex) {
-            Exceptions.attachMessage(ex, "Failed to load: " + xslxFile.getAbsolutePath());
-            Exceptions.printStackTrace(ex);
-        }
+    @Override
+    public void documentLoaded() {
+        ((SpreadsheetComponent) getMainComponent()).load(getWorkbook());
+        loaded = true;
+        getSpreadsheetComponent().registerActions();
+    }
+
+    public Workbook getWorkbook() {
+        return (Workbook) getDataObject().getDocument();
     }
 
     @Override
     protected void componentActivated() {
-        getSpreadsheetComponent().registerActions();
+        if (loaded) {
+            getSpreadsheetComponent().registerActions();
+        }
         super.componentActivated();
     }
 

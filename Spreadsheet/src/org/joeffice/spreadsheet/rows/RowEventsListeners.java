@@ -73,16 +73,10 @@ public class RowEventsListeners implements PropertyChangeListener, ListSelection
 
     private void showPopup(MouseEvent me) {
         if (me.isPopupTrigger()) {
-            /*Action insertAction = Utilities.actionsForPath("Actions/Build/org-joeffice-spreadsheet-actions-InsertRowsAction").get(0);
-             Action removeAction = Utilities.actionsForPath("Actions/Build/org-joeffice-spreadsheet-actions-RemoveRowsAction").get(0);
-             JPopupMenu menu = Utilities.actionsToPopup(new Action[] {insertAction, removeAction}, me.getComponent());*/
-            List<? extends Action> buildActions = Utilities.actionsForPath("Office/Spreadsheet/Rows/Popup");
-            JPopupMenu menu = Utilities.actionsToPopup(buildActions.toArray(new Action[buildActions.size()]), me.getComponent());
-            /*int row = rowTable.rowAtPoint(me.getPoint());
-             rowTable.getSelectionModel().addSelectionInterval(row, row);
-             JPopupMenu menu = new JPopupMenu();
-             menu.add(removeRows);
-             menu.add(insertRows);*/
+            List<? extends Action> buildActions =
+                    Utilities.actionsForPath("Office/Spreadsheet/Rows/Popup");
+            JPopupMenu menu = Utilities.actionsToPopup(
+                    buildActions.toArray(new Action[buildActions.size()]), me.getComponent());
             menu.show(me.getComponent(), me.getX(), me.getY());
         }
     }

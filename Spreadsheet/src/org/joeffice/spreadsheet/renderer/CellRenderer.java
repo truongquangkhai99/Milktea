@@ -18,10 +18,12 @@ package org.joeffice.spreadsheet.renderer;
 import java.awt.Color;
 import java.awt.Component;
 import java.text.NumberFormat;
+import java.util.Locale;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -52,7 +54,9 @@ public class CellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        //System.out.println("row " + row + "; column " + column + "; isSelected " + isSelected);
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        if (!isSelected) setBackground(UIManager.getColor("Table.background"));
         if (value != null) {
             JLabel defaultComponent = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
             Cell cell = (Cell) value;

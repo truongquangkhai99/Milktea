@@ -41,6 +41,7 @@ import org.joeffice.spreadsheet.rows.JScrollPaneAdjuster;
 import org.joeffice.spreadsheet.rows.JTableRowHeaderResizer;
 import org.joeffice.spreadsheet.rows.RowTable;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+import org.netbeans.api.print.PrintManager;
 
 /**
  * Component that displays one sheet.
@@ -138,7 +139,8 @@ public class SheetComponent extends JPanel {
         table.getActionMap().put(DefaultEditorKit.copyAction, copyAction);
         table.getActionMap().put(DefaultEditorKit.pasteAction, pasteAction);
 
-        table.setIntercellSpacing(new Dimension(0, 0));
+        //table.setIntercellSpacing(new Dimension(0, 0));
+        table.putClientProperty("print.printable", Boolean.TRUE);
 
         if (!sheet.isDisplayGridlines()) {
             table.setShowGrid(false);
