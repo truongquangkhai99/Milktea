@@ -55,7 +55,7 @@ public class JDBCSheet extends AbstractTableModel {
         init();
     }
 
-    private void init() {
+    public void init() {
         fillWithQuery("SELECT * FROM " + tableName + " LIMIT " + MAX_RESULTS + " OFFSET " + offset);
     }
 
@@ -194,21 +194,25 @@ public class JDBCSheet extends AbstractTableModel {
     private void updateDatabase(Object newValue, int row, int column) {
         try {
             dataModel.absolute(row + 1);
-            setColumnValue(dataModel, column, newValue);
+            setColumnValue(column, newValue);
+            dataModel.updateRow();
         } catch (SQLException ex) {
             Exceptions.printStackTrace(ex);
         }
     }
 
-    public void setColumnValue(RowSet rows, int columnIndex, Object value) throws SQLException {
+    public void setColumnValue(int columnIndex, Object value) throws SQLException {
         int columnType = columnsMetaData.getColumnType(columnIndex + 1);
         switch (columnType) {
+            case Types.BOOLEAN:
+                dataModel.updateBoolean(columnIndex + 1, (Boolean) value);
+                break;
             case Types.CHAR:
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
             case Types.NVARCHAR:
             case Types.LONGNVARCHAR:
-                rows.updateString(columnIndex + 1, (String) value);
+                dataModel.updateString(columnIndex + 1, (String) value);
                 break;
             case Types.BIGINT:
             case Types.INTEGER:
@@ -216,10 +220,9 @@ public class JDBCSheet extends AbstractTableModel {
             case Types.ROWID:
             case Types.SMALLINT:
             case Types.TINYINT:
-                rows.updateInt(columnIndex + 1, Integer.parseInt((String) value));
+                dataModel.updateInt(columnIndex + 1, Integer.parseInt((String) value));
                 break;
         }
-        rows.updateRow();
     }
 
     public void removeRows(int[] rows) {
@@ -232,6 +235,10 @@ public class JDBCSheet extends AbstractTableModel {
                 Exceptions.printStackTrace(ex);
             }
         }
+    }
+
+    public RowSet getDataModel() {
+        return dataModel;
     }
 
     public long getOffset() {

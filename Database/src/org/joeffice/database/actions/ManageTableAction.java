@@ -48,8 +48,7 @@ public final class ManageTableAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         JDBCTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(JDBCTopComponent.class);
         if (currentTopComponent != null) {
-            int selectedTabIndex = ((JTabbedPane) currentTopComponent.getMainComponent()).getSelectedIndex();
-            String tableName = currentTopComponent.getTableNames().get(selectedTabIndex);
+            String tableName = currentTopComponent.getSelectedTableName();
             File h2File = FileUtil.toFile(currentTopComponent.getDataObject().getPrimaryFile());
             ManageTableTopComponent manageTableTopComponent = new ManageTableTopComponent();
             Mode explorerMode = WindowManager.getDefault().findMode("editor");

@@ -62,7 +62,6 @@ import org.openide.util.Utilities;
 })
 public final class JDBCTopComponent extends OfficeTopComponent {
 
-    private transient Connection dbConnection;
     private List<String> tableNames;
 
     public JDBCTopComponent() {
@@ -89,38 +88,47 @@ public final class JDBCTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    public void loadDocument(File h2File) {
-        try {
-            dbConnection = H2DataObject.getConnection(h2File);
-            ResultSet rsTableNames = dbConnection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
-            tableNames = new ArrayList<>();
-            while (rsTableNames.next()) {
-                String nextTableName = rsTableNames.getString("TABLE_NAME");
-                tableNames.add(nextTableName);
+    public Object loadDocument(File h2File) throws Exception {
+        Connection dbConnection = H2DataObject.getConnection(h2File);
+        ResultSet rsTableNames = dbConnection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
+        tableNames = new ArrayList<>();
+        while (rsTableNames.next()) {
+            String nextTableName = rsTableNames.getString("TABLE_NAME");
+            tableNames.add(nextTableName);
+        }
+        return dbConnection;
+    }
 
-                TableComponent tableComp = new TableComponent(dbConnection, nextTableName);
+    @Override
+    public void documentLoaded() {
+        for (String tableName : tableNames) {
+            TableComponent tableComp = new TableComponent(getDatabaseConnection(), tableName);
 
-                String tabLabel = OfficeUIUtils.toDisplayable(nextTableName);
-                ((JTabbedPane) getMainComponent()).addTab(tabLabel, tableComp);
-            }
-        } catch (SQLException | ClassNotFoundException ex) {
-            Exceptions.printStackTrace(ex);
+            String tabLabel = OfficeUIUtils.toDisplayable(tableName);
+            ((JTabbedPane) getMainComponent()).addTab(tabLabel, tableComp);
         }
     }
 
     @Override
-    public void componentClosed() {
-        if (dbConnection != null) {
-            try {
-                dbConnection.close();
-            } catch (SQLException ex) {
-                Exceptions.printStackTrace(ex);
+    protected boolean closeLast() {
+        boolean closed = super.closeLast();
+        try {
+            if (getDatabaseConnection() != null && !getDatabaseConnection().isClosed()) {
+                getDatabaseConnection().close();
             }
+        } catch (SQLException ex) {
+            Exceptions.printStackTrace(ex);
         }
+        return closed;
     }
 
-    public List<String> getTableNames() {
-        return tableNames;
+    public Connection getDatabaseConnection() {
+        return (Connection) getDataObject().getDocument();
+    }
+
+    public String getSelectedTableName() {
+        int selectedTabIndex = ((JTabbedPane) getMainComponent()).getSelectedIndex();
+        return tableNames.get(selectedTabIndex);
     }
 
     public TableComponent getSelectedTableComponent() {

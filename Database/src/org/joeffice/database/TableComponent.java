@@ -57,6 +57,8 @@ public class TableComponent extends JPanel {
         databaseTable.setColumnHidingAllowed(true);
         databaseTable.setTransferHandler(new ETableTransferHandler());
         databaseTable.setDragEnabled(true); // Dragging not working yet
+        databaseTable.setPopupUsedFromTheCorner(true);
+        putClientProperty("print.printable", Boolean.TRUE);
 
         add(scrolling);
     }
