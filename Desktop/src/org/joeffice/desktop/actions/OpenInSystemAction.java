@@ -54,8 +54,9 @@ import org.openide.util.NbBundle.Messages;
 })
 @Messages({"CTL_OpenInSystemAction=Open in System",
         "MSG_NotRecognizedDoc=Only new Word Document (.docx) are supported.",
+        "MSG_NotRecognizedPpt=Only new Powerpoint presentations (.pptx) are supported.",
         "MSG_NotRecognizedUnsupported=This file format is not supported by Joeffice.",
-        "MSG_NotRecognizedOpenExternal=Do you want to open it in an external editor/viewer?",
+        "MSG_NotRecognizedOpenExternal=Do you want to open the file in an external editor/viewer?",
         "MSG_NotRecognizedTitle=Unknown file format"})
 public class OpenInSystemAction extends AbstractAction {
 
@@ -85,6 +86,9 @@ public class OpenInSystemAction extends AbstractAction {
         String unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedUnsupported");
         if (fileName.toLowerCase().endsWith(".doc")) {
             unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedDoc");
+        }
+        if (fileName.toLowerCase().endsWith(".ppt")) {
+            unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedPpt");
         }
         questionPanel.add(new JLabel(unsupportedText));
         String openExternalText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedOpenExternal");
