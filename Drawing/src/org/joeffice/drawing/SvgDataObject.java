@@ -59,7 +59,12 @@ import org.w3c.dom.Document;
             path = "Loaders/image/svg+xml/Actions",
             id =
             @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-            position = 100,
+            position = 100),
+    @ActionReference(
+            path = "Loaders/image/svg+xml/Actions",
+            id =
+            @ActionID(category = "Edit", id = "org.netbeans.core.ui.sysopen.SystemOpenAction"),
+            position = 150,
             separatorAfter = 200),
     @ActionReference(
             path = "Loaders/image/svg+xml/Actions",
