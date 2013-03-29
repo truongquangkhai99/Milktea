@@ -35,12 +35,15 @@ public class SheetTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        int lastRowNum = sheet.getLastRowNum();
+        int lastRowNum = getLastRowNum();
         if (lastRowNum < 100) {
             return lastRowNum + 100;
         } else {
             return lastRowNum + 30;
         }
+    }
+    public int getLastRowNum() {
+        return sheet.getLastRowNum();
     }
 
     public int getLastColumnNum() {

@@ -19,6 +19,7 @@ import static javax.swing.JLayeredPane.DEFAULT_LAYER;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.*;
@@ -31,6 +32,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.joeffice.spreadsheet.actions.ClipboardAction;
+import org.joeffice.spreadsheet.editor.SheetListener;
 
 import org.joeffice.spreadsheet.renderer.CellRenderer;
 import org.joeffice.spreadsheet.renderer.TableColumnAdjuster;
@@ -77,7 +79,6 @@ public class SheetComponent extends JPanel {
         JTable table = new SheetTable(sheetTableModel);
 
         table.setDefaultRenderer(Cell.class, new CellRenderer());
-        //TableCellEditor editor = new DefaultCellEditor(new JTextField());
         TableCellEditor editor = new org.joeffice.spreadsheet.editor.CellEditor();
         table.setDefaultEditor(Cell.class, editor);
         int columnsCount = sheetTableModel.getColumnCount();
@@ -127,6 +128,9 @@ public class SheetComponent extends JPanel {
 
         //table.setIntercellSpacing(new Dimension(0, 0));
         table.putClientProperty("print.printable", Boolean.TRUE);
+        Rectangle lastDataCellBounds = table.getCellRect(sheet.getLastRowNum(), sheetTableModel.getLastColumnNum(), true);
+        table.putClientProperty("print.size", new Dimension(lastDataCellBounds.x + lastDataCellBounds.width, lastDataCellBounds.y + lastDataCellBounds.height));
+        new SheetListener(table);
 
         if (!sheet.isDisplayGridlines()) {
             table.setShowGrid(false);

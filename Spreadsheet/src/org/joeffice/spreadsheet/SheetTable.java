@@ -15,7 +15,6 @@
  */
 package org.joeffice.spreadsheet;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.HashMap;
