@@ -55,7 +55,12 @@ import org.openide.util.NbBundle.Messages;
             path = "Loaders/application/vnd.openxmlformats-officedocument.wordprocessingml.document/Actions",
             id =
             @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
-            position = 100,
+            position = 100),
+    @ActionReference(
+            path = "Loaders/application/vnd.openxmlformats-officedocument.wordprocessingml.document/Actions",
+            id =
+            @ActionID(category = "Edit", id = "org.netbeans.core.ui.sysopen.SystemOpenAction"),
+            position = 150,
             separatorAfter = 200),
     @ActionReference(
             path = "Loaders/application/vnd.openxmlformats-officedocument.wordprocessingml.document/Actions",
