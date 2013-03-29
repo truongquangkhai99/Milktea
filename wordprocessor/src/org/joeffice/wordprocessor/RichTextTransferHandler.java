@@ -19,18 +19,15 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.EditorKit;
-import javax.swing.text.Element;
-import javax.swing.text.JTextComponent;
+import javax.swing.text.*;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.rtf.RTFEditorKit;
 
@@ -44,8 +41,6 @@ import org.openide.util.Exceptions;
  */
 public class RichTextTransferHandler extends TransferHandler {
 
-    private JTextComponent textField;
-
     /**
      * The paste method used for DnD and clipboard.
      */
@@ -55,19 +50,16 @@ public class RichTextTransferHandler extends TransferHandler {
             JTextComponent textField = (JTextComponent) c;
             String rtfText = textFromTransferable(t, TransferableRichText.RTF_FLAVOR);
             if (rtfText != null) {
-                System.out.println("RTF: " + rtfText);
                 addRichtText(rtfText, textField, new RTFEditorKit());
                 return true;
             }
             String htmlText = textFromTransferable(t, TransferableRichText.HTML_FLAVOR);
             if (htmlText != null) {
-                System.out.println("HTML: " + htmlText);
                 addRichtText(rtfText, textField, new HTMLEditorKit());
                 return true;
             }
             String plainText = textFromTransferable(t, DataFlavor.stringFlavor);
             if (plainText != null) {
-                System.out.println("Plain: " + plainText);
                 try {
                     textField.getDocument().insertString(textField.getSelectionStart(), plainText, null);
                     return true;
@@ -83,14 +75,10 @@ public class RichTextTransferHandler extends TransferHandler {
         if (t.isDataFlavorSupported(flavor)) {
             try {
                 Object data = t.getTransferData(flavor);
-                if (data instanceof ByteArrayInputStream) {
-                    byte[] buffer = new byte[((ByteArrayInputStream) data).available()];
-                    ((ByteArrayInputStream) data).read(buffer);
-                    return new String(buffer, Charset.defaultCharset());
-                } else if (data instanceof StringReader) {
-                    /*char[] buffer = new char[((StringReader) data).available()];
-                    ((StringReader) data).read(buffer);
-                    return new String(buffer);*/
+                if (data instanceof InputStream) {
+                    return readFully((InputStream) data, Charset.defaultCharset());
+                } else if (data instanceof Reader) {
+                    return readFully((Reader) data);
                 } else if (data instanceof String) {
                     return (String) data;
                 }
@@ -98,6 +86,28 @@ public class RichTextTransferHandler extends TransferHandler {
             }
         }
         return null;
+    }
+
+    private String readFully(Reader reader) throws IOException {
+        char[] buffer = new char[1024];
+        StringBuilder dataAsString = new StringBuilder();
+        int length = reader.read(buffer);
+        while (length != -1) {
+            dataAsString.append(buffer, 0, length);
+            length = reader.read(buffer);
+        }
+        return dataAsString.toString();
+    }
+
+    private String readFully(InputStream stream, Charset charset) throws IOException {
+        byte[] buffer = new byte[stream.available()];
+        ByteArrayOutputStream allData = new ByteArrayOutputStream();
+        int length = stream.read(buffer);
+        while (length != -1) {
+            allData.write(buffer, 0, length);
+            length = stream.read(buffer);
+        }
+        return new String(allData.toByteArray(), charset);
     }
 
     @Override
@@ -117,7 +127,7 @@ public class RichTextTransferHandler extends TransferHandler {
 
     @Override
     protected Transferable createTransferable(JComponent c) {
-        textField = (JTextComponent) c;
+        JTextComponent textField = (JTextComponent) c;
         int selectionStart = textField.getSelectionStart();
         int selectionLength = textField.getSelectionEnd() - selectionStart;
         return new TransferableRichText(textField.getDocument(), selectionStart, selectionLength);

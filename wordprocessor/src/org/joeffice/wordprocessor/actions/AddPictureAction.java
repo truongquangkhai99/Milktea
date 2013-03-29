@@ -17,19 +17,24 @@ package org.joeffice.wordprocessor.actions;
 
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.*;
+
 import org.joeffice.wordprocessor.DocxDocument;
 import org.joeffice.wordprocessor.WordpTopComponent;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
 import org.openide.windows.WindowManager;
 
+/**
+ * Action that adds an image to the editor.
+ * 
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office/Word",
         id = "org.joeffice.wordprocessor.actions.AddPictureAction")

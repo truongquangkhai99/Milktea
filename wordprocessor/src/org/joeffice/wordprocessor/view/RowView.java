@@ -54,6 +54,7 @@ public class RowView extends BoxView {
      * @param g the rendering surface to use
      * @param a the allocated region to render into
      */
+    @Override
     public void paint(Graphics g, Shape a) {
         Rectangle alloc = (a instanceof Rectangle) ? (Rectangle) a : a.getBounds();
         int n = getViewCount();
@@ -74,6 +75,7 @@ public class RowView extends BoxView {
      * @returns the span the view would like to be rendered into >= 0. Typically the view is told to render into the
      * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      */
+    @Override
     public float getPreferredSpan(int axis) {
         float span = 0;
         if (axis == View.X_AXIS) {
@@ -95,6 +97,7 @@ public class RowView extends BoxView {
      * @returns the span the view would like to be rendered into >= 0. Typically the view is told to render into the
      * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      */
+    @Override
     public float getMinimumSpan(int axis) {
         float span = 0;
         if (axis == View.X_AXIS) {
@@ -116,6 +119,7 @@ public class RowView extends BoxView {
      * @returns the span the view would like to be rendered into >= 0. Typically the view is told to render into the
      * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      */
+    @Override
     public float getMaximumSpan(int axis) {
         float span = 0;
         if (axis == View.X_AXIS) {
@@ -138,6 +142,7 @@ public class RowView extends BoxView {
      * @param alloc the allocated region to paint into
      * @param index the child index, >= 0 && < getViewCount()
      */
+    @Override
     protected void paintChild(Graphics g, Rectangle alloc, int index) {
         View child = getView(index);
         child.paint(g, alloc);

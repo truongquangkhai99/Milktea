@@ -16,6 +16,7 @@
 package org.joeffice.wordprocessor;
 
 import static javax.swing.text.DefaultStyledDocument.BUFFER_SIZE_DEFAULT;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;

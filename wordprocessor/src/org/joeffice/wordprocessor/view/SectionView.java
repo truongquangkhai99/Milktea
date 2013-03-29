@@ -45,6 +45,7 @@ public class SectionView extends BoxView {
      * @param width the width (inside of the insets) >= 0
      * @param height the height (inside of the insets) >= 0
      */
+    @Override
     protected void layout(int width, int height) {
         DocxDocument doc = (DocxDocument) getDocument();
         Insets margins = doc.getDocumentMargins();
@@ -65,6 +66,7 @@ public class SectionView extends BoxView {
      * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      * @exception IllegalArgumentException for an invalid axis type
      */
+    @Override
     public float getMinimumSpan(int axis) {
         if (axis == View.X_AXIS) {
             DocxDocument doc = (DocxDocument) getDocument();
@@ -86,6 +88,7 @@ public class SectionView extends BoxView {
      * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      * @exception IllegalArgumentException for an invalid axis type
      */
+    @Override
     public float getMaximumSpan(int axis) {
         if (axis == View.X_AXIS) {
             DocxDocument doc = (DocxDocument) getDocument();
@@ -107,6 +110,7 @@ public class SectionView extends BoxView {
      * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      * @exception IllegalArgumentException for an invalid axis type
      */
+    @Override
     public float getPreferredSpan(int axis) {
         if (axis == View.X_AXIS) {
             DocxDocument doc = (DocxDocument) getDocument();

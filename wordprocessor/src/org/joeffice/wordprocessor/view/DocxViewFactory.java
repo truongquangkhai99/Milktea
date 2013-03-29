@@ -27,12 +27,6 @@ import javax.swing.text.*;
 public class DocxViewFactory implements ViewFactory {
 
     /**
-     * Constructs new instance.
-     */
-    public DocxViewFactory() {
-    }
-
-    /**
      * Creates a view from the given structural element of a
      * document.
      *
@@ -44,22 +38,23 @@ public class DocxViewFactory implements ViewFactory {
     public View create(Element elem) {
         String kind = elem.getName();
         if (kind != null) {
-            if (kind.equals(AbstractDocument.ContentElementName)) {
-                return new LabelView(elem);
-            } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
-                return new ParagraphView(elem);
-            } else if (kind.equals(AbstractDocument.SectionElementName)) {
-                return new SectionView(elem, View.Y_AXIS);
-            } else if (kind.equals(StyleConstants.ComponentElementName)) {
-                return new ComponentView(elem);
-            } else if (kind.equals(StyleConstants.IconElementName)) {
-                return new IconView(elem);
-            } else if (kind.equals("table")) {
-                return new TableView(elem);
-            } else if (kind.equals("row")) {
-                return new RowView(elem);
-            } else if (kind.equals("cell")) {
-                return new CellView(elem);
+            switch (kind) {
+                case AbstractDocument.ContentElementName:
+                    return new ShowParLabelView(elem);
+                case AbstractDocument.ParagraphElementName:
+                    return new ParagraphView(elem);
+                case AbstractDocument.SectionElementName:
+                    return new SectionView(elem, View.Y_AXIS);
+                case StyleConstants.ComponentElementName:
+                    return new ComponentView(elem);
+                case StyleConstants.IconElementName:
+                    return new IconView(elem);
+                case "table":
+                    return new TableView(elem);
+                case "row":
+                    return new RowView(elem);
+                case "cell":
+                    return new CellView(elem);
             }
         }
         // default to text display

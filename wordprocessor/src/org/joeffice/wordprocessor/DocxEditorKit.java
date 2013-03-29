@@ -16,6 +16,7 @@
 package org.joeffice.wordprocessor;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.StyledEditorKit;
@@ -90,8 +91,8 @@ public class DocxEditorKit extends StyledEditorKit {
             sb.append(s).append("\n");
             s = br.readLine();
         }
-        System.out.println(sb.toString());
-        read(new ByteArrayInputStream(sb.toString().getBytes("UTF-8")), doc, pos);
+        // System.out.println(sb.toString());
+        read(new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8)), doc, pos);
     }
 
     /**

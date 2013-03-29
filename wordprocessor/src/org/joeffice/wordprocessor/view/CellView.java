@@ -54,6 +54,7 @@ public class CellView extends BoxView {
      * @returns the span the view would like to be rendered into >= 0. Typically the view is told to render into the
      * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      */
+    @Override
     public float getPreferredSpan(int axis) {
         float span = 0;
         if (axis == View.X_AXIS) {
@@ -73,6 +74,7 @@ public class CellView extends BoxView {
      * @returns the span the view would like to be rendered into >= 0. Typically the view is told to render into the
      * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      */
+    @Override
     public float getMinimumSpan(int axis) {
         float span = 0;
         if (axis == View.X_AXIS) {
@@ -92,6 +94,7 @@ public class CellView extends BoxView {
      * @returns the span the view would like to be rendered into >= 0. Typically the view is told to render into the
      * span that is returned, although there is no guarantee. The parent may choose to resize or break the view.
      */
+    @Override
     public float getMaximumSpan(int axis) {
         float span = 0;
         if (axis == View.X_AXIS) {
@@ -111,6 +114,7 @@ public class CellView extends BoxView {
      * @param	r Size requirements
      * @return A base line requirement.
      */
+    @Override
     protected SizeRequirements baselineRequirements(int axis, SizeRequirements r) {
         SizeRequirements sr = super.baselineRequirements(axis, r);
         if (axis == View.Y_AXIS) {
@@ -126,6 +130,7 @@ public class CellView extends BoxView {
      * @param	r Size requirements
      * @return A major requirement.
      */
+    @Override
     protected SizeRequirements calculateMajorAxisRequirements(int axis, SizeRequirements r) {
         SizeRequirements sr = super.calculateMajorAxisRequirements(axis, r);
         if (axis == View.Y_AXIS) {
@@ -141,6 +146,7 @@ public class CellView extends BoxView {
      * @param	r Size requirements
      * @return A minor requirement.
      */
+    @Override
     protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r) {
         SizeRequirements sr = super.calculateMinorAxisRequirements(axis, r);
         if (axis == View.Y_AXIS) {
@@ -155,6 +161,7 @@ public class CellView extends BoxView {
      * @param width - the width of cell.
      * @param height - the height of cell.
      */
+    @Override
     protected void layout(int width, int height) {
         DocxDocument.CellElement cell = (DocxDocument.CellElement) getElement();
         Insets margins = cell.getMargins();
@@ -172,6 +179,7 @@ public class CellView extends BoxView {
      * @param g the rendering surface to use
      * @param a the allocated region to render into
      */
+    @Override
     public void paint(Graphics g, Shape a) {
         Rectangle alloc = (a instanceof Rectangle) ? (Rectangle) a : a.getBounds();
         super.paint(g, a);

@@ -37,17 +37,19 @@ import org.openide.util.NbBundle.Messages;
  * @author Anthony Goubard - Japplis
  */
 @Messages({
-    "LBL_Docx_LOADER=Files of Docx"
+    "LBL_Docx_LOADER=Word Document (2007 / 2010)"
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_Docx_LOADER",
         mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        extension = {"docx", "DOCX"})
+        extension = {"docx", "DOCX"},
+        showInFileChooser = "#LBL_Docx_LOADER",
+        position = 110)
 @DataObject.Registration(
         mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         iconBase = "org/joeffice/wordprocessor/wordp-16.png",
         displayName = "#LBL_Docx_LOADER",
-        position = 300)
+        position = 110)
 @ActionReferences({
     @ActionReference(
             path = "Loaders/application/vnd.openxmlformats-officedocument.wordprocessingml.document/Actions",
@@ -113,9 +115,6 @@ public class DocxDataObject extends OfficeDataObject {
 
     @Override
     public void save(File file) throws IOException {
-        /*Document doc = (Document) getDocument();
-        DocxWriter writer = new DocxWriter(doc);
-        writer.write(file.getAbsolutePath());*/
         XWPFDocument document = (XWPFDocument) getDocument();
         try (FileOutputStream output = new FileOutputStream(file)) {
             document.write(output);

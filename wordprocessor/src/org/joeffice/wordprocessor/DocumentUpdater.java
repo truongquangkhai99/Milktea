@@ -151,19 +151,10 @@ public class DocumentUpdater implements DocumentListener {
     @Override
     public void changedUpdate(DocumentEvent de) {
         DefaultStyledDocument doc = (DefaultStyledDocument) de.getDocument();
-        System.out.println("de " + de);
-        System.out.println("de type " + de.getType());
-        System.out.println("de length " + de.getLength());
         ElementIterator iter = new ElementIterator(de.getDocument());
         for (Element elem = iter.first(); elem != null; elem = iter.next()) {
             DocumentEvent.ElementChange change = de.getChange(elem);
             if (change != null) {
-                System.out.println("Element " + elem.getName() + " (depth "
-                        + iter.depth() + ") changed its children: "
-                        + change.getChildrenRemoved().length
-                        + " children removed, "
-                        + change.getChildrenAdded().length
-                        + " children added.\n");
                 Element[] removedElems = change.getChildrenRemoved();
                 for (int i = removedElems.length - 1; i>=0; i--) {
                     remove(removedElems[i].getStartOffset(), removedElems[i].getEndOffset());

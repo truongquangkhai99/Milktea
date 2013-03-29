@@ -31,16 +31,13 @@ import org.joeffice.desktop.actions.EditorStyleable;
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 
-import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeans.modules.spellchecker.api.Spellchecker;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.UndoRedo;
-import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.RequestProcessor;
 
 /**
  * Top component which displays the docx documents.
@@ -99,11 +96,15 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
 
     @Override
     public void documentLoaded() {
-        Document document = ((JTextPane) getMainComponent()).getDocument();
+        JTextPane editor = ((JTextPane) getMainComponent());
+        Document document = editor.getDocument();
         document.addDocumentListener(this);
         document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
         document.addDocumentListener(new DocumentUpdater(getPOIDocument()));
-        //Spellchecker.register(wordProcessor); // Doesn't do anything (yet)
+
+        // Doesn't do anything (yet)
+        // This require the implementation of a TokenListProvider and of a TokenList
+        Spellchecker.register(editor);
         /*FindAction find = new FindAction();
          getActionMap().put(find.getName(), find);
          ReplaceAction replace = new ReplaceAction();

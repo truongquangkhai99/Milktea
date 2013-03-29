@@ -32,7 +32,8 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.windows.WindowManager;
 
 /**
- *
+ * A set of actions for the editor.
+ * 
  * @author Anthony Goubard - Japplis
  */
 public class SimpleActionsFactory {
