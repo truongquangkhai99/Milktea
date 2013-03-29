@@ -16,25 +16,23 @@
 package org.joeffice.drawing;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import org.apache.batik.dom.util.DOMUtilities;
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
-import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
-import org.openide.nodes.CookieSet;
-import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
+
 import org.w3c.dom.Document;
 
 /**
@@ -43,17 +41,19 @@ import org.w3c.dom.Document;
  * @author Anthony Goubard - Japplis
  */
 @Messages({
-    "LBL_Svg_LOADER=Files of Svg"
+    "LBL_Svg_LOADER=SVG Drawing"
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_Svg_LOADER",
         mimeType = "image/svg+xml",
-        extension = {"svg"})
+        extension = {"svg"},
+        showInFileChooser = "#LBL_Svg_LOADER",
+        position = 160)
 @DataObject.Registration(
         mimeType = "image/svg+xml",
         iconBase = "org/joeffice/drawing/drawing-16.png",
         displayName = "#LBL_Svg_LOADER",
-        position = 300)
+        position = 160)
 @ActionReferences({
     @ActionReference(
             path = "Loaders/image/svg+xml/Actions",
