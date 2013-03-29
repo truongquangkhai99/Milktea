@@ -26,11 +26,11 @@ import java.util.Properties;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
 import org.joeffice.database.tablemodel.TableMetaDataModel;
 import org.joeffice.spreadsheet.rows.RowTable;
+
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;

@@ -18,10 +18,11 @@ package org.joeffice.database.actions;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.AbstractAction;
-import javax.swing.JTabbedPane;
+
 import org.joeffice.database.JDBCTopComponent;
 import org.joeffice.database.ManageTableTopComponent;
 import org.joeffice.desktop.ui.OfficeTopComponent;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -31,6 +32,11 @@ import org.openide.util.NbBundle.Messages;
 import org.openide.windows.Mode;
 import org.openide.windows.WindowManager;
 
+/**
+ * Opens a new top component in the editor that shows the structure of the database.
+ * 
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office/Database",
         id = "org.joeffice.database.ManageTableAction")

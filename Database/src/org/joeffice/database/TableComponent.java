@@ -15,8 +15,6 @@
  */
 package org.joeffice.database;
 
-import static javax.swing.ScrollPaneConstants.UPPER_LEFT_CORNER;
-
 import java.awt.BorderLayout;
 import java.sql.Connection;
 import javax.swing.JPanel;
@@ -24,9 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.joeffice.database.tablemodel.JDBCSheet;
-import org.joeffice.spreadsheet.rows.JScrollPaneAdjuster;
-import org.joeffice.spreadsheet.rows.JTableRowHeaderResizer;
-import org.joeffice.spreadsheet.rows.RowTable;
+import org.joeffice.spreadsheet.rows.RowTableFactory;
 
 import org.netbeans.swing.etable.ETable;
 import org.netbeans.swing.etable.ETableTransferHandler;
@@ -46,13 +42,7 @@ public class TableComponent extends JPanel {
         sheet = new JDBCSheet(conn, tableName); // Table model
         databaseTable = new ETable(sheet);
 
-        // TODO move this code to the rows spreadsheet package
-        JScrollPane scrolling = new JScrollPane(databaseTable);
-        JTable rowHeaders = new RowTable(databaseTable);
-        scrolling.setRowHeaderView(rowHeaders);
-        scrolling.setCorner(UPPER_LEFT_CORNER, rowHeaders.getTableHeader());
-        new JTableRowHeaderResizer(scrolling).setEnabled(true);
-        new JScrollPaneAdjuster(scrolling);
+        JScrollPane scrolling = RowTableFactory.attachRows(databaseTable, databaseTable);
 
         databaseTable.setColumnHidingAllowed(true);
         databaseTable.setTransferHandler(new ETableTransferHandler());

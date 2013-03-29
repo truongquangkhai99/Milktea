@@ -27,6 +27,12 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Action that will show the next results.
+ * If the last results are displayed, this action does nothing but beep.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "View/Office/Database",
         id = "org.joeffice.database.actions.NextResultsAction")

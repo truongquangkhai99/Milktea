@@ -32,7 +32,7 @@ import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * An action that launch the H2 console to manage the opened database.
+ * An action that launches the H2 console to manage the opened database.
  *
  * @author Anthony Goubard - Japplis
  */

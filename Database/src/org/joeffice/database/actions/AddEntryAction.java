@@ -42,7 +42,8 @@ import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Action that shows a dialog to add a new entry.
+ * Action that adds a new entry to the database.
+ * A dialog is display to the user to fill the data.
  *
  * @author Anthony Goubard - Japplis
  */
@@ -65,27 +66,13 @@ public final class AddEntryAction extends AbstractAction {
             try {
                 Connection conn = currentTopComponent.getDatabaseConnection();
                 TableMetaDataModel metaData = new TableMetaDataModel(conn, currentTopComponent.getSelectedTableName());
-                JDBCSheet sheet = currentTopComponent.getSelectedTableComponent().getSheet();
-                RowSet dataModel = sheet.getDataModel();
                 JPanel fieldsPanel = createFieldsPanel(metaData);
                 String title = NbBundle.getMessage(getClass(), "CTL_AddEntryAction");
                 DialogDescriptor descriptor = new DialogDescriptor(fieldsPanel, title);
                 Object dialogResult = DialogDisplayer.getDefault().notify(descriptor);
                 if (dialogResult == DialogDescriptor.OK_OPTION) {
-                    dataModel.moveToInsertRow();
-                    List<JComponent> components = (List<JComponent>) fieldsPanel.getClientProperty(COMPONENTS_KEY);
-                    for (int i = 0; i < components.size(); i++) {
-                        JComponent fieldComponent = components.get(i);
-                        if (fieldComponent instanceof JTextField) {
-                            String value = ((JTextField) fieldComponent).getText();
-                            sheet.setColumnValue(i, value);
-                        } else if (fieldComponent instanceof JCheckBox) {
-                            Boolean value = ((JCheckBox) fieldComponent).isSelected();
-                            sheet.setColumnValue(i, value);
-                        }
-                    }
-                    dataModel.insertRow();
-                    sheet.init();
+                    JDBCSheet sheet = currentTopComponent.getSelectedTableComponent().getSheet();
+                    addEntry(fieldsPanel, sheet);
                 }
             } catch (SQLException ex) {
                 Exceptions.printStackTrace(ex);
@@ -100,23 +87,10 @@ public final class AddEntryAction extends AbstractAction {
         List<JLabel> fieldLabels = new ArrayList<>();
         List<JComponent> fieldComponents = new ArrayList<>();
         for (int i = 0; i < metaData.getColumnCount(); i++) {
-            String columnName = (String) metaData.getValueAt(0, i);
-            String labelText = OfficeUIUtils.toDisplayable(columnName);
-            JLabel fieldLabel = new JLabel(labelText);
-            if ((Boolean) metaData.getValueAt(2, i) || (Boolean) metaData.getValueAt(3, i)) {
-                fieldLabel.setFont(fieldLabel.getFont().deriveFont(Font.BOLD));
-            }
+            JLabel fieldLabel = getLabelForField(metaData, i);
             fieldLabels.add(fieldLabel);
 
-            JComponent fieldComponent;
-            String fieldType = (String) metaData.getValueAt(1, i);
-            switch (fieldType) {
-                case "BOOLEAN":
-                    fieldComponent = new JCheckBox();
-                    break;
-                default:
-                    fieldComponent = new JTextField(40);
-            }
+            JComponent fieldComponent = getComponentForField(metaData, i);
             fieldComponents.add(fieldComponent);
         }
         fieldsPanel.putClientProperty(COMPONENTS_KEY, fieldComponents);
@@ -151,5 +125,46 @@ public final class AddEntryAction extends AbstractAction {
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(fieldsGroup));
         return fieldsPanel;
+    }
+
+    private JLabel getLabelForField(TableMetaDataModel metaData, int index) {
+        String columnName = (String) metaData.getValueAt(0, index);
+        String labelText = OfficeUIUtils.toDisplayable(columnName);
+        JLabel fieldLabel = new JLabel(labelText);
+        if ((Boolean) metaData.getValueAt(2, index) || (Boolean) metaData.getValueAt(3, index)) {
+            fieldLabel.setFont(fieldLabel.getFont().deriveFont(Font.BOLD));
+        }
+        return fieldLabel;
+    }
+
+    private JComponent getComponentForField(TableMetaDataModel metaData, int index) {
+        JComponent fieldComponent;
+        String fieldType = (String) metaData.getValueAt(1, index);
+        switch (fieldType) {
+            case "BOOLEAN":
+                fieldComponent = new JCheckBox();
+                break;
+            default:
+                fieldComponent = new JTextField(40);
+        }
+        return fieldComponent;
+    }
+
+    public void addEntry(JPanel fieldsPanel, JDBCSheet sheet) throws SQLException {
+        RowSet dataModel = sheet.getDataModel();
+        dataModel.moveToInsertRow();
+        List<JComponent> components = (List<JComponent>) fieldsPanel.getClientProperty(COMPONENTS_KEY);
+        for (int i = 0; i < components.size(); i++) {
+            JComponent fieldComponent = components.get(i);
+            if (fieldComponent instanceof JTextField) {
+                String value = ((JTextField) fieldComponent).getText();
+                sheet.setColumnValue(i, value);
+            } else if (fieldComponent instanceof JCheckBox) {
+                Boolean value = ((JCheckBox) fieldComponent).isSelected();
+                sheet.setColumnValue(i, value);
+            }
+        }
+        dataModel.insertRow();
+        sheet.init();
     }
 }

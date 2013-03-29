@@ -27,6 +27,12 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Action that will show the previous results.
+ * If the first results are displayed, this action does nothing but beep.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "View/Office/Database",
         id = "org.joeffice.database.actions.PreviousResultsAction")

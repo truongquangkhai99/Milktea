@@ -40,17 +40,19 @@ import org.openide.util.NbBundle.Messages;
  * @author Anthony Goubard - Japplis
  */
 @Messages({
-    "LBL_H2_LOADER=Files of H2"
+    "LBL_H2_LOADER=H2 Database"
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_H2_LOADER",
         mimeType = "application/h2",
-        extension = {"db"}) // Netbeans Platform can't handle .h2.db as extension
+        extension = {"db"},
+        showInFileChooser = "LBL_H2_LOADER",
+        position = 170) // Netbeans Platform can't handle .h2.db as extension
 @DataObject.Registration(
         mimeType = "application/h2",
         iconBase = "org/joeffice/database/database-16.png",
         displayName = "#LBL_H2_LOADER",
-        position = 300)
+        position = 170)
 @ActionReferences({
     @ActionReference(
             path = "Loaders/application/h2/Actions",

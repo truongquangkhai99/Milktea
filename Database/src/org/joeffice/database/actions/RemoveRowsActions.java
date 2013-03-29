@@ -18,16 +18,23 @@ package org.joeffice.database.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
+
 import org.joeffice.database.JDBCTopComponent;
 import org.joeffice.database.TableComponent;
 import org.joeffice.database.tablemodel.JDBCSheet;
 import org.joeffice.desktop.ui.OfficeTopComponent;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Removes selected rows from the database.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office/Database",
         id = "org.joeffice.database.actions.RemoveRowsActions")
