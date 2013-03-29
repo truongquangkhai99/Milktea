@@ -26,8 +26,12 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.TopComponent;
 
+/**
+ * Removes the first selected column.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office/Spreadsheet",
         id = "org.joeffice.spreadsheet.actions.RemoveColumnAction")

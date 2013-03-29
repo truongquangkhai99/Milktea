@@ -18,6 +18,7 @@ package org.joeffice.spreadsheet;
 import javax.swing.TransferHandler;
 
 /**
+ * Handles data to be copy/paste from the spreadsheet or drag and drop.
  *
  * @author Anthony Goubard - Japplis
  */

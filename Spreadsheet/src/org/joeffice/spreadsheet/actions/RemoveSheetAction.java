@@ -17,14 +17,14 @@ package org.joeffice.spreadsheet.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+
 import org.joeffice.spreadsheet.SpreadsheetComponent;
-import org.joeffice.spreadsheet.SpreadsheetTopComponent;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.TopComponent;
 
 /**
  * Remove the selected sheet.

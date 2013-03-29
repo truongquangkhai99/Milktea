@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
+
 import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.spreadsheet.POIUtils;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;

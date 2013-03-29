@@ -38,10 +38,10 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.joeffice.desktop.ui.Styleable;
 import org.openide.windows.TopComponent;
-import sun.awt.resources.awt;
 
 /**
  * Class that applies the style to the selected cells.
@@ -54,10 +54,10 @@ public class TableStyleable implements Styleable {
 
     @Override
     public void setFontAttributes(AttributedString attributes) {
-        TopComponent currentTopComponent = TopComponent.getRegistry().getActivated();
-        if (currentTopComponent instanceof SpreadsheetTopComponent) {
-            JTable table = ((SpreadsheetTopComponent) currentTopComponent).getSelectedTable();
-            Sheet sheet = ((SpreadsheetTopComponent) currentTopComponent).getSpreadsheetComponent().getSelectedSheet().getSheet();
+        SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
+        if (currentTopComponent != null) {
+            JTable table = currentTopComponent.getSelectedTable();
+            Sheet sheet = currentTopComponent.getSpreadsheetComponent().getSelectedSheet().getSheet();
 
             int rowIndexStart = table.getSelectedRow();
             int rowIndexEnd = table.getSelectionModel().getMaxSelectionIndex();

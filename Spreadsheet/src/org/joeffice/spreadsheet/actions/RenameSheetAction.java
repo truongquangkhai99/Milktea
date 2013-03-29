@@ -29,6 +29,11 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Ask Rename the selected sheet.
+ * 
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office/Spreadsheet",
         id = "org.joeffice.spreadsheet.actions.RenameSheetAction")

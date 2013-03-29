@@ -16,9 +16,6 @@
 package org.joeffice.spreadsheet;
 
 import static javax.swing.JLayeredPane.DEFAULT_LAYER;
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
-import static javax.swing.ScrollPaneConstants.UPPER_LEFT_CORNER;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -37,11 +34,8 @@ import org.joeffice.spreadsheet.actions.ClipboardAction;
 
 import org.joeffice.spreadsheet.renderer.CellRenderer;
 import org.joeffice.spreadsheet.renderer.TableColumnAdjuster;
-import org.joeffice.spreadsheet.rows.JScrollPaneAdjuster;
-import org.joeffice.spreadsheet.rows.JTableRowHeaderResizer;
-import org.joeffice.spreadsheet.rows.RowTable;
+import org.joeffice.spreadsheet.rows.RowTableFactory;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
-import org.netbeans.api.print.PrintManager;
 
 /**
  * Component that displays one sheet.
@@ -71,15 +65,8 @@ public class SheetComponent extends JPanel {
         listenToChanges();
         layers = createSheetLayers(sheetTable);
 
-        JScrollPane scrolling = new JScrollPane(VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_ALWAYS);
-        scrolling.setViewportView(layers);
+        JScrollPane scrolling = RowTableFactory.attachRows(sheetTable, layers);
         scrolling.setColumnHeaderView(sheetTable.getTableHeader());
-        JTable rowHeaders = createRowHeaders(sheetTable);
-        scrolling.setRowHeaderView(rowHeaders);
-        scrolling.setCorner(UPPER_LEFT_CORNER, rowHeaders.getTableHeader());
-        new JTableRowHeaderResizer(scrolling).setEnabled(true);
-        new JScrollPaneAdjuster(scrolling);
-        scrolling.getVerticalScrollBar().setUnitIncrement(16);
 
         setLayout(new BorderLayout());
         add(scrolling);
@@ -117,7 +104,6 @@ public class SheetComponent extends JPanel {
         JLabel tableHeader = (JLabel) table.getTableHeader().getDefaultRenderer();
         tableHeader.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // XXX This is OK for one block but it doesn't work for 2 blocks, also selecting row no longer works
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.setCellSelectionEnabled(true);
 
@@ -146,12 +132,6 @@ public class SheetComponent extends JPanel {
             table.setShowGrid(false);
         }
         return table;
-    }
-
-    // From http://www.chka.de/swing/table/row-headers/RowHeaderTable.java Christian Kaufhold
-    public JTable createRowHeaders(JTable sheetTable) {
-        JTable rowHeaders = new RowTable(sheetTable);
-        return rowHeaders;
     }
 
     // From http://stackoverflow.com/questions/6663591/jtable-inside-jlayeredpane-inside-jscrollpane-how-do-you-get-it-to-work

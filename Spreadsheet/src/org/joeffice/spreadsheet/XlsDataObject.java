@@ -33,17 +33,19 @@ import org.openide.util.NbBundle.Messages;
  * @author Anthony Goubard - Japplis
  */
 @Messages({
-    "LBL_Xls_LOADER=Files of Xls"
+    "LBL_Xls_LOADER=Microsoft Excel 97 / 2003"
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_Xls_LOADER",
         mimeType = "application/vnd.ms-excel",
-        extension = {"xls"})
+        extension = {"xls"},
+        showInFileChooser = "#LBL_Xls_LOADER",
+        position = 130)
 @DataObject.Registration(
         mimeType = "application/vnd.ms-excel",
         iconBase = "org/joeffice/spreadsheet/spreadsheet-16.png",
         displayName = "#LBL_Xls_LOADER",
-        position = 300)
+        position = 130)
 @ActionReferences({
     @ActionReference(
             path = "Loaders/application/vnd.ms-excel/Actions",

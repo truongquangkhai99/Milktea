@@ -17,6 +17,7 @@ package org.joeffice.spreadsheet.csv;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.ResultSet;
@@ -66,12 +67,12 @@ public class SmartCsvReader {
     }
 
     private List<String> detectCharset(Path csvPath) {
-        List<String> lines = read(csvPath, Charset.forName("UTF-8"));
+        List<String> lines = read(csvPath, StandardCharsets.UTF_8);
         if (lines == null) {
             lines = read(csvPath, Charset.defaultCharset());
         }
         if (lines == null) {
-            lines = read(csvPath, Charset.forName("ISO-8859-1"));
+            lines = read(csvPath, StandardCharsets.ISO_8859_1);
         }
         return lines;
     }

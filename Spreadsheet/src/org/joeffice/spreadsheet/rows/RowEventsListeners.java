@@ -26,15 +26,18 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 
 import org.openide.util.Utilities;
 
 /**
- * Listeners for events that happen in the row header.
+ * Listeners for events related to the row table.
  *
  * @author Anthony Goubard - Japplis
  */
-public class RowEventsListeners implements PropertyChangeListener, ListSelectionListener, MouseListener {
+public class RowEventsListeners implements PropertyChangeListener, ListSelectionListener, MouseListener, TableModelListener {
 
     private RowTable rowTable;
 
@@ -101,5 +104,17 @@ public class RowEventsListeners implements PropertyChangeListener, ListSelection
 
     @Override
     public void mouseExited(MouseEvent me) {
+    }
+
+    @Override
+    public void tableChanged(TableModelEvent tme) {
+        int row = tme.getFirstRow();
+        if (tme.getType() == TableModelEvent.INSERT) {
+            Object[] data = new Object[] {row + 1};
+            ((DefaultTableModel) rowTable.getModel()).insertRow(row + 1, data);
+        }
+        if (tme.getType() == TableModelEvent.DELETE) {
+            ((DefaultTableModel) rowTable.getModel()).removeRow(row);
+        }
     }
 }

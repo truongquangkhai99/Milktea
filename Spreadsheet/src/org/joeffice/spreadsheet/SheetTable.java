@@ -26,7 +26,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
 /**
- * The JTable used to display data.
+ * A JTable with extra features.
  * This class is only to fix bugs or improve existing functionalities.
  *
  * @author Anthony Goubard - Japplis

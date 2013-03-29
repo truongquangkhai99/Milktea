@@ -41,22 +41,24 @@ import org.openide.util.NbBundle.Messages;
  * @author Anthony Goubard - Japplis
  */
 @Messages({
-    "LBL_Xlsx_LOADER=Microsoft Word 2007 / 2010"
+    "LBL_Xlsx_LOADER=Microsoft Excel 2007 / 2010"
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_Xlsx_LOADER",
         mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        extension = {"xlsx"})
+        extension = {"xlsx"},
+        showInFileChooser = "#LBL_Xlsx_LOADER",
+        position = 120)
 @DataObject.Registration(
         mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         iconBase = "org/joeffice/spreadsheet/spreadsheet-16.png",
         displayName = "#LBL_Xlsx_LOADER",
-        position = 300)
+        position = 120)
 @ActionReferences({
     @ActionReference(
             path = "Loaders/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet/Actions",
             id =
-            @ActionID(category = "System", id = "org.openide.actions.OpenAction"),
+            @ActionID(category = "System", id = "org.openide.actions.FileSystemAction"),
             position = 100,
             separatorAfter = 200),
     @ActionReference(

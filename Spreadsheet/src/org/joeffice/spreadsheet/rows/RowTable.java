@@ -68,6 +68,7 @@ public class RowTable extends JTable {
         dataTable.addPropertyChangeListener("singleRowHeight", rowListeners);
         new TableRowResizer(this);
         getSelectionModel().addListSelectionListener(rowListeners);
+        dataTable.getModel().addTableModelListener(rowListeners);
         addMouseListener(rowListeners);
     }
 

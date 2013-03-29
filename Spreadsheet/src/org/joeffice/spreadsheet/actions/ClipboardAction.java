@@ -16,11 +16,14 @@
 package org.joeffice.spreadsheet.actions;
 
 import static javax.swing.Action.NAME;
+
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JTable;
+
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
+
 import org.openide.windows.TopComponent;
 
 /**

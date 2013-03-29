@@ -16,21 +16,18 @@
 package org.joeffice.spreadsheet;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import javax.swing.*;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.joeffice.desktop.file.OfficeDataObject;
 
+import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;

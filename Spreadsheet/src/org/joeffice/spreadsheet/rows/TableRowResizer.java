@@ -26,6 +26,7 @@ import javax.swing.event.MouseInputAdapter;
 /**
  * Resize the rows with the mouse.
  */
+// From http://www.jroller.com/santhosh/entry/make_jtable_resiable_better_than
 public class TableRowResizer extends MouseInputAdapter {
 
     public static Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);

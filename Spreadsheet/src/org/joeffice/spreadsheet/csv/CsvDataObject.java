@@ -34,17 +34,19 @@ import org.openide.util.NbBundle.Messages;
  * @author Anthony Goubard - Japplis
  */
 @Messages({
-    "LBL_Csv_LOADER=Files of Csv"
+    "LBL_Csv_LOADER=CSV File"
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_Csv_LOADER",
         mimeType = "text/csv",
-        extension = {"csv", "CSV"})
+        extension = {"csv", "CSV"},
+        showInFileChooser = "#LBL_Csv_LOADER",
+        position = 150)
 @DataObject.Registration(
         mimeType = "text/csv",
         iconBase = "org/joeffice/spreadsheet/spreadsheet-16.png",
         displayName = "#LBL_Csv_LOADER",
-        position = 300)
+        position = 150)
 @ActionReferences({
     @ActionReference(
             path = "Loaders/text/csv/Actions",

@@ -16,8 +16,8 @@
 package org.joeffice.spreadsheet.tablemodel;
 
 import javax.swing.table.AbstractTableModel;
+
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellUtil;
 import org.joeffice.spreadsheet.POIUtils;
 
 /**

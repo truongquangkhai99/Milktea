@@ -18,15 +18,16 @@ package org.joeffice.spreadsheet.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
+
 import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
-import org.openide.windows.TopComponent;
 
 @ActionID(
         category = "Edit/Office/Spreadsheet",
