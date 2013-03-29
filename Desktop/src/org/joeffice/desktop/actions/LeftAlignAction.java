@@ -4,13 +4,20 @@ import java.awt.event.ActionEvent;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
+
 import org.joeffice.desktop.ui.Styleable;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Align to the left.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office",
         id = "org.joeffice.desktop.actions.LeftAlignAction")

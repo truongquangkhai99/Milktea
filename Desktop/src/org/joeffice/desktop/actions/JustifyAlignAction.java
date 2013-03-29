@@ -13,6 +13,11 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Justified the paragraph.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office",
         id = "org.joeffice.desktop.actions.JustifyAlignAction")

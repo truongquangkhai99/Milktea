@@ -16,13 +16,17 @@
 package org.joeffice.desktop.actions;
 
 import java.awt.Desktop;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import javax.swing.AbstractAction;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
-import org.joeffice.desktop.file.OfficeDataObject;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 
 import org.openide.loaders.DataObject;
 import org.openide.awt.ActionID;
@@ -31,39 +35,64 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
+import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Open in the OS after asking the user.
+ * Similar to Actions/System/org-openide-actions-FileSystemAction.instance
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "File",
         id = "org.joeffice.desktop.actions.OpenInSystemAction")
 @ActionRegistration(
         displayName = "#CTL_OpenInSystemAction")
 @ActionReferences({
-    @ActionReference(path = "Loaders/application/vnd.ms-excel/Actions", position = 200),
-    @ActionReference(path = "Loaders/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet/Actions", position = 200),
-    @ActionReference(path = "Loaders/application/vnd.openxmlformats-officedocument.wordprocessingml.document/Actions", position = 200),
-    @ActionReference(path = "Loaders/application/vnd.openxmlformats-officedocument.presentationml.presentation/Actions", position = 200),
-    @ActionReference(path = "Loaders/image/svg+xml/Actions", position = 200)
+    @ActionReference(path = "Loaders/content/unknown/Actions", position = 100),
 })
-@Messages("CTL_OpenInSystemAction=Open in System")
+@Messages({"CTL_OpenInSystemAction=Open in System",
+        "MSG_NotRecognizedDoc=Only new Word Document (.docx) are supported.",
+        "MSG_NotRecognizedUnsupported=This file format is not supported by Joeffice.",
+        "MSG_NotRecognizedOpenExternal=Do you want to open it in an external editor/viewer?",
+        "MSG_NotRecognizedTitle=Unknown file format"})
 public class OpenInSystemAction extends AbstractAction {
 
-    private final List<DataObject> context;
+    private final DataObject context;
 
-    public OpenInSystemAction(List<DataObject> context) {
+    public OpenInSystemAction(DataObject context) {
         this.context = context;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        Desktop desktop = Desktop.getDesktop();
-        for (DataObject dataObject : context) {
-            File file = FileUtil.toFile(((OfficeDataObject) dataObject).getPrimaryFile());
+        Object anwser = askOpenInSystem(context.getName());
+        if (anwser == DialogDescriptor.YES_OPTION) {
+            Desktop desktop = Desktop.getDesktop();
+            File file = FileUtil.toFile(context.getPrimaryFile());
             try {
                 desktop.open(file);
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
+    }
+
+    protected Object askOpenInSystem(String fileName) {
+        String title = NbBundle.getMessage(getClass(), "MSG_NotRecognizedTitle");
+        JPanel questionPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        String unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedUnsupported");
+        if (fileName.toLowerCase().endsWith(".doc")) {
+            unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedDoc");
+        }
+        questionPanel.add(new JLabel(unsupportedText));
+        String openExternalText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedOpenExternal");
+        questionPanel.add(new JLabel(openExternalText));
+        questionPanel.setBorder(new EmptyBorder(10, 10, 0, 10));
+        DialogDescriptor descriptor = new DialogDescriptor(questionPanel, title);
+        descriptor.setOptionType(DialogDescriptor.YES_NO_OPTION);
+        DialogDisplayer.getDefault().notify(descriptor);
+        return descriptor.getValue();
     }
 }

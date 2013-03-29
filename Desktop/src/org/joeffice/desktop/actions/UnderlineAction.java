@@ -16,11 +16,12 @@
 package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
+
 import org.joeffice.desktop.ui.Styleable;
+
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;

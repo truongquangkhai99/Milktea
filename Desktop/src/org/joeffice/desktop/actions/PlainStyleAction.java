@@ -29,7 +29,7 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Change the font weight to bold.
+ * Reset the font of the selected text to normal (bold, italic, underline, subscript, superscript, strike through).
  *
  * @author Anthony Goubard - Japplis
  */

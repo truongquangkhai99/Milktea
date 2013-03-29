@@ -15,23 +15,17 @@
  */
 package org.joeffice.desktop.actions;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
-import javax.swing.JEditorPane;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+
 import org.joeffice.desktop.ui.Styleable;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
-import org.openide.text.DataEditorSupport;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 
 /**

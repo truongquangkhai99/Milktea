@@ -6,14 +6,11 @@
       <folder name="unknown">
         <folder name="Actions">
           <file name="OpenAction.shadow_hidden"/>
-          <file name="org-netbeans-core-ui-sysopen-SystemOpenAction.shadow">
-            <attr name="originalFile" stringvalue="Actions/Edit/org-netbeans-core-ui-sysopen-SystemOpenAction.instance"/>
-            <attr name="position" intvalue="100"/>
-          </file>
           <file name="org-netbeans-core-ui-options-filetypes-OpenAsAction.shadow">
             <attr name="originalFile" stringvalue="Actions/Edit/org-netbeans-core-ui-options-filetypes-OpenAsAction.instance"/>
             <attr name="position" intvalue="200"/>
           </file>
+          <file name="org-netbeans-core-ui-sysopen-SystemOpenAction.shadow_hidden"/>
         </folder>
       </folder>
     </folder>

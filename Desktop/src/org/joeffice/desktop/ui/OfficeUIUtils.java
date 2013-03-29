@@ -17,7 +17,6 @@ package org.joeffice.desktop.ui;
 
 import java.beans.PropertyVetoException;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 
@@ -29,7 +28,7 @@ import org.openide.windows.TopComponent;
 
 /**
  * Generic UI utilities.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
 public class OfficeUIUtils {

@@ -46,7 +46,8 @@ import org.openide.util.NbPreferences;
 import org.openide.windows.WindowManager;
 
 /**
- * Class used to create a new document. This class is temporary until the annotation requireProject=false is supported.
+ * Class used to create a new document.
+ * This class is temporary until the annotation requireProject=false is supported.
  *
  * @author Anthony Goubard - Japplis
  */
@@ -93,7 +94,7 @@ public final class NewFileAction extends AbstractAction {
     }
 
     private void addFileFilters(JFileChooser chooser) {
-        List<DataObject> possibleObjects = findDataObject("Templates/Other");
+        List<DataObject> possibleObjects = findDataObject("Templates/Office");
         for (DataObject dataObject : possibleObjects) {
             if (dataObject instanceof OfficeDataObject) {
                 FileFilter filter = new OfficeFileFilter(dataObject);
