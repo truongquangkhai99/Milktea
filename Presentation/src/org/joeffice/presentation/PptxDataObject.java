@@ -27,15 +27,12 @@ import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
-import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
-import org.openide.nodes.Node;
 import org.openide.util.NbBundle.Messages;
 
 /**
@@ -44,17 +41,19 @@ import org.openide.util.NbBundle.Messages;
  * @author Anthony Goubard - Japplis
  */
 @Messages({
-    "LBL_Pptx_LOADER=Files of Pptx"
+    "LBL_Pptx_LOADER=Powerpoint 2007 / 2010"
 })
 @MIMEResolver.ExtensionRegistration(
         displayName = "#LBL_Pptx_LOADER",
         mimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        extension = {"pptx"})
+        extension = {"pptx"},
+        showInFileChooser = "#LBL_Pptx_LOADER",
+        position = 140)
 @DataObject.Registration(
         mimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation",
         iconBase = "org/joeffice/presentation/presentation-16.png",
         displayName = "#LBL_Pptx_LOADER",
-        position = 300)
+        position = 140)
 @ActionReferences({
     @ActionReference(
             path = "Loaders/application/vnd.openxmlformats-officedocument.presentationml.presentation/Actions",

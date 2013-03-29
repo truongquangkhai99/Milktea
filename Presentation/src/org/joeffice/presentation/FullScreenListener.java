@@ -21,7 +21,6 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.awt.image.MemoryImageSource;
-import java.util.Date;
 import javax.swing.Timer;
 
 /**

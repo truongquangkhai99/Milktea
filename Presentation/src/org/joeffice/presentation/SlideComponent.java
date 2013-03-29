@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import org.apache.poi.xslf.usermodel.XSLFBackground;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSheet;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
 
 /**
  * A component to show one slide.

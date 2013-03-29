@@ -28,6 +28,12 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Change the layout of the current slide.
+ * Not supported in Apache POI
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office/Presentation",
         id = "org.joeffice.presentation.actions.ChooseLayoutAction")

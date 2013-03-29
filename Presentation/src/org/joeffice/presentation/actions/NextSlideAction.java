@@ -15,6 +15,7 @@
  */
 package org.joeffice.presentation.actions;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
@@ -27,6 +28,12 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Shows the next slide (in editor mode).
+ * Beep if at the last slide.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "View/Office/Presentation",
         id = "org.joeffice.presentation.actions.NextSlideAction")
@@ -51,6 +58,8 @@ public class NextSlideAction extends AbstractAction {
             int currentSlide = currentTopComponent.getSelectedSlide();
             if (currentSlide < currentTopComponent.getPresentation().getSlides().length - 1) {
                 currentTopComponent.setSelectedSlide(currentSlide + 1);
+            } else {
+                Toolkit.getDefaultToolkit().beep();
             }
         }
     }

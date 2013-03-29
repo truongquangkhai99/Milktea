@@ -19,15 +19,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+
 import org.joeffice.desktop.ui.OfficeTopComponent;
+
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -70,22 +69,13 @@ public final class SlideThumbnailsTopComponent extends TopComponent implements L
     private void initComponents() {
         setLayout(new BorderLayout());
         slidesEditor = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
-        if (slidesEditor == null) return;
+        if (slidesEditor == null) {
+            return;
+        }
         associateLookup(slidesEditor.getLookup());
         XSLFSlide[] slides = slidesEditor.getPresentation().getSlides();
         slidesList = new JList(slides);
-        slidesList.setCellRenderer(new DefaultListCellRenderer() {
-
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                XSLFSlide slide = (XSLFSlide) value;
-                JComponent renderer = new SlideComponent(slide, null, new Dimension(200, 160));
-                if (isSelected) {
-                    renderer.setBorder(BorderFactory.createLineBorder(Color.RED));
-                }
-                return renderer;
-            }
-        });
+        slidesList.setCellRenderer(new SlideCellRenderer());
         slidesList.setFocusable(false);
         slidesList.addListSelectionListener(this);
         slidesList.putClientProperty("print.printable", Boolean.TRUE);
@@ -103,5 +93,20 @@ public final class SlideThumbnailsTopComponent extends TopComponent implements L
 
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
+    }
+
+    class SlideCellRenderer extends DefaultListCellRenderer {
+
+        private Color selectionColor = UIManager.getColor("Table.selectionBackground");
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            XSLFSlide slide = (XSLFSlide) value;
+            JComponent renderer = new SlideComponent(slide, null, new Dimension(200, 160));
+            if (isSelected) {
+                renderer.setBorder(BorderFactory.createLineBorder(selectionColor));
+            }
+            return renderer;
+        }
     }
 }

@@ -42,7 +42,8 @@ import org.openide.util.NbBundle.Messages;
         iconBase = "org/joeffice/presentation/actions/picture_empty.png",
         displayName = "#CTL_LaunchPresentationAction")
 @ActionReferences(value = {
-    @ActionReference(path = "Office/Presentation/Toolbar", position = 500)})
+    @ActionReference(path = "Office/Presentation/Toolbar", position = 500),
+    @ActionReference(path = "Shortcuts", name = "F5")})
 @Messages("CTL_LaunchPresentationAction=Launch Presentation")
 public final class LaunchPresentationAction extends AbstractAction {
 

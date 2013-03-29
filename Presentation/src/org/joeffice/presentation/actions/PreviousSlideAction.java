@@ -15,6 +15,7 @@
  */
 package org.joeffice.presentation.actions;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
@@ -27,6 +28,12 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Moves to the previous slides.
+ * Beep if the current slides is the first slide.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "View/Office/Presentation",
         id = "org.joeffice.presentation.actions.PreviousSlideAction")
@@ -51,6 +58,8 @@ public class PreviousSlideAction extends AbstractAction {
             int currentSlide = currentTopComponent.getSelectedSlide();
             if (currentSlide > 0) {
                 currentTopComponent.setSelectedSlide(currentSlide - 1);
+            } else {
+                Toolkit.getDefaultToolkit().beep();
             }
         }
     }

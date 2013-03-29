@@ -27,6 +27,11 @@ import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Go to the first slide (in editor mode).
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "View/Office/Presentation",
         id = "org.joeffice.presentation.actions.FirstSlideAction")
