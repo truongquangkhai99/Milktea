@@ -19,6 +19,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -54,7 +57,7 @@ import org.openide.util.NbBundle.Messages;
     "CTL_SlideThumbnailsTopComponent=Slide Thumbnails Window",
     "HINT_SlideThumbnailsTopComponent=This is a Slide Thumbnails window"
 })
-public final class SlideThumbnailsTopComponent extends TopComponent implements ListSelectionListener {
+public final class SlideThumbnailsTopComponent extends TopComponent implements ListSelectionListener, ContainerListener {
 
     private JList slidesList;
     private SlidesTopComponent slidesEditor;
@@ -73,13 +76,27 @@ public final class SlideThumbnailsTopComponent extends TopComponent implements L
             return;
         }
         associateLookup(slidesEditor.getLookup());
-        XSLFSlide[] slides = slidesEditor.getPresentation().getSlides();
-        slidesList = new JList(slides);
+        slidesEditor.getMainComponent().addContainerListener(this);
+        slidesList = new JList();
+        initSlides();
         slidesList.setCellRenderer(new SlideCellRenderer());
         slidesList.setFocusable(false);
         slidesList.addListSelectionListener(this);
-        slidesList.putClientProperty("print.printable", Boolean.TRUE);
         add(new JScrollPane(slidesList));
+    }
+
+    private void initSlides() {
+        XSLFSlide[] slides = slidesEditor.getPresentation().getSlides();
+        DefaultListModel<XSLFSlide> listModel = new DefaultListModel<>();
+        for (XSLFSlide slide : slides) {
+            listModel.addElement(slide);
+        }
+        slidesList.setModel(listModel);
+        if (slides.length > 0) {
+            slidesList.putClientProperty("print.printable", Boolean.TRUE);
+        } else {
+            slidesList.putClientProperty("print.printable", null);
+        }
     }
 
     @Override
@@ -93,6 +110,16 @@ public final class SlideThumbnailsTopComponent extends TopComponent implements L
 
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
+    }
+
+    @Override
+    public void componentAdded(ContainerEvent ce) {
+       initSlides();
+    }
+
+    @Override
+    public void componentRemoved(ContainerEvent ce) {
+       initSlides();
     }
 
     class SlideCellRenderer extends DefaultListCellRenderer {

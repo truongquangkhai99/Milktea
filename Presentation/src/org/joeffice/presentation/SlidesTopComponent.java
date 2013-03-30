@@ -103,6 +103,7 @@ public final class SlidesTopComponent extends OfficeTopComponent {
         }
         getMainComponent().putClientProperty("print.printable", Boolean.TRUE);
         selectedSlide = 0;
+        getMainComponent().revalidate();
     }
 
     public XMLSlideShow getPresentation() {
@@ -116,9 +117,11 @@ public final class SlidesTopComponent extends OfficeTopComponent {
     public void setSelectedSlide(int selectedSlide) {
         int oldSlide = this.selectedSlide;
         this.selectedSlide = selectedSlide;
-        JComponent mainComponent = getMainComponent();
-        CardLayout slidesLayout = (CardLayout) mainComponent.getLayout();
-        slidesLayout.show(mainComponent, String.valueOf(selectedSlide));
+        if (selectedSlide >= 0) {
+            JComponent mainComponent = getMainComponent();
+            CardLayout slidesLayout = (CardLayout) mainComponent.getLayout();
+            slidesLayout.show(mainComponent, String.valueOf(selectedSlide));
+        }
         firePropertyChange("slideChanged", oldSlide, selectedSlide);
     }
 
