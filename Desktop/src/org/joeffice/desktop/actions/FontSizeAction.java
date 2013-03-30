@@ -21,6 +21,8 @@ import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.Map;
 import javax.swing.AbstractAction;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
@@ -29,6 +31,7 @@ import org.joeffice.desktop.ui.Styleable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
@@ -43,6 +46,7 @@ import org.openide.util.NbBundle.Messages;
         id = "org.joeffice.desktop.actions.FontSizeAction")
 @ActionRegistration(
         displayName = "#CTL_FontSizeAction")
+@ActionReference(path = "Menu/Edit", position = 1515)
 @Messages("CTL_FontSizeAction=Font Size")
 public final class FontSizeAction extends AbstractAction {
 
@@ -55,16 +59,20 @@ public final class FontSizeAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         AttributedString currentAttributes = styleable.getCommonFontAttributes();
-        double defaultFontSize = 11.0;
+        int defaultFontSize = 12;
         Map<AttributedCharacterIterator.Attribute,Object> fontSizeAttr =
                 currentAttributes.getIterator(new TextAttribute[] { TextAttribute.SIZE }).getAttributes();
         if (!fontSizeAttr.isEmpty()) {
-            defaultFontSize = (Double) fontSizeAttr.get(TextAttribute.SIZE);
+            defaultFontSize = (Integer) fontSizeAttr.get(TextAttribute.SIZE);
         }
+
         String title = NbBundle.getMessage(getClass(), "CTL_FontSizeAction");
-        SpinnerNumberModel fontSizeModel = new SpinnerNumberModel(defaultFontSize, 1.0, 99.0, 1.0);
-        JSpinner spinner = new JSpinner(fontSizeModel);
-        DialogDescriptor dialogDesc = new DialogDescriptor(spinner, title);
+        SpinnerNumberModel fontSizeModel = new SpinnerNumberModel(defaultFontSize, 1, 99, 1);
+        JSpinner fontSizeSpinner = new JSpinner(fontSizeModel);
+        JPanel fontSizePanel = new JPanel();
+        fontSizePanel.add(new JLabel(title));
+        fontSizePanel.add(fontSizeSpinner);
+        DialogDescriptor dialogDesc = new DialogDescriptor(fontSizePanel, title);
         Object dialogResult = DialogDisplayer.getDefault().notify(dialogDesc);
         if (dialogResult == DialogDescriptor.OK_OPTION) {
             AttributedString attributes = new AttributedString("FontSize");

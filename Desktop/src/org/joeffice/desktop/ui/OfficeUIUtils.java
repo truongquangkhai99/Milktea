@@ -15,10 +15,18 @@
  */
 package org.joeffice.desktop.ui;
 
+import java.awt.Component;
+import java.awt.GridLayout;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 
 import org.openide.cookies.SaveCookie;
 import org.openide.loaders.DataObject;
@@ -87,5 +95,30 @@ public class OfficeUIUtils {
             }
         }
         return displayableName.toString();
+    }
+
+    /**
+     * Ask the user for a value
+     *
+     * @param title
+     *      the title for the dialog
+     * @param optionType
+     *      the option types of the buttons such as in {@link DialogDescriptor}
+     * @param messages
+     *      the elements to display can be String or Component.
+     */
+    public static Object ask(String title, int optionType, Object... messages) {
+        JPanel askPanel = new JPanel(new GridLayout(messages.length, 1, 5, 5));
+        askPanel.setBorder(new EmptyBorder(10, 10, 0, 10));
+        for (Object message : messages) {
+            if (message instanceof String) {
+                askPanel.add(new JLabel((String) message));
+            } else if (message instanceof Component) {
+                askPanel.add((Component) message);
+            }
+        }
+        DialogDescriptor description = new DialogDescriptor(askPanel, title);
+        Object dialogAnswer = DialogDisplayer.getDefault().notify(description);
+        return dialogAnswer;
     }
 }

@@ -24,6 +24,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -82,7 +83,6 @@ public class OpenInSystemAction extends AbstractAction {
 
     protected Object askOpenInSystem(String fileName) {
         String title = NbBundle.getMessage(getClass(), "MSG_NotRecognizedTitle");
-        JPanel questionPanel = new JPanel(new GridLayout(2, 1, 5, 5));
         String unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedUnsupported");
         if (fileName.toLowerCase().endsWith(".doc")) {
             unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedDoc");
@@ -90,13 +90,8 @@ public class OpenInSystemAction extends AbstractAction {
         if (fileName.toLowerCase().endsWith(".ppt")) {
             unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedPpt");
         }
-        questionPanel.add(new JLabel(unsupportedText));
         String openExternalText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedOpenExternal");
-        questionPanel.add(new JLabel(openExternalText));
-        questionPanel.setBorder(new EmptyBorder(10, 10, 0, 10));
-        DialogDescriptor descriptor = new DialogDescriptor(questionPanel, title);
-        descriptor.setOptionType(DialogDescriptor.YES_NO_OPTION);
-        DialogDisplayer.getDefault().notify(descriptor);
-        return descriptor.getValue();
+        Object answer = OfficeUIUtils.ask(title, DialogDescriptor.YES_NO_OPTION, unsupportedText, openExternalText);
+        return answer;
     }
 }

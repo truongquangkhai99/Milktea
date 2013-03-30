@@ -15,7 +15,6 @@
  */
 package org.joeffice.desktop.actions;
 
-import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;

@@ -36,6 +36,7 @@ import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 
 import org.openide.awt.UndoRedo;
+import org.openide.cookies.CloseCookie;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.filesystems.FileObject;
@@ -129,7 +130,8 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         final ProgressHandle progress = ProgressHandleFactory.createHandle("Opening " + documentFile.getName());
         progress.start();
         SwingWorker loader = new DocumentLoader(documentFile, progress);
-        RequestProcessor.getDefault().post(loader);
+        RequestProcessor requestProcessor = new RequestProcessor(getClass());
+        requestProcessor.post(loader);
     }
 
     protected abstract Object loadDocument(File documentFile) throws Exception;
@@ -253,6 +255,8 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         protected void done() {
             if (successful) {
                 documentLoaded();
+            } else {
+                getDataObject().getLookup().lookup(CloseCookie.class).close();
             }
             progress.finish();
             getDataObject().addPropertyChangeListener(new ChangeTitleIfModified());

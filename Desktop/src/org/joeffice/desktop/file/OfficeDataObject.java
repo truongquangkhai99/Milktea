@@ -16,7 +16,11 @@
 package org.joeffice.desktop.file;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.joeffice.desktop.ui.OfficeTopComponent;
 
@@ -103,8 +107,25 @@ public abstract class OfficeDataObject extends MultiDataObject implements SaveCo
     @Override
     public synchronized void save() throws IOException {
         File currentFile = FileUtil.toFile(getPrimaryFile());
-        save(currentFile);
+        File backup = backupOriginal(currentFile);
+        File secureSave = new File(currentFile.getAbsolutePath() + ".new." + getPrimaryFile().getExt());
+        save(secureSave);
+        if (secureSave.exists() && secureSave.length() > 0) {
+            Files.copy(secureSave.toPath(), new FileOutputStream(currentFile));
+            boolean deleted = backup.delete();
+            System.out.println("backup deleted: " + deleted);
+            boolean newDeleted = secureSave.delete();
+            System.out.println("secure save file deleted: " + newDeleted);
+        }
         setModified(false);
+    }
+
+    private synchronized File backupOriginal(File currentFile) throws IOException {
+        File backupFile = new File(currentFile.getAbsolutePath() + ".backup." + getPrimaryFile().getExt());
+        if (!backupFile.exists() && currentFile.length() > 0) {
+            Files.copy(currentFile.toPath(), backupFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+        }
+        return backupFile;
     }
 
     @Override

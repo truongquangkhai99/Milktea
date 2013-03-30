@@ -135,20 +135,11 @@
     <file name="D-V.shadow">
       <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-PasteAction.instance"/>
     </file>
-    <file name="DS-V.shadow">
-      <attr name="originalFile" stringvalue="org-netbeans-modules-editor-MainMenuAction$PasteFormattedAction.instance"/>
-    </file>
-    <file name="DS-D.shadow">
-      <attr name="originalFile" stringvalue="Editor/Actions/clipboard-history.instance"/>
-    </file>
     <file name="DELETE.shadow">
       <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-DeleteAction.instance"/>
     </file>
     <!-- The system doesn't seem to find the MainMenuAction -->
-    <file name="D-A.shadow">
-      <attr name="originalFile" stringvalue="org-netbeans-modules-editor-MainMenuAction$SelectAllAction.instance"/>
-    </file>
-    <file name="D-F3.shadow">
+    <!--file name="D-F3.shadow">
       <attr name="originalFile" stringvalue="org-netbeans-modules-editor-MainMenuAction$FindSelectionAction.instance"/>
     </file>
     <file name="F3.shadow">
@@ -156,7 +147,7 @@
     </file>
     <file name="S-F3.shadow">
       <attr name="originalFile" stringvalue="org-netbeans-modules-editor-MainMenuAction$FindPreviousAction.instance"/>
-    </file>
+    </file-->
 
     <file name="D-F.shadow">
       <attr name="originalFile" stringvalue="Actions/Edit/org-openide-actions-FindAction.instance"/>
