@@ -46,6 +46,9 @@ public class TransferableRichText implements Transferable {
     private Document doc;
     private int start;
     private int length;
+    private String cachedPlainText;
+    private String cachedRtfText;
+    private String cachedHtmlText;
 
     public TransferableRichText(Document doc, int start, int length) {
         this.doc = doc;
@@ -65,28 +68,36 @@ public class TransferableRichText implements Transferable {
                 return true;
             }
         }
-        //System.out.println("unsupported " + flavor.toString());
         return false;
     }
 
     @Override
     public synchronized Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
         if (flavor.equals(DataFlavor.stringFlavor)) {
+            if (cachedPlainText != null) {
+                return cachedPlainText;
+            }
             try {
-                String text = doc.getText(start, length);
-                return text;
+                cachedPlainText = doc.getText(start, length);
+                return cachedPlainText;
             } catch (BadLocationException ex) {
                 Exceptions.printStackTrace(ex);
                 return "";
             }
         } else if (flavor.equals(RTF_FLAVOR)) {
+            if (cachedRtfText != null) {
+                return getTransferableText(cachedRtfText, flavor);
+            }
             EditorKit rtfKit = new RTFEditorKit();
-            String rtfValue = convertWithKit(rtfKit);
-            return getTransferableText(rtfValue, flavor);
+            cachedRtfText = convertWithKit(rtfKit);
+            return getTransferableText(cachedRtfText, flavor);
         } else if (flavor.equals(HTML_FLAVOR)) {
+            if (cachedHtmlText != null) {
+                return getTransferableText(cachedHtmlText, flavor);
+            }
             EditorKit htmlKit = new HTMLEditorKit();
-            String htmlValue = convertWithKit(htmlKit);
-            return getTransferableText(htmlValue, flavor);
+            cachedHtmlText = convertWithKit(htmlKit);
+            return getTransferableText(cachedHtmlText, flavor);
         } else {
             throw new UnsupportedFlavorException(flavor);
         }

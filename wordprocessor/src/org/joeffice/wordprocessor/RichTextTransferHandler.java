@@ -15,21 +15,18 @@
  */
 package org.joeffice.wordprocessor;
 
-import java.awt.datatransfer.Clipboard;
+import static javax.swing.TransferHandler.MOVE;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.io.StringReader;
-import java.nio.charset.Charset;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.TransferHandler;
 import javax.swing.text.*;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.rtf.RTFEditorKit;
+
+import org.joeffice.desktop.ui.OfficeTransferHandler;
 
 import org.openide.util.Exceptions;
 
@@ -39,7 +36,7 @@ import org.openide.util.Exceptions;
  *
  * @author Anthony Goubard - Japplis
  */
-public class RichTextTransferHandler extends TransferHandler {
+public class RichTextTransferHandler extends OfficeTransferHandler {
 
     /**
      * The paste method used for DnD and clipboard.
@@ -48,17 +45,17 @@ public class RichTextTransferHandler extends TransferHandler {
     public boolean importData(JComponent c, Transferable t) {
         if (canImport(new TransferSupport(c, t))) {
             JTextComponent textField = (JTextComponent) c;
-            String rtfText = textFromTransferable(t, TransferableRichText.RTF_FLAVOR);
+            String rtfText = getTextFromTransferable(t, TransferableRichText.RTF_FLAVOR);
             if (rtfText != null) {
                 addRichtText(rtfText, textField, new RTFEditorKit());
                 return true;
             }
-            String htmlText = textFromTransferable(t, TransferableRichText.HTML_FLAVOR);
+            String htmlText = getTextFromTransferable(t, TransferableRichText.HTML_FLAVOR);
             if (htmlText != null) {
                 addRichtText(rtfText, textField, new HTMLEditorKit());
                 return true;
             }
-            String plainText = textFromTransferable(t, DataFlavor.stringFlavor);
+            String plainText = getTextFromTransferable(t, DataFlavor.stringFlavor);
             if (plainText != null) {
                 try {
                     textField.getDocument().insertString(textField.getSelectionStart(), plainText, null);
@@ -67,62 +64,13 @@ public class RichTextTransferHandler extends TransferHandler {
                     Exceptions.printStackTrace(ex);
                 }
             }
+            ImageIcon image = getImageFromTransferable(t);
+            if (image != null) {
+                ((DocxDocument) textField.getDocument()).insertPicture(image, textField.getSelectionStart());
+                return true;
+            }
         }
         return false;
-    }
-
-    private String textFromTransferable(Transferable t, DataFlavor flavor) {
-        if (t.isDataFlavorSupported(flavor)) {
-            try {
-                Object data = t.getTransferData(flavor);
-                if (data instanceof InputStream) {
-                    return readFully((InputStream) data, Charset.defaultCharset());
-                } else if (data instanceof Reader) {
-                    return readFully((Reader) data);
-                } else if (data instanceof String) {
-                    return (String) data;
-                }
-            } catch (UnsupportedFlavorException | IOException ex) {
-            }
-        }
-        return null;
-    }
-
-    private String readFully(Reader reader) throws IOException {
-        char[] buffer = new char[1024];
-        StringBuilder dataAsString = new StringBuilder();
-        int length = reader.read(buffer);
-        while (length != -1) {
-            dataAsString.append(buffer, 0, length);
-            length = reader.read(buffer);
-        }
-        return dataAsString.toString();
-    }
-
-    private String readFully(InputStream stream, Charset charset) throws IOException {
-        byte[] buffer = new byte[stream.available()];
-        ByteArrayOutputStream allData = new ByteArrayOutputStream();
-        int length = stream.read(buffer);
-        while (length != -1) {
-            allData.write(buffer, 0, length);
-            length = stream.read(buffer);
-        }
-        return new String(allData.toByteArray(), charset);
-    }
-
-    @Override
-    public void exportToClipboard(JComponent comp, Clipboard clip, int action) {
-        Transferable content = createTransferable(comp);
-        clip.setContents(content, null);
-        /* Disabled as TransferableRichText.getTransferData is called afterwards by netbeans and the offset have changed
-        if (action == MOVE) {
-            JTextComponent textField = (JTextComponent) comp;
-            try {
-                textField.getDocument().remove(textField.getSelectionStart(), textField.getSelectionEnd() - textField.getSelectionStart());
-            } catch (BadLocationException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }*/
     }
 
     @Override
@@ -133,14 +81,17 @@ public class RichTextTransferHandler extends TransferHandler {
         return new TransferableRichText(textField.getDocument(), selectionStart, selectionLength);
     }
 
+    // Doesn't seem to be called
     @Override
-    public int getSourceActions(JComponent c) {
-        return COPY_OR_MOVE;
-    }
-
-    @Override
-    public boolean canImport(TransferHandler.TransferSupport support) {
-        return true;
+    public void exportDone(JComponent comp, Transferable transferable, int action) {
+        if (action == MOVE) {
+            JTextComponent textField = (JTextComponent) comp;
+            try {
+                textField.getDocument().remove(textField.getSelectionStart(), textField.getSelectionEnd() - textField.getSelectionStart());
+            } catch (BadLocationException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
     }
 
     private void addRichtText(String richText, JTextComponent textField, EditorKit richEditor) {
@@ -170,5 +121,4 @@ public class RichTextTransferHandler extends TransferHandler {
             }
         }
     }
-
 }

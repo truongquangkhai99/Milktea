@@ -18,11 +18,19 @@ package org.joeffice.wordprocessor;
 import static javax.swing.text.StyleConstants.*;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.*;
 import org.openide.util.Exceptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
@@ -56,6 +64,26 @@ public class DocumentUpdater implements DocumentListener {
         }
     }
 
+    public void insertImage(ImageIcon image, int offset) {
+        try {
+            currentOffset = 0;
+            DocumentPosition position = searchPart(document.getBodyElements(), offset);
+            if (position != null) {
+                int width = image.getIconWidth();
+                int height = image.getIconHeight();
+                ByteArrayOutputStream output=new ByteArrayOutputStream();
+                BufferedImage bi=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                bi.getGraphics().drawImage(image.getImage(),0,0,null);
+                ImageIO.write(bi, "png", output);
+                byte[] imageData = output.toByteArray();
+                InputStream imageDataStream = new ByteArrayInputStream(imageData);
+                position.run.addPicture(imageDataStream, XWPFDocument.PICTURE_TYPE_PNG, image.getDescription(), width, height);
+            }
+        } catch (BadLocationException | IOException | InvalidFormatException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
     public void remove(int offset, int length) {
         try {
             currentOffset = 0;
@@ -85,6 +113,12 @@ public class DocumentUpdater implements DocumentListener {
             String newValue = oldValue.substring(0, position.offsetInText)
                     + (endPosition == null ? "" : oldValue.substring(endPosition.offsetInText));
             position.text.setStringValue(newValue);
+            if (newValue.isEmpty()) {
+                position.run.getCTR().removeT(position.positionInRun);
+                if (position.run.getCTR().getTList().isEmpty()) {
+                    position.run.getParagraph().removeRun(position.positionInParagraph);
+                }
+            }
         }
         return sameText;
     }
@@ -127,6 +161,9 @@ public class DocumentUpdater implements DocumentListener {
                 deleteRun = true;
             }
         }
+        if (position.run.getCTR().getTList().isEmpty()) {
+            position.run.getParagraph().removeRun(position.positionInParagraph);
+        }
     }
 
     @Override
@@ -134,6 +171,11 @@ public class DocumentUpdater implements DocumentListener {
         int offset = de.getOffset();
         int length = de.getLength();
         try {
+            Element selectedCharElement = ((StyledDocument) de.getDocument()).getCharacterElement(offset);
+            ImageIcon image = (ImageIcon) StyleConstants.getIcon(selectedCharElement.getAttributes());
+            if (image != null) {
+                insertImage(image, offset);
+            }
             String addedText = de.getDocument().getText(offset, length);
             insertString(addedText, offset);
         } catch (BadLocationException ex) {
@@ -161,11 +203,14 @@ public class DocumentUpdater implements DocumentListener {
                 }
                 for (Element addedElem : change.getChildrenAdded()) {
                     try {
+                        currentOffset = 0;
                         DocumentPosition pos = searchPart(document.getBodyElements(), addedElem.getStartOffset());
-                        String text = doc.getText(addedElem.getStartOffset(), addedElem.getEndOffset() - addedElem.getStartOffset());
-                        XWPFRun run = pos.run.getParagraph().createRun();
-                        run.setText(text);
-                        applyAttributes(run, addedElem.getAttributes());
+                        if (pos != null) {
+                            String text = doc.getText(addedElem.getStartOffset(), addedElem.getEndOffset() - addedElem.getStartOffset());
+                            XWPFRun run = pos.run.getParagraph().createRun();
+                            run.setText(text);
+                            applyAttributes(run, addedElem.getAttributes());
+                        }
                     } catch (BadLocationException ex) {
                         Exceptions.printStackTrace(ex);
                     }
