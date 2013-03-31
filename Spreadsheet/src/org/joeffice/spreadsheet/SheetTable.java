@@ -34,6 +34,7 @@ public class SheetTable extends JTable {
 
     private Map<Integer, Set<Integer>> selectedCells = new HashMap<>();
     private Point firstExtendCell;
+    private Point lastExtendCell;
 
     public SheetTable(TableModel tableModel) {
         super(tableModel);
@@ -53,26 +54,33 @@ public class SheetTable extends JTable {
             selectedCells.get(rowIndex).remove(columnIndex);
         } else {
             if (!toggle && !extend) {
+                lastExtendCell = null;
                 selectedCells.clear();
             }
-            Set<Integer> selectedColumns = selectedCells.get(rowIndex);
-            if (selectedColumns == null) {
-                selectedColumns = new TreeSet<>();
-                selectedCells.put(rowIndex, selectedColumns);
-            }
-            selectedColumns.add(columnIndex);
+            addCellToSelection(rowIndex, columnIndex);
+            Point extendCell = new Point(rowIndex, columnIndex);
             if (!extend) {
-                firstExtendCell = new Point(rowIndex, columnIndex);
-            } else {
+                firstExtendCell = extendCell;
+                lastExtendCell = null;
+            } else if (lastExtendCell == null || !extendCell.equals(lastExtendCell)) {
                 for (int i = Math.min(firstExtendCell.x, rowIndex); i <= Math.max(firstExtendCell.x, rowIndex); i++) {
                     for (int j = Math.min(firstExtendCell.y, columnIndex); j <= Math.max(firstExtendCell.y, columnIndex); j++) {
-                        selectedCells.get(i).add(j);
-                        getColumnModel().getSelectionModel().addSelectionInterval(j, j);
+                        addCellToSelection(i, j);
                     }
                 }
+                lastExtendCell = extendCell;
             }
         }
         super.changeSelection(rowIndex, columnIndex, toggle, extend);
+    }
+
+    private void addCellToSelection(int row, int column) {
+        Set<Integer> selectedColumns = selectedCells.get(row);
+        if (selectedColumns == null) {
+            selectedColumns = new TreeSet<>();
+            selectedCells.put(row, selectedColumns);
+        }
+        selectedColumns.add(column);
     }
 
     @Override
@@ -80,6 +88,7 @@ public class SheetTable extends JTable {
         for (int i = index0; i <= index1; i++) {
             selectedCells.remove(i);
         }
+        getColumnModel().getSelectionModel().addSelectionInterval(0, getColumnCount() - 1);
         super.addRowSelectionInterval(index0, index1);
     }
 

@@ -131,6 +131,15 @@ public class XlsxDataObject extends OfficeDataObject {
             } else {
                 workbook.write(xslxOutputStream);
             }
+            /* bug in Apache POI https://issues.apache.org/bugzilla/show_bug.cgi?id=49940
+             * if (workbook instanceof XSSFWorkbook) {
+                try {
+                    workbook = JoefficeWorkbookFactory.create(file);
+                    setDocument(workbook);
+                } catch (InvalidFormatException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }*/
         }
     }
 }

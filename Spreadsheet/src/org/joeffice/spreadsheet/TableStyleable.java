@@ -41,7 +41,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.joeffice.desktop.ui.Styleable;
-import org.openide.windows.TopComponent;
 
 /**
  * Class that applies the style to the selected cells.
@@ -55,14 +54,18 @@ public class TableStyleable implements Styleable {
     @Override
     public void setFontAttributes(AttributedString attributes) {
         SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
-        if (currentTopComponent != null) {
+        if (currentTopComponent != null &&
+                currentTopComponent.getSelectedTable().getSelectedRow() > -1 &&
+                currentTopComponent.getSelectedTable().getSelectedColumn() > -1) {
             JTable table = currentTopComponent.getSelectedTable();
             Sheet sheet = currentTopComponent.getSpreadsheetComponent().getSelectedSheet().getSheet();
 
             int rowIndexStart = table.getSelectedRow();
             int rowIndexEnd = table.getSelectionModel().getMaxSelectionIndex();
-            int colIndexStart = table.getSelectedColumn();
-            int colIndexEnd = table.getColumnModel().getSelectionModel().getMaxSelectionIndex();
+            int[] selectedColumns1 = table.getSelectedColumns();
+            int[] selectedColumns = POIUtils.getSelectedColumns(table, table.getSelectedRows());
+            int colIndexStart = selectedColumns[0];
+            int colIndexEnd = selectedColumns[selectedColumns.length - 1];
 
             // Go through all the selected cells and all the attributes
             for (int i = rowIndexStart; i <= rowIndexEnd; i++) {

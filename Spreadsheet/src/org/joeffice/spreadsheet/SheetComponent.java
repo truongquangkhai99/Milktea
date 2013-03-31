@@ -108,9 +108,6 @@ public class SheetComponent extends JPanel {
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.setCellSelectionEnabled(true);
 
-        table.setDragEnabled(true);
-        table.setDropMode(DropMode.ON_OR_INSERT);
-
         TableColumnAdjuster tca = new TableColumnAdjuster(table, 20);
         if (sheet.getDefaultColumnWidth() == -1) {
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -118,6 +115,10 @@ public class SheetComponent extends JPanel {
             tca.setLeaveEmptyAsIs(true);
             tca.adjustColumns();
         }
+
+        table.setTransferHandler(new TableTransferHandler());
+        table.setDragEnabled(true);
+        table.setDropMode(DropMode.ON_OR_INSERT);
 
         Action cutAction = new ClipboardAction(DefaultEditorKit.cutAction);
         Action copyAction = new ClipboardAction(DefaultEditorKit.copyAction);

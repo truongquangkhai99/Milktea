@@ -19,6 +19,9 @@ import java.awt.Color;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.swing.JTable;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -163,5 +166,39 @@ public class POIUtils {
         } else {
             return "";
         }
+    }
+
+    public static int[] getSelectedColumns(JTable table, int[] rows) {
+        int firstWithValue = Integer.MAX_VALUE;
+        int lastWithValue = 0;
+        Set<Integer> selectedColumns = new TreeSet<>();
+        for (int row : rows) {
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                if (table.isCellSelected(row, i)) {
+                    selectedColumns.add(i);
+                    String cellText = getFormattedText((Cell) table.getValueAt(row, i));
+                    if (!cellText.equals("") && i < firstWithValue) {
+                        firstWithValue = i;
+                    }
+                    if (!cellText.equals("") && i > lastWithValue) {
+                        lastWithValue = i;
+                    }
+                }
+            }
+        }
+        Set<Integer> outOfBoundColumns = new TreeSet<>();
+        for (int column : selectedColumns) {
+            if (column < firstWithValue || column > lastWithValue) {
+                outOfBoundColumns.add(column);
+            }
+        }
+        selectedColumns.removeAll(outOfBoundColumns);
+        int[] selected = new int[selectedColumns.size()];
+        int index = 0;
+        for (int selectedColumn : selectedColumns) {
+            selected[index] = selectedColumn;
+            index++;
+        }
+        return selected;
     }
 }
