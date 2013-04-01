@@ -18,7 +18,6 @@ package org.joeffice.spreadsheet.renderer;
 import java.awt.Color;
 import java.awt.Component;
 import java.text.NumberFormat;
-import java.util.Locale;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -32,8 +31,11 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.joeffice.spreadsheet.POIUtils;
+import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 
 /**
  * The POI cell renderer.
@@ -60,7 +62,11 @@ public class CellRenderer extends DefaultTableCellRenderer {
         if (value != null) {
             JLabel defaultComponent = (JLabel) DEFAULT_RENDERER.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
             Cell cell = (Cell) value;
-            decorateLabel(cell, defaultComponent);
+            try {
+                decorateLabel(cell, defaultComponent);
+            } catch (XmlValueDisconnectedException ex) {
+                reloadTableModel();
+            }
         }
         return this;
     }
@@ -146,6 +152,14 @@ public class CellRenderer extends DefaultTableCellRenderer {
 
         if (cell.getCellComment() != null) {
             renderingComponent.setToolTipText(cell.getCellComment().getString().getString());
+        }
+    }
+
+    // Due to https://issues.apache.org/bugzilla/show_bug.cgi?id=49940
+    private void reloadTableModel() {
+        SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
+        if (currentTopComponent != null) {
+            currentTopComponent.getSpreadsheetComponent().reload();
         }
     }
 }

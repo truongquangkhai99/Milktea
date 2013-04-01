@@ -65,13 +65,8 @@ public final class SpreadsheetTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    protected JToolBar createToolbar() {
-        JToolBar spreadsheetToolbar = new JToolBar();
-        List<? extends Action> spreadsheetToolbarActions = Utilities.actionsForPath("Office/Spreadsheet/Toolbar");
-        for (Action action : spreadsheetToolbarActions) {
-            spreadsheetToolbar.add(action);
-        }
-        return spreadsheetToolbar;
+    public String getShortName() {
+        return "Spreadsheet";
     }
 
     @Override

@@ -207,6 +207,19 @@ public class SheetComponent extends JPanel {
         return sheet;
     }
 
+    public void setSheet(Sheet sheet) {
+        this.sheet = sheet;
+        SheetTableModel sheetTableModel = new SheetTableModel(sheet);
+        sheetTable.setModel(sheetTableModel);
+        sheetTableModel.addTableModelListener(new TableModelListener() {
+
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                getSpreadsheetComponent().setModified(true);
+            }
+        });
+    }
+
     public SpreadsheetComponent getSpreadsheetComponent() {
         return spreadsheetComponent;
     }

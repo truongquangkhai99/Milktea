@@ -46,8 +46,9 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_SetBordersAction")
 @ActionReferences(value = {
-    @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 600)})
-@Messages("CTL_SetBordersAction=Set borders")
+    @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet", position = 600)})
+@Messages({"CTL_SetBordersAction=Set borders",
+    "MSG_ChooseBorders=Choose Borders"})
 public final class SetBordersAction extends AbstractAction {
 
     @Override

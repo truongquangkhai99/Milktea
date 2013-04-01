@@ -18,8 +18,10 @@ package org.joeffice.spreadsheet;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
@@ -29,10 +31,12 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiFileLoader;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 
 /**
@@ -123,6 +127,21 @@ public class XlsxDataObject extends OfficeDataObject {
     }
 
     @Override
+    public synchronized void save() throws IOException {
+        super.save();
+
+        // bug in Apache POI https://issues.apache.org/bugzilla/show_bug.cgi?id=49940
+        if (getDocument() instanceof XSSFWorkbook && !(getDocument() instanceof CSVWorkbook)) {
+            try {
+                Workbook workbook = JoefficeWorkbookFactory.create(FileUtil.toFile(getPrimaryFile()));
+                setDocument(workbook);
+            } catch (InvalidFormatException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }
+
+    @Override
     public synchronized void save(File file) throws IOException {
         Workbook workbook = (Workbook) getDocument();
         try (FileOutputStream xslxOutputStream = new FileOutputStream(file)) {
@@ -131,15 +150,6 @@ public class XlsxDataObject extends OfficeDataObject {
             } else {
                 workbook.write(xslxOutputStream);
             }
-            /* bug in Apache POI https://issues.apache.org/bugzilla/show_bug.cgi?id=49940
-             * if (workbook instanceof XSSFWorkbook) {
-                try {
-                    workbook = JoefficeWorkbookFactory.create(file);
-                    setDocument(workbook);
-                } catch (InvalidFormatException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            }*/
         }
     }
 }

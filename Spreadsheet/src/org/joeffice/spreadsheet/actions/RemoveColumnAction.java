@@ -38,7 +38,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_RemoveColumnAction")
 @ActionReferences(value = {
-    @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 400)})
+    @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet", position = 400)})
 @Messages("CTL_RemoveColumnAction=Remove Column")
 public final class RemoveColumnAction extends AbstractAction {
 

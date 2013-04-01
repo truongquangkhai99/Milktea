@@ -48,7 +48,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_CompleteSeriesAction")
 @ActionReferences(value = {
-    @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 700)})
+    @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet", position = 700)})
 @Messages("CTL_CompleteSeriesAction=Complete serie")
 public final class CompleteSeriesAction  extends AbstractAction {
 

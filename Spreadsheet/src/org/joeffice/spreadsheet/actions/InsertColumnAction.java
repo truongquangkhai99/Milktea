@@ -35,7 +35,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionRegistration(
         displayName = "#CTL_InsertColumnAction")
 @ActionReferences(value = {
-    @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 300)})
+    @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet", position = 300)})
 @Messages("CTL_InsertColumnAction=Insert Column")
 public final class InsertColumnAction extends AbstractAction {
 

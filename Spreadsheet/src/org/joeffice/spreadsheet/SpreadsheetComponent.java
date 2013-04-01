@@ -70,6 +70,16 @@ public class SpreadsheetComponent extends JTabbedPane implements ChangeListener 
         formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
     }
 
+    // Due to bug https://issues.apache.org/bugzilla/show_bug.cgi?id=49940
+    public void reload() {
+        this.workbook = spreadsheetAndToolbar.getWorkbook();
+        int numberOfSheets = workbook.getNumberOfSheets();
+        for (int i = 0; i < numberOfSheets; i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+            ((SheetComponent) getComponentAt(i)).setSheet(sheet);
+        }
+    }
+
     public SpreadsheetTopComponent getSpreadsheetAndToolbar() {
         return spreadsheetAndToolbar;
     }
