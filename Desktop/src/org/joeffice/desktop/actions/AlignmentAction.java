@@ -23,9 +23,7 @@ import org.openide.util.actions.Presenter;
 @ActionRegistration(
         iconBase = "org/joeffice/desktop/action/text_align_center.png",
         displayName = "#CTL_Alignement")
-@ActionReferences({
-    @ActionReference(path = "Toolbars/Font", position = 3500)
-})
+@ActionReference(path = "Toolbars/Font", position = 3500)
 @NbBundle.Messages("CTL_Alignement=Align")
 public class AlignmentAction extends AbstractAction implements Presenter.Toolbar {
 

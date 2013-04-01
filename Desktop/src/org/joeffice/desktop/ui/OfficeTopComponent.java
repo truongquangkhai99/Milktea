@@ -16,24 +16,22 @@
 package org.joeffice.desktop.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Properties;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-import javax.swing.SwingWorker;
+import javax.swing.*;
 
 import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
 
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.awt.Toolbar;
 
 import org.openide.awt.UndoRedo;
 import org.openide.cookies.CloseCookie;
@@ -47,6 +45,8 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.RequestProcessor;
+import org.openide.util.Utilities;
+import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.ProxyLookup;
@@ -113,8 +113,20 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
     }
 
     protected JToolBar createToolbar() {
-        JToolBar editorToolbar = new JToolBar();
-        return editorToolbar;
+        JToolBar toolbar = new Toolbar(getShortName());
+        String toolbarActionsPath = "Office/" + getShortName() + "/Toolbar";
+        List<? extends Action> toolbarActions = Utilities.actionsForPath(toolbarActionsPath);
+        for (Action action : toolbarActions) {
+            if (action == null) {
+                toolbar.addSeparator();
+            } else if (action instanceof Presenter.Toolbar) {
+                Component actionComponent = ((Presenter.Toolbar) action).getToolbarPresenter();
+                toolbar.add(actionComponent);
+            } else {
+                toolbar.add(action);
+            }
+        }
+        return toolbar;
     }
 
     protected abstract JComponent createMainComponent();

@@ -17,18 +17,20 @@
 package org.joeffice.desktop.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.JXList;
-
 import org.joeffice.desktop.actions.ChooseFontAction;
+
 
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.ErrorManager;
@@ -76,6 +78,7 @@ public final class FontListTopComponent extends TopComponent implements ListSele
         initComponents();
         setName(Bundle.CTL_FontListTopComponent());
         setToolTipText(Bundle.HINT_FontListTopComponent());
+        setFocusable(false);
     }
 
     private void initComponents() {
@@ -85,33 +88,27 @@ public final class FontListTopComponent extends TopComponent implements ListSele
         add(filterField, BorderLayout.NORTH);
 
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        Font[] fonts = env.getAllFonts();
-        fontList = new JXList(fonts);
-        fontList.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Font font = (Font) value;
-                return super.getListCellRendererComponent(list, font.getName(), index, isSelected, cellHasFocus);
-            }
-        });
+        String[] fontFamilies = env.getAvailableFontFamilyNames();
+        fontList = new JXList(fontFamilies);
+        fontList.setAutoCreateRowSorter(true);
+        fontList.setCellRenderer(new FontCellRenderer());
         fontList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         fontList.addListSelectionListener(this);
         fontList.setFocusable(false);
-        //fontList.setSearchable(new JXList.ListSearchable());
         add(new JScrollPane(fontList));
     }
 
     @Override
     public void valueChanged(ListSelectionEvent lse) {
-        Font selectedFont = (Font) fontList.getSelectedValue();
+        String selectedFont = (String) fontList.getSelectedValue();
         if (selectedFont != null) {
             //Action chooseFont = findAction("Actions/Edit/Office/org-joeffice-desktop-actions-ChooseFontAction.instance");
             Action chooseFont = Utilities.actionsGlobalContext().lookup(ChooseFontAction.class);
-            ActionEvent event = new ActionEvent(lse.getSource(), lse.getFirstIndex(), selectedFont.getName());
+            ActionEvent event = new ActionEvent(lse.getSource(), lse.getFirstIndex(), selectedFont);
             chooseFont.actionPerformed(event);
             /*Styleable styleable = Lookup.getDefault().lookup(Styleable.class);
             AttributedString attributes = new AttributedString("ChangeFont");
-            attributes.addAttribute(TextAttribute.FAMILY, selectedFont.getName());
+            attributes.addAttribute(TextAttribute.FAMILY, selectedFont);
             styleable.setFontAttributes(attributes);*/
         }
     }
@@ -121,11 +118,7 @@ public final class FontListTopComponent extends TopComponent implements ListSele
     }
 
     public String getSelectedFontName() {
-        Font selectedFont = (Font) fontList.getSelectedValue();
-        if (selectedFont != null) {
-            return selectedFont.getName();
-        }
-        return null;
+        return (String) fontList.getSelectedValue();
     }
 
     public Action findAction(String key) {
@@ -174,5 +167,39 @@ public final class FontListTopComponent extends TopComponent implements ListSele
     }
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
+    }
+
+    class FontCellRenderer extends JPanel implements ListCellRenderer<String> {
+
+        private Color selectedColor;
+        private JLabel fontNameLabel;
+        private JLabel fontExampleLabel;
+
+        public FontCellRenderer() {
+            fontNameLabel = new JLabel();
+            fontNameLabel.setOpaque(false);
+            fontExampleLabel = new JLabel("abcABC");
+            fontExampleLabel.setOpaque(false);
+            fontExampleLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+            BoxLayout stretchLayout = new BoxLayout(this, BoxLayout.X_AXIS);
+            setLayout(stretchLayout);
+            add(fontNameLabel);
+            add(Box.createHorizontalGlue());
+            add(fontExampleLabel);
+            selectedColor = UIManager.getColor("List.selectionBackground");
+            setBackground(UIManager.getColor("List.background"));
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList<? extends String> list, String value, int index, boolean isSelected, boolean cellHasFocus) {
+            fontNameLabel.setText(value);
+            fontExampleLabel.setFont(new Font(value, Font.PLAIN, fontNameLabel.getFont().getSize()));
+            if (isSelected) {
+                setBorder(new LineBorder(selectedColor));
+            } else {
+                setBorder(null);
+            }
+            return this;
+        }
     }
 }

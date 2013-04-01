@@ -59,7 +59,9 @@ import org.openide.windows.WindowManager;
         iconBase = "org/joeffice/desktop/actions/add.png",
         displayName = "#CTL_NewFileAction")
 @ActionReference(path = "Menu/File", position = 90)
-@Messages({"CTL_NewFileAction=New File...", "MSG_ChooseExtension=Please choose or provide a file type"})
+@Messages({"CTL_NewFileAction=New File...",
+    "MSG_ChooseExtension=Please choose or provide a file type",
+    "CTL_Untitled=Untitled"})
 public final class NewFileAction extends AbstractAction {
 
     @Override
@@ -87,8 +89,11 @@ public final class NewFileAction extends AbstractAction {
     private JFileChooser createFileChooser() {
         JFileChooser newFileChooser = new JFileChooser();
         String defaultLocation = NbPreferences.forModule(NewFileAction.class).get("file.location", System.getProperty("user.home"));
-        newFileChooser.setCurrentDirectory(new File(defaultLocation));
+        File currentDir = new File(defaultLocation);
+        newFileChooser.setCurrentDirectory(currentDir);
         newFileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        String defaultName = NbBundle.getMessage(getClass(), "CTL_Untitled");
+        newFileChooser.setSelectedFile(new File(currentDir, defaultName + ".docx"));
         addFileFilters(newFileChooser);
         return newFileChooser;
     }
@@ -140,7 +145,7 @@ public final class NewFileAction extends AbstractAction {
     }
 
     public FileObject getFileTemplate(File savedFile) {
-        List<DataObject> possibleObjects = findDataObject("Templates/Other");
+        List<DataObject> possibleObjects = findDataObject("Templates/Office");
         for (final DataObject dataObject : possibleObjects) {
             if (dataObject instanceof OfficeDataObject && savedFile.getName().endsWith(dataObject.getPrimaryFile().getExt())) {
                 return dataObject.getPrimaryFile();
