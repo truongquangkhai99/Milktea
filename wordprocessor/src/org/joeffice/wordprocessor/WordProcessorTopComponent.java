@@ -15,6 +15,7 @@
  */
 package org.joeffice.wordprocessor;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -43,31 +44,31 @@ import org.openide.util.NbBundle.Messages;
  * Top component which displays the docx documents.
  */
 @ConvertAsProperties(
-        dtd = "-//org.joeffice.wordprocessor//Wordp//EN",
+        dtd = "-//org.joeffice.wordprocessor//WordProcessor//EN",
         autostore = false)
 @TopComponent.Description(
-        preferredID = "WordpTopComponent",
-        iconBase = "org/joeffice/wordprocessor/wordp-16.png",
+        preferredID = "WordProcessorTopComponent",
+        iconBase = "org/joeffice/wordprocessor/wordprocessor-16.png",
         persistenceType = TopComponent.PERSISTENCE_ONLY_OPENED)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
-@ActionID(category = "Window", id = "org.joeffice.wordprocessor.WordpTopComponent")
+@ActionID(category = "Window", id = "org.joeffice.wordprocessor.WordProcessorTopComponent")
 /*@ActionReference(path = "Menu/Window")*/
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_WordpAction",
-        preferredID = "WordpTopComponent")
+        displayName = "#CTL_WordProcessorAction",
+        preferredID = "WordProcessorTopComponent")
 @Messages({
-    "CTL_WordpAction=Wordp",
-    "CTL_WordpTopComponent=Word processor Window",
-    "HINT_WordpTopComponent=This is a Word processor window"
+    "CTL_WordProcessorAction=Word Processor",
+    "CTL_WordProcessorTopComponent=Word processor Window",
+    "HINT_WordProcessorTopComponent=This is a Word processor window"
 })
-public final class WordpTopComponent extends OfficeTopComponent implements DocumentListener {
+public final class WordProcessorTopComponent extends OfficeTopComponent implements DocumentListener {
 
     private EditorStyleable styleable;
 
-    public WordpTopComponent() {
+    public WordProcessorTopComponent() {
     }
 
-    public WordpTopComponent(OfficeDataObject dataObject) {
+    public WordProcessorTopComponent(OfficeDataObject dataObject) {
         super(dataObject);
     }
 
@@ -78,7 +79,17 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
         styleable = new EditorStyleable(editor);
         editor.setTransferHandler(new RichTextTransferHandler());
         editor.putClientProperty("print.printable", Boolean.TRUE);
+
+        // Doesn't work
+        editor.setSize(new Dimension(545, Integer.MAX_VALUE));
+        editor.setPreferredSize(new Dimension(545, Integer.MAX_VALUE));
+        editor.setMaximumSize(new Dimension(545, Integer.MAX_VALUE));
         return editor;
+    }
+
+    @Override
+    public String getShortName() {
+        return "Word Processor";
     }
 
     @Override
@@ -133,7 +144,7 @@ public final class WordpTopComponent extends OfficeTopComponent implements Docum
     }
 
     public static JTextPane findCurrentTextPane() {
-        WordpTopComponent wordProcessor = OfficeTopComponent.getSelectedComponent(WordpTopComponent.class);
+        WordProcessorTopComponent wordProcessor = OfficeTopComponent.getSelectedComponent(WordProcessorTopComponent.class);
         return (JTextPane) wordProcessor.getMainComponent();
     }
 

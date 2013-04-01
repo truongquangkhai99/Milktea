@@ -17,6 +17,7 @@ package org.joeffice.wordprocessor;
 
 import static javax.swing.TransferHandler.MOVE;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.IOException;
 import java.io.StringReader;
@@ -39,6 +40,11 @@ import org.openide.util.Exceptions;
 public class RichTextTransferHandler extends OfficeTransferHandler {
 
     /**
+     * Indicator for copy as text or paste as text.
+     */
+    private boolean asTextOnly;
+
+    /**
      * The paste method used for DnD and clipboard.
      */
     @Override
@@ -46,12 +52,12 @@ public class RichTextTransferHandler extends OfficeTransferHandler {
         if (canImport(new TransferSupport(c, t))) {
             JTextComponent textField = (JTextComponent) c;
             String rtfText = getTextFromTransferable(t, TransferableRichText.RTF_FLAVOR);
-            if (rtfText != null) {
+            if (rtfText != null && !asTextOnly) {
                 addRichtText(rtfText, textField, new RTFEditorKit());
                 return true;
             }
             String htmlText = getTextFromTransferable(t, TransferableRichText.HTML_FLAVOR);
-            if (htmlText != null) {
+            if (htmlText != null && !asTextOnly) {
                 addRichtText(rtfText, textField, new HTMLEditorKit());
                 return true;
             }
@@ -78,7 +84,12 @@ public class RichTextTransferHandler extends OfficeTransferHandler {
         JTextComponent textField = (JTextComponent) c;
         int selectionStart = textField.getSelectionStart();
         int selectionLength = textField.getSelectionEnd() - selectionStart;
-        return new TransferableRichText(textField.getDocument(), selectionStart, selectionLength);
+        if (asTextOnly) {
+            String text = textField.getSelectedText();
+            return new StringSelection(text);
+        } else {
+            return new TransferableRichText(textField.getDocument(), selectionStart, selectionLength);
+        }
     }
 
     // Doesn't seem to be called
@@ -120,5 +131,13 @@ public class RichTextTransferHandler extends OfficeTransferHandler {
                 addRichText(textField, children);
             }
         }
+    }
+
+    public boolean isAsTextOnly() {
+        return asTextOnly;
+    }
+
+    public void setAsTextOnly(boolean asTextOnly) {
+        this.asTextOnly = asTextOnly;
     }
 }

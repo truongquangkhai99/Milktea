@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
         position = 110)
 @DataObject.Registration(
         mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        iconBase = "org/joeffice/wordprocessor/wordp-16.png",
+        iconBase = "org/joeffice/wordprocessor/wordprocessor-16.png",
         displayName = "#LBL_Docx_LOADER",
         position = 110)
 @ActionReferences({
@@ -115,7 +115,7 @@ public class DocxDataObject extends OfficeDataObject {
 
     @Override
     public OfficeTopComponent open(OfficeDataObject dataObject) {
-        return new WordpTopComponent(dataObject);
+        return new WordProcessorTopComponent(dataObject);
     }
 
     @Override

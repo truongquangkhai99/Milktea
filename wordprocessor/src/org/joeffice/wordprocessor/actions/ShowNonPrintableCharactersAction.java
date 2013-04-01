@@ -15,17 +15,21 @@
  */
 package org.joeffice.wordprocessor.actions;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JTextPane;
 import javax.swing.text.Document;
 
-import org.joeffice.wordprocessor.WordpTopComponent;
+import org.joeffice.wordprocessor.WordProcessorTopComponent;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.util.HelpCtx;
+import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
+import org.openide.util.actions.BooleanStateAction;
 
 /**
  * Action that will show (or hide) all the non printable characters of the editor.
@@ -33,24 +37,50 @@ import org.openide.util.NbBundle.Messages;
  * @author Anthony Goubard - Japplis
  */
 @ActionID(
-        category = "View/Office/Word",
+        category = "View/Office/Word Processor",
         id = "org.joeffice.wordprocessor.actions.ShowNonPrintableCharactersAction")
 @ActionRegistration(
+        iconBase = "org/joeffice/wordprocessor/actions/pilcrow.png",
         displayName = "#CTL_ShowNonPrintableCharactersAction")
-@ActionReference(path = "Menu/Edit/Gimme More/Word", position = 700)
+@ActionReferences({
+    @ActionReference(path = "Menu/Edit/Gimme More/Word Processor", position = 700),
+    @ActionReference(path = "Office/Word Processor/Toolbar", position = 300)})
 @Messages("CTL_ShowNonPrintableCharactersAction=Show Non Printable Characters")
-public final class ShowNonPrintableCharactersAction implements ActionListener {
+public final class ShowNonPrintableCharactersAction extends BooleanStateAction implements PropertyChangeListener {
+
+    public ShowNonPrintableCharactersAction() {
+        setBooleanState(false);
+        addPropertyChangeListener(this);
+    }
 
     @Override
-    public void actionPerformed(ActionEvent ae) {
-        JTextPane editor = WordpTopComponent.findCurrentTextPane();
-        Document doc = editor.getDocument();
-        boolean allCharactersShown = doc.getProperty("show paragraphs") != null;
-        if (allCharactersShown) {
-            doc.putProperty("show paragraphs", null);
-        } else {
-            doc.putProperty("show paragraphs", Boolean.TRUE);
+    public String getName() {
+        String name = NbBundle.getMessage(getClass(), "CTL_ShowNonPrintableCharactersAction");
+        return name;
+    }
+
+    @Override
+	protected String iconResource()	{
+		return "org/joeffice/wordprocessor/actions/pilcrow.png";
+	}
+
+    @Override
+    public HelpCtx getHelpCtx() {
+        return HelpCtx.DEFAULT_HELP;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(PROP_BOOLEAN_STATE.equals(evt.getPropertyName())) {
+            JTextPane editor = WordProcessorTopComponent.findCurrentTextPane();
+            Document doc = editor.getDocument();
+            boolean enabled = (Boolean) evt.getNewValue();
+            if (enabled) {
+                doc.putProperty("show paragraphs", Boolean.TRUE);
+            } else {
+                doc.putProperty("show paragraphs", null);
+            }
+            editor.repaint();
         }
-        editor.repaint();
     }
 }
