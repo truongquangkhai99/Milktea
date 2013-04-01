@@ -66,20 +66,15 @@ public final class SlidesTopComponent extends OfficeTopComponent {
     }
 
     @Override
-    protected JToolBar createToolbar() {
-        JToolBar spreadsheetToolbar = new JToolBar();
-        List<? extends Action> spreadsheetToolbarActions = Utilities.actionsForPath("Office/Presentation/Toolbar");
-        for (Action action : spreadsheetToolbarActions) {
-            spreadsheetToolbar.add(action);
-        }
-        return spreadsheetToolbar;
-    }
-
-    @Override
     protected JComponent createMainComponent() {
         JPanel slidesHolder = new JPanel();
         slidesHolder.setLayout(new CardLayout());
         return slidesHolder;
+    }
+
+    @Override
+    public String getShortName() {
+        return "Presentation";
     }
 
     @Override
