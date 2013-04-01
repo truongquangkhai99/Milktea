@@ -80,6 +80,11 @@ public final class DrawingTopComponent extends OfficeTopComponent {
     }
 
     @Override
+    public String getShortName() {
+        return "Drawing";
+    }
+
+    @Override
     protected Object loadDocument(File svgFile) throws Exception {
 
         String xmlParser = XMLResourceDescriptor.getXMLParserClassName();
