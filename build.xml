@@ -22,10 +22,14 @@
   </target>
 
   <!-- Windows-only target that replaces the icon for the launcher exe with our own icon. -->
-  <target name="replace-windows-launcher-icon" if="replaceIconExe">
+  <target name="replace-windows-launcher-icon" depends="-init-replace-icon-exe,-init" if="replaceIconExe" description="replace-windows-launchers">
     <echo message="Replacing icon of Windows launcher executable."/>
     <exec executable="${replaceIconExe}" resolveexecutable="true">
       <arg file="build/launcher/bin/${app.name}.exe" />
+      <arg file="tools/${app.name}.ico"/>
+    </exec>
+    <exec executable="${replaceIconExe}" resolveexecutable="true">
+      <arg file="build/launcher/bin/${app.name}64.exe" />
       <arg file="tools/${app.name}.ico"/>
     </exec>
   </target>
@@ -40,11 +44,12 @@
     <copy tofile="${nbdist-resources.dir}/${app.name}.icns" file="tools/${app.name}.icns" />
   </target>
 
+  <!-- doesn't work -->
   <target name="replace-icon-installer" depends="-init-replace-icon-exe,-init" description="Set the ${app.name} icon to the installer.">
     <echo message="Replacing icon of Windows installer executable."/>
     <exec executable="${replaceIconExe}" resolveexecutable="true">
-      <arg file="${dist.dir}/${app.name}-windows.exe" />
-      <arg file="tools/${app.name}.ico"/>
+      <arg value="${dist.dir}/${app.name}-windows.exe" />
+      <arg value="tools/${app.name}.ico"/>
     </exec>
   </target>
 
@@ -59,7 +64,7 @@
     </javac>
 
     <!-- classes are CreateH2Database, CreatePresentationDirectories, JTableCellSelection, UpdateRowSet, PptxShapeNotDrawn, FilterJXList -->
-    <java classname="org.joeffice.tools.JTableCellSelection">
+    <java classname="org.joeffice.tools.FilterJXList">
       <classpath path="build/classes" />
       <classpath location="h2/release/modules/ext/h2-1.3.170.jar" />
       <classpath location="swingX/release/modules/ext/swingx-all-1.6.5.jar" />

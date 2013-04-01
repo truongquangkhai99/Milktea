@@ -37,6 +37,7 @@ public class FilterJXList {
         JPanel listPanel = new JPanel(new BorderLayout(5, 5));
         String[] data = {"hello", "world", "world 2"};
         final JXList list = new JXList(data);
+        list.setAutoCreateRowSorter(true);
         final JTextField filterField = new JTextField(30);
         final RowFilter<ListModel, Integer> filter = new RowFilter<ListModel, Integer>() {
             @Override
@@ -55,7 +56,7 @@ public class FilterJXList {
             }
         };
         //list.setRowFilter(filter);
-        list.setSortable(true);
+        //list.setSortable(true);
         filterField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
