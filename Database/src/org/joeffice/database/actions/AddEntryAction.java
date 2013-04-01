@@ -51,12 +51,14 @@ import org.openide.util.NbBundle.Messages;
         category = "Edit/Office/Database",
         id = "org.joeffice.database.actions.AddEntryAction")
 @ActionRegistration(
+        iconBase = "org/joeffice/database/actions/table_add.png",
         displayName = "#CTL_AddEntryAction")
 @ActionReferences(value = {
     @ActionReference(path = "Office/Database/Toolbar", position = 1000)})
 @Messages("CTL_AddEntryAction=Add Entry...")
 public final class AddEntryAction extends AbstractAction {
 
+    private final static int LIMIT_FOR_SCROLLPANE = 15;
     private final static String COMPONENTS_KEY = "Components";
 
     @Override
@@ -68,7 +70,12 @@ public final class AddEntryAction extends AbstractAction {
                 TableMetaDataModel metaData = new TableMetaDataModel(conn, currentTopComponent.getSelectedTableName());
                 JPanel fieldsPanel = createFieldsPanel(metaData);
                 String title = NbBundle.getMessage(getClass(), "CTL_AddEntryAction");
-                DialogDescriptor descriptor = new DialogDescriptor(fieldsPanel, title);
+                DialogDescriptor descriptor;
+                if (metaData.getColumnCount() > LIMIT_FOR_SCROLLPANE) {
+                    descriptor = new DialogDescriptor(new JScrollPane(fieldsPanel), title);
+                } else {
+                    descriptor = new DialogDescriptor(fieldsPanel, title);
+                }
                 Object dialogResult = DialogDisplayer.getDefault().notify(descriptor);
                 if (dialogResult == DialogDescriptor.OK_OPTION) {
                     JDBCSheet sheet = currentTopComponent.getSelectedTableComponent().getSheet();
