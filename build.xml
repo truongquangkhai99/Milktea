@@ -36,21 +36,32 @@
 
   <!-- Override to change Mac application icon. -->
   <target name="build-mac" depends="suite.build-mac" description="Build Mac OS X Application">
+    <echo message="Replacing Mac icon" />
     <property name="nbdist-contents.dir" value="${dist.dir}/${app.name}.app/Contents"/>
     <property name="nbdist-resources.dir" value="${nbdist-contents.dir}/Resources"/>
 
     <!-- Replace the icns file. -->
     <delete file="${nbdist-resources.dir}/${app.name}.icns"/>
-    <copy tofile="${nbdist-resources.dir}/${app.name}.icns" file="tools/${app.name}.icns" />
+    <copy file="tools/${app.name}.icns" tofile="${nbdist-resources.dir}/${app.name}.icns" />
+
   </target>
 
-  <!-- doesn't work -->
+  <!-- doesn't work (the installer file is then 130 kb) -->
   <target name="replace-icon-installer" depends="-init-replace-icon-exe,-init" description="Set the ${app.name} icon to the installer.">
     <echo message="Replacing icon of Windows installer executable."/>
     <exec executable="${replaceIconExe}" resolveexecutable="true">
       <arg value="${dist.dir}/${app.name}-windows.exe" />
       <arg value="tools/${app.name}.ico"/>
     </exec>
+  </target>
+
+  <target name="post-release" depends="-init" description="Post release">
+    <property name="joeffice.com.dir" location="c:\Java\japplis\joeffice\joeffice.com" />
+    <property name="joeffice.net.dir" location="c:\Java\japplis\joeffice\joeffice.net" />
+    <copy file="${dist.dir}/${app.name}-windows.exe" tofile="${joeffice.com.dir}/${app.name}.exe" failonerror="false" />
+    <copy file="${dist.dir}/${app.name}-linux.sh" tofile="${joeffice.com.dir}/${app.name}.sh" failonerror="false" />
+    <copy file="${dist.dir}/${app.name}-macosx.tgz" tofile="${joeffice.com.dir}/${app.name}.tgz" failonerror="false" />
+    <copy file="${dist.dir}/${app.name}.zip" tofile="${joeffice.net.dir}/${app.name}.zip" />
   </target>
 
   <target name="run-tool" description="Run a tool">
