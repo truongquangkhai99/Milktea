@@ -18,30 +18,39 @@ package org.joeffice.desktop.actions;
 import java.awt.event.ActionEvent;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
+
 import org.joeffice.desktop.ui.Styleable;
+
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-// Not implemented yet in document updater or in editor styleable
 @ActionID(
         category = "Edit/Office",
-        id = "org.joeffice.desktop.actions.FontSizeIncrementAction")
+        id = "org.joeffice.desktop.actions.ToUpperCaseAction")
 @ActionRegistration(
-        displayName = "#CTL_FontSizeIncrementAction")
-@Messages("CTL_FontSizeIncrementAction=Increase font size")
-public final class FontSizeIncrementAction extends AbstractAction {
+        iconBase = "org/joeffice/desktop/actions/text_uppercase.png",
+        displayName = "#CTL_ToUpperCaseAction")
+@ActionReference(path = "Menu/Edit/Gimme More/Text", position = 50)
+@Messages("CTL_ToUpperCaseAction=To Upper Case")
+public final class ToUpperCaseAction extends AbstractAction implements TextTransformer {
 
     private Styleable styleable;
 
-    public FontSizeIncrementAction(Styleable styleable) {
+    public ToUpperCaseAction(Styleable styleable) {
         this.styleable = styleable;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AttributedString attributes = new AttributedString("Increase fotn size");
-        attributes.addAttribute(ExtraTextAttribute.INCREASE_FONT_SIZE, 1);
+        AttributedString attributes = new AttributedString("ToUpperCase");
+        attributes.addAttribute(ExtraTextAttribute.TEXT_TRANSFORM, this);
         styleable.setFontAttributes(attributes);
+    }
+
+    @Override
+    public String transformText(String text) {
+        return text.toUpperCase();
     }
 }

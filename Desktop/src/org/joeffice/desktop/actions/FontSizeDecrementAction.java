@@ -40,7 +40,7 @@ public final class FontSizeDecrementAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         AttributedString attributes = new AttributedString("Increase fotn size");
-        attributes.addAttribute(ParagraphAttributes.INCREASE_FONT_SIZE, -1);
+        attributes.addAttribute(ExtraTextAttribute.INCREASE_FONT_SIZE, -1);
         styleable.setFontAttributes(attributes);
     }
 }

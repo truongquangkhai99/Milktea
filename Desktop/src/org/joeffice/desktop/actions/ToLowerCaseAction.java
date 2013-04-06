@@ -18,30 +18,39 @@ package org.joeffice.desktop.actions;
 import java.awt.event.ActionEvent;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
+
 import org.joeffice.desktop.ui.Styleable;
+
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-// Not implemented yet in document updater or in editor styleable
 @ActionID(
         category = "Edit/Office",
-        id = "org.joeffice.desktop.actions.FontSizeIncrementAction")
+        id = "org.joeffice.desktop.actions.ToLowerCaseAction")
 @ActionRegistration(
-        displayName = "#CTL_FontSizeIncrementAction")
-@Messages("CTL_FontSizeIncrementAction=Increase font size")
-public final class FontSizeIncrementAction extends AbstractAction {
+        iconBase = "org/joeffice/desktop/actions/text_lowercase.png",
+        displayName = "#CTL_ToLowerCaseAction")
+@ActionReference(path = "Menu/Edit/Gimme More/Text", position = 40)
+@Messages("CTL_ToLowerCaseAction=To Lower Case")
+public final class ToLowerCaseAction extends AbstractAction implements TextTransformer {
 
     private Styleable styleable;
 
-    public FontSizeIncrementAction(Styleable styleable) {
+    public ToLowerCaseAction(Styleable styleable) {
         this.styleable = styleable;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AttributedString attributes = new AttributedString("Increase fotn size");
-        attributes.addAttribute(ExtraTextAttribute.INCREASE_FONT_SIZE, 1);
+        AttributedString attributes = new AttributedString("ToLowerCase");
+        attributes.addAttribute(ExtraTextAttribute.TEXT_TRANSFORM, this);
         styleable.setFontAttributes(attributes);
+    }
+
+    @Override
+    public String transformText(String text) {
+        return text.toLowerCase();
     }
 }

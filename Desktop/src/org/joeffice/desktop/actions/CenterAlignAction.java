@@ -37,7 +37,7 @@ public final class CenterAlignAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         AttributedString attributes = new AttributedString("Center align");
-        attributes.addAttribute(ParagraphAttributes.ALIGNMENT, ParagraphAttributes.ALIGNMENT_CENTER);
+        attributes.addAttribute(ExtraTextAttribute.ALIGNMENT, ExtraTextAttribute.ALIGNMENT_CENTER);
         styleable.setFontAttributes(attributes);
     }
 }

@@ -38,7 +38,7 @@ public final class LeftAlignAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         AttributedString attributes = new AttributedString("Left align");
-        attributes.addAttribute(ParagraphAttributes.ALIGNMENT, ParagraphAttributes.ALIGNMENT_LEFT);
+        attributes.addAttribute(ExtraTextAttribute.ALIGNMENT, ExtraTextAttribute.ALIGNMENT_LEFT);
         styleable.setFontAttributes(attributes);
     }
 }

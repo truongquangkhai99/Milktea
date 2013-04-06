@@ -16,32 +16,37 @@
 package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
+
 import org.joeffice.desktop.ui.Styleable;
+
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-// Not implemented yet in document updater or in editor styleable
 @ActionID(
         category = "Edit/Office",
-        id = "org.joeffice.desktop.actions.FontSizeIncrementAction")
+        id = "org.joeffice.desktop.actions.StrikeThroughAction")
 @ActionRegistration(
-        displayName = "#CTL_FontSizeIncrementAction")
-@Messages("CTL_FontSizeIncrementAction=Increase font size")
-public final class FontSizeIncrementAction extends AbstractAction {
+        iconBase = "org/joeffice/desktop/actions/text_strikethrough.png",
+        displayName = "#CTL_StrikeThroughAction")
+@ActionReference(path = "Menu/Edit/Gimme More/Text", position = 30)
+@Messages("CTL_StrikeThroughAction=StrikeThrough")
+public final class StrikeThroughAction extends AbstractAction {
 
     private Styleable styleable;
 
-    public FontSizeIncrementAction(Styleable styleable) {
+    public StrikeThroughAction(Styleable styleable) {
         this.styleable = styleable;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AttributedString attributes = new AttributedString("Increase fotn size");
-        attributes.addAttribute(ExtraTextAttribute.INCREASE_FONT_SIZE, 1);
+        AttributedString attributes = new AttributedString("StrikeThrough");
+        attributes.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
         styleable.setFontAttributes(attributes);
     }
 }

@@ -16,7 +16,7 @@
 package org.joeffice.desktop.actions;
 
 import static java.awt.font.TextAttribute.*;
-import static org.joeffice.desktop.actions.ParagraphAttributes.*;
+import static org.joeffice.desktop.actions.ExtraTextAttribute.*;
 import static javax.swing.text.StyleConstants.*;
 
 import java.awt.font.TextAttribute;
@@ -64,6 +64,11 @@ public class EditorStyleable implements Styleable {
             Object value = attributesIterator.getAttribute(attribute);
             changeParagraph |= attribute == JUSTIFICATION | attribute == ALIGNMENT;
             addAttribute(attribute, value, editorAttributes, currentAttributes);
+            if (attribute == TEXT_TRANSFORM) {
+                String selectedText = textPane.getSelectedText();
+                String transformedText = ((TextTransformer) value).transformText(selectedText);
+                textPane.replaceSelection(transformedText);
+            }
         }
 
         document.setCharacterAttributes(startSelection, selectionLength, editorAttributes, false);
@@ -111,6 +116,9 @@ public class EditorStyleable implements Styleable {
             editorAttributes.addAttribute(StrikeThrough, attributeValue);
         } else if (attribute == ALIGNMENT) {
             editorAttributes.addAttribute(Alignment, attributeValue);
+        } else if (attribute == INDENTATION) {
+            float indentInPoint = ((Integer) attributeValue).floatValue() * 10.5F;
+            editorAttributes.addAttribute(LeftIndent, indentInPoint);
         }
     }
 

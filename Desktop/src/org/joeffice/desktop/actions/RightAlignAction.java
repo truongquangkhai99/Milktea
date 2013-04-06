@@ -37,7 +37,7 @@ public final class RightAlignAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         AttributedString attributes = new AttributedString("Right align");
-        attributes.addAttribute(ParagraphAttributes.ALIGNMENT, ParagraphAttributes.ALIGNMENT_RIGHT);
+        attributes.addAttribute(ExtraTextAttribute.ALIGNMENT, ExtraTextAttribute.ALIGNMENT_RIGHT);
         styleable.setFontAttributes(attributes);
     }
 }

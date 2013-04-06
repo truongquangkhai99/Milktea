@@ -15,6 +15,7 @@
  */
 package org.joeffice.desktop.ui;
 
+import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
@@ -25,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
 import javax.swing.*;
+import javax.swing.plaf.LayerUI;
 
 import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
 
@@ -106,6 +108,8 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
             JScrollPane mainPane = new JScrollPane(mainComponent);
             mainPane.getVerticalScrollBar().setUnitIncrement(16);
             ScrollPaneSelector.installScrollPaneSelector(mainPane);
+            //JLayer<Component> zoomLayer = new JLayer<>(mainPane.getViewport().getView(), new ZoomLayerUI());
+            //mainPane.getViewport().setView(zoomLayer);
             add(mainPane);
         }
 
@@ -274,4 +278,22 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
             getDataObject().addPropertyChangeListener(new ChangeTitleIfModified());
         }
     }
+
+    // See https://code.google.com/p/link-collector/source/browse/ver2/trunk/labs/zoom-with-jxpanel-src/org/pbjar/jxlayer/plaf/ext/TransformUI.java
+    /*class ZoomLayerUI extends LayerUI<Component> {
+
+        @Override
+        public void paint(Graphics g, JComponent c) {
+            int w = c.getWidth();
+            int h = c.getHeight();
+
+            if (w == 0 || h == 0) {
+                return;
+            }
+            Graphics2D g2 = (Graphics2D) g;
+
+            g2.scale(2.0, 2.0);
+            super.paint(g2, c);
+        }
+    }*/
 }

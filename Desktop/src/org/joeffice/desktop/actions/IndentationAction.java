@@ -16,32 +16,36 @@
 package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
+
 import org.joeffice.desktop.ui.Styleable;
+
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-// Not implemented yet in document updater or in editor styleable
 @ActionID(
         category = "Edit/Office",
-        id = "org.joeffice.desktop.actions.FontSizeIncrementAction")
+        id = "org.joeffice.desktop.actions.IndentationAction")
 @ActionRegistration(
-        displayName = "#CTL_FontSizeIncrementAction")
-@Messages("CTL_FontSizeIncrementAction=Increase font size")
-public final class FontSizeIncrementAction extends AbstractAction {
+        displayName = "#CTL_IndentationAction")
+@ActionReference(path = "Menu/Edit/Gimme More/Text", position = 60)
+@Messages("CTL_IndentationAction=Indentation")
+public final class IndentationAction extends AbstractAction {
 
     private Styleable styleable;
 
-    public FontSizeIncrementAction(Styleable styleable) {
+    public IndentationAction(Styleable styleable) {
         this.styleable = styleable;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AttributedString attributes = new AttributedString("Increase fotn size");
-        attributes.addAttribute(ExtraTextAttribute.INCREASE_FONT_SIZE, 1);
+        AttributedString attributes = new AttributedString("Indentation");
+        attributes.addAttribute(ExtraTextAttribute.INDENTATION, 4);
         styleable.setFontAttributes(attributes);
     }
 }

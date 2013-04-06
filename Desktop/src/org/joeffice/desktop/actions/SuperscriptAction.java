@@ -16,32 +16,37 @@
 package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import javax.swing.AbstractAction;
+
 import org.joeffice.desktop.ui.Styleable;
+
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
-// Not implemented yet in document updater or in editor styleable
 @ActionID(
         category = "Edit/Office",
-        id = "org.joeffice.desktop.actions.FontSizeIncrementAction")
+        id = "org.joeffice.desktop.actions.SuperscriptAction")
 @ActionRegistration(
-        displayName = "#CTL_FontSizeIncrementAction")
-@Messages("CTL_FontSizeIncrementAction=Increase font size")
-public final class FontSizeIncrementAction extends AbstractAction {
+        iconBase = "org/joeffice/desktop/actions/text_superscript.png",
+        displayName = "#CTL_SuperscriptAction")
+@ActionReference(path = "Menu/Edit/Gimme More/Text", position = 20)
+@Messages("CTL_SuperscriptAction=Superscript")
+public final class SuperscriptAction extends AbstractAction {
 
     private Styleable styleable;
 
-    public FontSizeIncrementAction(Styleable styleable) {
+    public SuperscriptAction(Styleable styleable) {
         this.styleable = styleable;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        AttributedString attributes = new AttributedString("Increase fotn size");
-        attributes.addAttribute(ExtraTextAttribute.INCREASE_FONT_SIZE, 1);
+        AttributedString attributes = new AttributedString("Superscript");
+        attributes.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER);
         styleable.setFontAttributes(attributes);
     }
 }

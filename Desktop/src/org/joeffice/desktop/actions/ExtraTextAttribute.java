@@ -10,16 +10,20 @@ import javax.swing.text.StyleConstants;
  * @see TextAttribute
  * @author Anthony Goubard - Japplis
  */
-public class ParagraphAttributes extends AttributedCharacterIterator.Attribute {
+public class ExtraTextAttribute extends AttributedCharacterIterator.Attribute {
 
-    public final static ParagraphAttributes ALIGNMENT = new ParagraphAttributes("Alignment");
+    public final static ExtraTextAttribute ALIGNMENT = new ExtraTextAttribute("Alignment");
     public final static int ALIGNMENT_LEFT = StyleConstants.ALIGN_LEFT;
     public final static int ALIGNMENT_RIGHT = StyleConstants.ALIGN_RIGHT;
     public final static int ALIGNMENT_CENTER = StyleConstants.ALIGN_CENTER;
 
-    public final static ParagraphAttributes INCREASE_FONT_SIZE = new ParagraphAttributes("FontSizeIncrement");
+    public final static ExtraTextAttribute INCREASE_FONT_SIZE = new ExtraTextAttribute("FontSizeIncrement");
 
-    ParagraphAttributes(String name) {
+    public final static ExtraTextAttribute INDENTATION = new ExtraTextAttribute("Indentation");
+
+    public final static ExtraTextAttribute TEXT_TRANSFORM = new ExtraTextAttribute("TextTransform");
+
+    ExtraTextAttribute(String name) {
         super(name);
     }
 }
