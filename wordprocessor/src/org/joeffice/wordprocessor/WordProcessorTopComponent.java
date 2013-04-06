@@ -33,7 +33,7 @@ import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.netbeans.modules.spellchecker.api.Spellchecker;
+// import org.netbeans.modules.spellchecker.api.Spellchecker;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.UndoRedo;
@@ -115,7 +115,7 @@ public final class WordProcessorTopComponent extends OfficeTopComponent implemen
 
         // Doesn't do anything (yet)
         // This require the implementation of a TokenListProvider and of a TokenList
-        Spellchecker.register(editor);
+        // Spellchecker.register(editor);
         /*FindAction find = new FindAction();
          getActionMap().put(find.getName(), find);
          ReplaceAction replace = new ReplaceAction();

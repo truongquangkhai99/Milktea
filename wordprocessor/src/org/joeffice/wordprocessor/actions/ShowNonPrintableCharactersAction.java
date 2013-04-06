@@ -60,9 +60,9 @@ public final class ShowNonPrintableCharactersAction extends BooleanStateAction i
     }
 
     @Override
-	protected String iconResource()	{
-		return "org/joeffice/wordprocessor/actions/pilcrow.png";
-	}
+    protected String iconResource() {
+        return "org/joeffice/wordprocessor/actions/pilcrow.png";
+    }
 
     @Override
     public HelpCtx getHelpCtx() {
@@ -71,7 +71,7 @@ public final class ShowNonPrintableCharactersAction extends BooleanStateAction i
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if(PROP_BOOLEAN_STATE.equals(evt.getPropertyName())) {
+        if (PROP_BOOLEAN_STATE.equals(evt.getPropertyName())) {
             JTextPane editor = WordProcessorTopComponent.findCurrentTextPane();
             Document doc = editor.getDocument();
             boolean enabled = (Boolean) evt.getNewValue();
