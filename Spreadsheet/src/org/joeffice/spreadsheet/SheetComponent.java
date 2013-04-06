@@ -31,6 +31,7 @@ import javax.swing.text.DefaultEditorKit;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
 import org.joeffice.spreadsheet.actions.ClipboardAction;
 import org.joeffice.spreadsheet.editor.SheetListener;
 
@@ -69,6 +70,7 @@ public class SheetComponent extends JPanel {
 
         JScrollPane scrolling = RowTableFactory.attachRows(sheetTable, layers);
         scrolling.setColumnHeaderView(sheetTable.getTableHeader());
+        ScrollPaneSelector.installScrollPaneSelector(scrolling);
 
         setLayout(new BorderLayout());
         add(scrolling);

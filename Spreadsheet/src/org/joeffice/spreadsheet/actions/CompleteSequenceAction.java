@@ -18,6 +18,7 @@ package org.joeffice.spreadsheet.actions;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
 
@@ -27,6 +28,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.spreadsheet.POIUtils;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
+import org.joeffice.spreadsheet.sequence.DateStringSequence;
+import org.joeffice.spreadsheet.sequence.IdentitySequence;
+import org.joeffice.spreadsheet.sequence.NumberSequence;
+import org.joeffice.spreadsheet.sequence.ResourceBundleSequence;
+import org.joeffice.spreadsheet.sequence.Sequence;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
 
 import org.openide.awt.ActionID;
@@ -38,37 +44,52 @@ import org.openide.util.NbBundle.Messages;
 /**
  * Completes the empty cell based on the content of the previous cells.
  *
- * Basic implementation that just fill the values with "1".
- *
+ * @see org.joeffice.spreadsheet.sequence.Sequence
  * @author Anthony Goubard - Japplis
  */
 @ActionID(
         category = "Edit/Office/Spreadsheet",
-        id = "org.joeffice.spreadsheet.actions.CompleteSeriesAction")
+        id = "org.joeffice.spreadsheet.actions.CompleteSequenceAction")
 @ActionRegistration(
-        displayName = "#CTL_CompleteSeriesAction")
+        iconBase = "org/joeffice/spreadsheet/actions/application_go.png",
+        displayName = "#CTL_CompleteSequenceAction")
 @ActionReferences(value = {
+    @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 700),
     @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet", position = 700)})
-@Messages("CTL_CompleteSeriesAction=Complete serie")
-public final class CompleteSeriesAction  extends AbstractAction {
+@Messages("CTL_CompleteSequenceAction=Complete")
+public class CompleteSequenceAction  extends AbstractAction {
+
+    private List<Sequence> sequences = new ArrayList<>();
+
+    public CompleteSequenceAction() {
+        // TODO get the list from layer.xml
+        sequences.add(new NumberSequence());
+        sequences.add(new DateStringSequence());
+        sequences.add(new ResourceBundleSequence());
+        if (!Locale.getDefault().getLanguage().equals(Locale.US.getLanguage())) {
+            sequences.add(new DateStringSequence(Locale.US));
+            sequences.add(new ResourceBundleSequence(Locale.US));
+        }
+        sequences.add(new IdentitySequence());
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
         if (currentTopComponent != null) {
             JTable currentTable = currentTopComponent.getSelectedTable();
-            Sheet currentSheet = currentTopComponent.getCurentSheet();
             int[] selectedRows = currentTable.getSelectedRows();
             int[] selectedColumns = currentTable.getSelectedColumns();
             if (selectedRows.length == 0 || selectedColumns.length == 0) {
                 return;
             }
-            completeCells(currentSheet, selectedRows, selectedColumns);
-            ((SheetTableModel) currentTable.getModel()).fireTableDataChanged();
+            SheetTableModel model = (SheetTableModel) currentTable.getModel();
+            completeCells(model, selectedRows, selectedColumns);
         }
     }
 
-    protected void completeCells(Sheet sheet, int[] selectedRows, int[] selectedColumns) {
+    protected void completeCells(SheetTableModel model, int[] selectedRows, int[] selectedColumns) {
+        Sheet sheet = model.getSheet();
         boolean completeRows = true;
         int firstRow = selectedRows[0];
         int firstColumn = selectedColumns[0];
@@ -89,7 +110,7 @@ public final class CompleteSeriesAction  extends AbstractAction {
                         previousValues = getPreviousValues(sheet, firstRow, i, completeRows, j);
                     }
                     String nextValue = getNextValue(previousValues);
-                    cell.setCellValue(nextValue);
+                    model.setValueAt(nextValue, i, j);
                 }
             }
         }
@@ -111,9 +132,12 @@ public final class CompleteSeriesAction  extends AbstractAction {
     }
 
     protected String getNextValue(List<String> previousValues) {
-        if (previousValues.isEmpty()) {
-            return "1";
+        for (Sequence sequence : sequences) {
+            String nextValue = sequence.getNextValue(previousValues);
+            if (nextValue != null) {
+                return nextValue;
+            }
         }
-        return "1";
+        return "";
     }
 }

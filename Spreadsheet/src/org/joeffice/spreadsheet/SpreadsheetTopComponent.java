@@ -16,7 +16,6 @@
 package org.joeffice.spreadsheet;
 
 import java.io.File;
-import java.util.List;
 import java.util.Properties;
 import javax.swing.*;
 
@@ -30,7 +29,6 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.Utilities;
 
 /**
  * Top component which displays the toolbar and the sheets tab panel.

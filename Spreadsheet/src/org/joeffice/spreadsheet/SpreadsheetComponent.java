@@ -30,6 +30,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import org.joeffice.desktop.ui.OfficeTopComponent;
+import org.joeffice.spreadsheet.actions.ShowHideGridAction;
+import org.openide.filesystems.FileUtil;
 
 import org.openide.util.Utilities;
 
@@ -163,6 +165,9 @@ public class SpreadsheetComponent extends JTabbedPane implements ChangeListener 
         topComponentActions.put(DefaultEditorKit.copyAction, tableActions.get(DefaultEditorKit.copyAction));
         topComponentActions.put(DefaultEditorKit.pasteAction, tableActions.get(DefaultEditorKit.pasteAction));
         spreadsheetAndToolbar.getServices().add(styleable);
+        ShowHideGridAction showHideGridAction = FileUtil.getConfigObject(
+            "Actions/View/Office/Spreadsheet/org-joeffice-spreadsheet-actions-ShowHideGridAction.instance", ShowHideGridAction.class);
+        showHideGridAction.setBooleanState(getSelectedSheet().getSheet().isPrintGridlines());
     }
 
     public void unregisterActions() {

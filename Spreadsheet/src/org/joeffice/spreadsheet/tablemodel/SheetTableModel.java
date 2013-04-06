@@ -187,4 +187,8 @@ public class SheetTableModel extends AbstractTableModel {
         }
         fireTableStructureChanged();
     }
+
+    public Sheet getSheet() {
+        return sheet;
+    }
 }

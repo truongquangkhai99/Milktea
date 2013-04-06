@@ -31,13 +31,14 @@ import org.openide.util.NbBundle.Messages;
 
 /**
  * Ask Rename the selected sheet.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
 @ActionID(
         category = "Edit/Office/Spreadsheet",
         id = "org.joeffice.spreadsheet.actions.RenameSheetAction")
 @ActionRegistration(
+        iconBase = "org/joeffice/spreadsheet/actions/textfield_rename.png",
         displayName = "#CTL_RenameSheetAction")
 @ActionReferences(value = {
     @ActionReference(path = "Office/Spreadsheet/Tabs/Popup")})

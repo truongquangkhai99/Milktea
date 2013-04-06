@@ -15,22 +15,19 @@
  */
 package org.joeffice.spreadsheet;
 
-import javax.swing.JTable;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Sheet;
 
 import static java.awt.font.TextAttribute.*;
-import static org.joeffice.desktop.actions.ParagraphAttributes.*;
+import static org.joeffice.desktop.actions.ExtraTextAttribute.*;
 
 import java.awt.Color;
-import java.awt.font.TextAttribute;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
+import java.util.List;
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -38,8 +35,9 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.joeffice.desktop.ui.OfficeTopComponent;
 
+import org.joeffice.desktop.actions.TextTransformer;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.desktop.ui.Styleable;
 
 /**
@@ -54,33 +52,16 @@ public class TableStyleable implements Styleable {
     @Override
     public void setFontAttributes(AttributedString attributes) {
         SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
-        if (currentTopComponent != null &&
-                currentTopComponent.getSelectedTable().getSelectedRow() > -1 &&
-                currentTopComponent.getSelectedTable().getSelectedColumn() > -1) {
+        if (currentTopComponent != null) {
             JTable table = currentTopComponent.getSelectedTable();
-            Sheet sheet = currentTopComponent.getSpreadsheetComponent().getSelectedSheet().getSheet();
 
-            int rowIndexStart = table.getSelectedRow();
-            int rowIndexEnd = table.getSelectionModel().getMaxSelectionIndex();
-            int[] selectedColumns1 = table.getSelectedColumns();
-            int[] selectedColumns = POIUtils.getSelectedColumns(table, table.getSelectedRows());
-            int colIndexStart = selectedColumns[0];
-            int colIndexEnd = selectedColumns[selectedColumns.length - 1];
-
-            // Go through all the selected cells and all the attributes
-            for (int i = rowIndexStart; i <= rowIndexEnd; i++) {
-                for (int j = colIndexStart; j <= colIndexEnd; j++) {
-                    if (table.isCellSelected(i, j)) {
-                        AttributedCharacterIterator attributesIterator = attributes.getIterator();
-                        for (Attribute attribute : attributesIterator.getAllAttributeKeys()) {
-                            Object value = attributesIterator.getAttribute(attribute);
-                            Cell cell = POIUtils.getCell(false, sheet, i, j);
-                            if (cell != null) {
-                                addAttribute(attribute, value, cell);
-                            }
-                            ((AbstractTableModel) table.getModel()).fireTableCellUpdated(i, j);
-                        }
-                    }
+            List<Cell> selectedCells = POIUtils.getSelectedCells(table);
+            for (Cell cell : selectedCells) {
+                AttributedCharacterIterator attributesIterator = attributes.getIterator();
+                for (Attribute attribute : attributesIterator.getAllAttributeKeys()) {
+                    Object value = attributesIterator.getAttribute(attribute);
+                    addAttribute(attribute, value, cell);
+                    ((AbstractTableModel) table.getModel()).fireTableCellUpdated(cell.getRowIndex(), cell.getColumnIndex());
                 }
             }
         }
@@ -139,6 +120,22 @@ public class TableStyleable implements Styleable {
             }
             newFont.setUnderline(underlineValue);
             CellUtil.setFont(cell, workbook, newFont);
+        } else if (attribute == SUPERSCRIPT) {
+            short superscriptValue = Font.SS_NONE;
+            if (SUPERSCRIPT_SUB.equals(attributeValue)) {
+                superscriptValue = Font.SS_SUB;
+            } else if (SUPERSCRIPT_SUPER.equals(attributeValue)) {
+                superscriptValue = Font.SS_SUPER;
+            }
+            newFont.setTypeOffset(superscriptValue);
+            CellUtil.setFont(cell, workbook, newFont);
+        } else if (attribute == STRIKETHROUGH) {
+            boolean strikeThrough = true;
+            if (newFont.getStrikeout()) {
+                strikeThrough = false;
+            }
+            newFont.setStrikeout(strikeThrough);
+            CellUtil.setFont(cell, workbook, newFont);
         } else if (attribute == POSTURE) {
             boolean italic = true;
             if (newFont.getItalic()) {
@@ -159,6 +156,12 @@ public class TableStyleable implements Styleable {
             } else if (attributeValue.equals(StyleConstants.ALIGN_CENTER)) {
                 CellUtil.setAlignment(cell, workbook, CellStyle.ALIGN_CENTER);
             }
+        } else if (attribute == INDENTATION) {
+            style.setIndention(((Number) attributeValue).shortValue());
+        } else if (attribute == TEXT_TRANSFORM) {
+            String text = POIUtils.getFormattedText(cell);
+            String transformedText = ((TextTransformer) attributeValue).transformText(text);
+            cell.setCellValue(transformedText);
         }
     }
 
