@@ -20,6 +20,7 @@ import java.sql.Connection;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 
 import org.joeffice.database.tablemodel.JDBCSheet;
 import org.joeffice.spreadsheet.rows.RowTableFactory;
@@ -48,6 +49,11 @@ public class TableComponent extends JPanel {
         databaseTable.setTransferHandler(new ETableTransferHandler());
         databaseTable.setDragEnabled(true); // Dragging not working yet
         databaseTable.setPopupUsedFromTheCorner(true);
+        HighlightCellRenderer highlightRender = new HighlightCellRenderer();
+        for (int i = 0; i < databaseTable.getColumnCount(); i++) {
+            TableColumn column = databaseTable.getColumnModel().getColumn(i);
+            column.setCellRenderer(highlightRender);
+        }
         putClientProperty("print.printable", Boolean.TRUE);
 
         add(scrolling);

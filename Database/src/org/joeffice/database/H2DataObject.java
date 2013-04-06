@@ -118,7 +118,13 @@ public class H2DataObject extends OfficeDataObject {
 
     @Override
     public void save(File file) throws IOException {
-        // later connection.commit();
+        // TODO show warning if different file
+        Connection connection = (Connection) getDocument();
+        try {
+            connection.commit();
+        } catch (SQLException ex) {
+            throw new IOException(ex);
+        }
     }
 
     public static Connection getConnection(File h2File) throws ClassNotFoundException, SQLException {
@@ -127,7 +133,8 @@ public class H2DataObject extends OfficeDataObject {
         if (filePath.endsWith(".h2.db")) {
             filePath = filePath.substring(0, filePath.length() - 6);
         }
-        Connection dbConnection = DriverManager.getConnection("jdbc:h2:" + filePath, "sa", "");
+        String jdbcUrl = "jdbc:h2:" + filePath + ";AUTOCOMMIT=OFF";
+        Connection dbConnection = DriverManager.getConnection(jdbcUrl, "sa", "");
         return dbConnection;
     }
 }
