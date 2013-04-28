@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -29,6 +30,7 @@ import javax.swing.table.AbstractTableModel;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
 
 /**
@@ -205,6 +207,16 @@ public class POIUtils {
             index++;
         }
         return selected;
+    }
+
+    public static List<Cell> getSelectedCells() {
+        SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
+        if (currentTopComponent != null) {
+            JTable currentTable = currentTopComponent.getSelectedTable();
+            List<Cell> selectedCells = POIUtils.getSelectedCells(currentTable);
+            return selectedCells;
+        }
+        return Collections.EMPTY_LIST;
     }
 
     public static List<Cell> getSelectedCells(JTable table) {

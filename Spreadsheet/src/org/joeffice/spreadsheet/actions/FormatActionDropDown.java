@@ -45,14 +45,13 @@ public final class FormatActionDropDown extends AbstractAction implements Presen
 
     public final static String EXTENSION_POINT = "Office/Spreadsheet/Format";
 
-    private JPopupMenu popup = new JPopupMenu();
-
     @Override
     public void actionPerformed(ActionEvent e) {
     }
 
     @Override
     public Component getToolbarPresenter() {
+        JPopupMenu popup = new JPopupMenu();
         for (Action a : Utilities.actionsForPath(EXTENSION_POINT)) {
             popup.add(a);
         }

@@ -17,6 +17,7 @@ package org.joeffice.spreadsheet;
 
 import static javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import org.joeffice.desktop.ui.OfficeTopComponent;
+import org.joeffice.spreadsheet.actions.DeleteCellsAction;
 import org.joeffice.spreadsheet.actions.ShowHideGridAction;
 import org.openide.filesystems.FileUtil;
 
@@ -168,6 +170,13 @@ public class SpreadsheetComponent extends JTabbedPane implements ChangeListener 
         ShowHideGridAction showHideGridAction = FileUtil.getConfigObject(
             "Actions/View/Office/Spreadsheet/org-joeffice-spreadsheet-actions-ShowHideGridAction.instance", ShowHideGridAction.class);
         showHideGridAction.setBooleanState(getSelectedSheet().getSheet().isPrintGridlines());
+        //Action deleteCellsAction = FileUtil.getConfigObject(
+        //    "Actions/Edit/Office/Spreadsheet/org-joeffice-spreadsheet-actions-DeleteCellsAction.instance", Action.class);
+        //Action deleteCellsAction = OfficeUIUtils.getAction("Edit/Office/Spreadsheet", "org-joeffice-spreadsheet-actions-DeleteCellsAction");
+        Action deleteCellsAction = new DeleteCellsAction();
+        getSelectedSheet().getTable().getInputMap(WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "delete");
+        tableActions.put("delete", deleteCellsAction);
+        topComponentActions.put("delete", deleteCellsAction);
     }
 
     public void unregisterActions() {

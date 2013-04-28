@@ -16,17 +16,25 @@
 package org.joeffice.spreadsheet.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.AbstractAction;
+import javax.swing.JComboBox;
 import javax.swing.JTable;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Workbook;
+
+import org.apache.poi.ss.usermodel.*;
+
 import org.joeffice.desktop.ui.OfficeTopComponent;
+import org.joeffice.desktop.ui.OfficeUIUtils;
 import org.joeffice.spreadsheet.POIUtils;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
+import org.openide.NotifyDescriptor;
+import org.openide.util.NbBundle;
 
 /**
  * Action to apply a specific format on the cell.
@@ -36,13 +44,20 @@ import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
 public class FormatAction extends AbstractAction {
 
     private String pattern;
+    private boolean choosePattern;
+    private boolean definePattern;
 
     public FormatAction(String pattern) {
         this.pattern = pattern;
+        choosePattern = pattern.equals("choose");
+        definePattern = pattern.equals("define");
+        if (choosePattern || definePattern) {
+            this.pattern = "#,###.##";
+        }
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent ae) {
         SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
         if (currentTopComponent != null) {
             JTable currentTable = currentTopComponent.getSelectedTable();
@@ -51,15 +66,54 @@ public class FormatAction extends AbstractAction {
             if (selectedCells.isEmpty()) {
                 return;
             }
+            if (choosePattern) {
+                pattern = askFromList();
+            } else if (definePattern) {
+                pattern = askFromInputField();
+            }
+            if (pattern == null) {
+                return;
+            }
             Workbook workbook = selectedCells.get(0).getSheet().getWorkbook();
-            CellStyle formatStyle = workbook.createCellStyle();
             DataFormat format = workbook.createDataFormat();
             short formatIndex = format.getFormat(pattern);
-            formatStyle.setDataFormat(formatIndex);
             for (Cell cell : selectedCells) {
-                cell.setCellStyle(formatStyle);
+                cell.getCellStyle().setDataFormat(formatIndex);
                 tableModel.fireTableCellUpdated(cell.getRowIndex(), cell.getColumnIndex());
             }
         }
+    }
+
+    @NbBundle.Messages("MSG_chooseFormat=Choose Format")
+    private String askFromList() {
+        String askFormat = NbBundle.getMessage(FormatActionFactory.class, "MSG_chooseFormat");
+        Vector<String> formats = new Vector<>();
+        for (String format : BuiltinFormats.getAll()) {
+            if (!format.startsWith("reserved")) {
+                formats.add(format);
+            }
+        }
+        JComboBox formatsCombo = new JComboBox(formats);
+        formatsCombo.setSelectedItem(pattern);
+
+        Object dialogAnswer = OfficeUIUtils.ask(askFormat, DialogDescriptor.OK_CANCEL_OPTION, askFormat, formatsCombo);
+        if (dialogAnswer == DialogDescriptor.OK_OPTION) {
+            String selectedFormat = (String) formatsCombo.getSelectedItem();
+            return selectedFormat;
+        }
+        return null;
+    }
+
+    @NbBundle.Messages("MSG_defineFormat=Define the cell format")
+    private String askFromInputField() {
+        String question = NbBundle.getMessage(getClass(), "MSG_defineFormat");
+        NotifyDescriptor.InputLine askFormat = new NotifyDescriptor.InputLine(question, question, NotifyDescriptor.OK_CANCEL_OPTION, NotifyDescriptor.QUESTION_MESSAGE);
+        askFormat.setInputText(pattern);
+        Object dialogResult = DialogDisplayer.getDefault().notify(askFormat);
+        if (dialogResult == NotifyDescriptor.OK_OPTION) {
+            String format = askFormat.getInputText();
+            return format;
+        }
+        return null;
     }
 }

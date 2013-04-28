@@ -102,4 +102,40 @@ public class FormatActionFactory {
     public static Action numberFormat() {
         return new FormatAction("#,##0.##");
     }
+
+    /**
+     * Return an Action which format cell for a chosen list.
+     *
+     * @return
+     */
+    @ActionID(
+            category = "Edit/Office/Spreadsheet",
+            id = "org.joeffice.spreadsheet.actions.chooseFormat")
+    @ActionRegistration(
+            displayName = "#CTL_chooseFormat")
+    @ActionReferences({
+        @ActionReference(path = "Office/Spreadsheet/Format", position = 850),
+        @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet", position = 850)})
+    @NbBundle.Messages("CTL_chooseFormat=Choose Format")
+    public static Action chooseFormat() {
+        return new FormatAction("choose");
+    }
+
+    /**
+     * Return an Action which format cell for a specified text.
+     *
+     * @return
+     */
+    @ActionID(
+            category = "Edit/Office/Spreadsheet",
+            id = "org.joeffice.spreadsheet.actions.defineFormat")
+    @ActionRegistration(
+            displayName = "#CTL_defineFormat")
+    @ActionReferences({
+        @ActionReference(path = "Office/Spreadsheet/Format", position = 860),
+        @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet", position = 860)})
+    @NbBundle.Messages("CTL_defineFormat=Define Format")
+    public static Action defineFormat() {
+        return new FormatAction("define");
+    }
 }
