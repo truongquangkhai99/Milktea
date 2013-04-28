@@ -20,7 +20,7 @@ import java.awt.GridLayout;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.StringTokenizer;
-import javax.swing.JComponent;
+import javax.swing.Action;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,7 +31,11 @@ import org.openide.DialogDisplayer;
 import org.openide.cookies.SaveCookie;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.openide.util.Lookup.Item;
+import org.openide.util.Lookup.Template;
 import org.openide.util.NbBundle;
+import org.openide.util.lookup.Lookups;
 import org.openide.windows.TopComponent;
 
 /**
@@ -120,5 +124,25 @@ public class OfficeUIUtils {
         DialogDescriptor description = new DialogDescriptor(askPanel, title);
         Object dialogAnswer = DialogDisplayer.getDefault().notify(description);
         return dialogAnswer;
+    }
+
+    /**
+     * Retrieves an action instance
+     * @param category e.g., "Maps"
+     * @param id e.g., "com-emxsys-worldwind-ribbon-actions-ToggleLayerAction"
+     * @return the Action instance or null
+     * @see http://forums.netbeans.org/topic44790.html
+     */
+    @Deprecated
+    public static Action getAction(String category, String id) {
+        String folder = "Actions/" + category + "/";
+        Lookup pathLookup = Lookups.forPath(folder);
+
+        Template<Action> actionTemplate = new Template<>(Action.class, folder + id, null);
+        Item<Action> item = pathLookup.lookupItem(actionTemplate);
+        if (item != null) {
+            return item.getInstance();
+        }
+        return null;
     }
 }

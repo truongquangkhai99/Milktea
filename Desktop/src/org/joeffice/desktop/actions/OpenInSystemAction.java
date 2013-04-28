@@ -16,19 +16,14 @@
 package org.joeffice.desktop.actions;
 
 import java.awt.Desktop;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.AbstractAction;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+
 import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
-
 import org.openide.loaders.DataObject;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -54,8 +49,8 @@ import org.openide.util.NbBundle.Messages;
     @ActionReference(path = "Loaders/content/unknown/Actions", position = 100),
 })
 @Messages({"CTL_OpenInSystemAction=Open in System",
-        "MSG_NotRecognizedDoc=Only new Word Document (.docx) are supported.",
-        "MSG_NotRecognizedPpt=Only new Powerpoint presentations (.pptx) are supported.",
+        "MSG_NotRecognizedDoc=Only Word 2007 - 2013 Documents (.docx) are supported.",
+        "MSG_NotRecognizedPpt=Only Powerpoint 2007 - 2013 presentations (.pptx) are supported.",
         "MSG_NotRecognizedUnsupported=This file format is not supported by Joeffice.",
         "MSG_NotRecognizedOpenExternal=Do you want to open the file in an external editor/viewer?",
         "MSG_NotRecognizedTitle=Unknown file format"})
@@ -84,10 +79,11 @@ public class OpenInSystemAction extends AbstractAction {
     protected Object askOpenInSystem(String fileName) {
         String title = NbBundle.getMessage(getClass(), "MSG_NotRecognizedTitle");
         String unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedUnsupported");
-        if (fileName.toLowerCase().endsWith(".doc")) {
+        String extension = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".")).toLowerCase() : "";
+        if (extension.equals(".doc") || extension.equals("odt")) {
             unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedDoc");
         }
-        if (fileName.toLowerCase().endsWith(".ppt")) {
+        if (extension.equals(".ppt") || extension.equals("odp")) {
             unsupportedText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedPpt");
         }
         String openExternalText = NbBundle.getMessage(getClass(), "MSG_NotRecognizedOpenExternal");

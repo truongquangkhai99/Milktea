@@ -233,12 +233,18 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(DataObject.PROP_MODIFIED)) {
-                boolean modified = (Boolean) evt.getNewValue();
-                if (modified) {
-                    setHtmlDisplayName("<html><body><b>" + getDataObject().getName());
-                } else {
-                    setHtmlDisplayName("<html><body>" + getDataObject().getName());
-                }
+                final boolean modified = (Boolean) evt.getNewValue();
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (modified) {
+                            setHtmlDisplayName("<html><body><b>" + getDataObject().getName());
+                        } else {
+                            setHtmlDisplayName("<html><body>" + getDataObject().getName());
+                        }
+                    }
+                });
             }
         }
     }
