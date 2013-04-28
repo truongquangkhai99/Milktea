@@ -16,7 +16,6 @@
 package org.joeffice.drawing;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.Properties;
 import javax.swing.JComponent;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
@@ -30,7 +29,6 @@ import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
-import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.Utilities;
@@ -97,12 +95,9 @@ public final class DrawingTopComponent extends OfficeTopComponent {
     @Override
     public void documentLoaded() {
         JSVGCanvas svgCanvas = (JSVGCanvas) getMainComponent();
-        svgCanvas.setDocument(getDocument());
+        Document document = (Document) getDataObject().getDocument();
+        svgCanvas.setDocument(document);
         svgCanvas.putClientProperty("print.printable", Boolean.TRUE);
-    }
-
-    public Document getDocument() {
-        return (Document) getDataObject().getDocument();
     }
 
     @Override
