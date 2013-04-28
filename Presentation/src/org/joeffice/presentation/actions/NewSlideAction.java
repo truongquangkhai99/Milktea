@@ -16,15 +16,10 @@
 package org.joeffice.presentation.actions;
 
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 import org.apache.poi.xslf.usermodel.*;
 
@@ -33,7 +28,6 @@ import org.joeffice.desktop.ui.OfficeUIUtils;
 import org.joeffice.presentation.SlideComponent;
 import org.joeffice.presentation.SlidesTopComponent;
 import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;

@@ -18,9 +18,11 @@ package org.joeffice.presentation;
 import java.awt.*;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.joeffice.desktop.ui.OfficeTopComponent;
 
 /**
  * The frame showing the presentation in full screen.
@@ -36,6 +38,8 @@ public class FullScreenFrame extends JFrame {
     private int slideIndex = 0;
 
     private XMLSlideShow presentation;
+
+    private boolean blackScreen;
 
     public FullScreenFrame() {
         setUndecorated(true);
@@ -54,14 +58,22 @@ public class FullScreenFrame extends JFrame {
 
     public void showSlides(XMLSlideShow presentation) {
         this.presentation = presentation;
+        GraphicsDevice screen = getScreen();
+        setSize(screen.getDisplayMode().getWidth(), screen.getDisplayMode().getHeight());
         setVisible(true);
-        setSlideIndex(0);
+        SlidesTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
+        if (currentTopComponent != null) {
+            setSlideIndex(currentTopComponent.getSelectedSlide());
+        } else {
+            setSlideIndex(0);
+        }
     }
 
     public void setScreenIndex(int screenIndex) {
         this.screenIndex = screenIndex;
         if (isVisible()) {
             GraphicsDevice screen = getScreen();
+            setSize(screen.getDisplayMode().getWidth(), screen.getDisplayMode().getHeight());
             screen.setFullScreenWindow(this);
         }
     }
@@ -70,9 +82,20 @@ public class FullScreenFrame extends JFrame {
         return screenIndex;
     }
 
+    public void nextScreen() {
+        GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+        if (screens.length <= 1) return;
+        GraphicsDevice screen = getScreen();
+        screen.setFullScreenWindow(null);
+        int nextScreen = (screenIndex + 1) % screens.length;
+        setScreenIndex(nextScreen);
+    }
+
     public void setSlideIndex(int slideIndex) {
-        if (slideIndex < 0) return;
-        if (slideIndex >= presentation.getSlides().length) return;
+        if (slideIndex < 0 || slideIndex >= presentation.getSlides().length) {
+            Toolkit.getDefaultToolkit().beep();
+            return;
+        }
         this.slideIndex = slideIndex;
         if (isVisible()) {
             DisplayMode display = getScreen().getDisplayMode();
@@ -86,6 +109,10 @@ public class FullScreenFrame extends JFrame {
             setSize(displaySize);
             revalidate();
         }
+        SlidesTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
+        if (currentTopComponent != null) {
+            currentTopComponent.setSelectedSlide(slideIndex);
+        }
     }
 
     public int getSlideIndex() {
@@ -98,12 +125,21 @@ public class FullScreenFrame extends JFrame {
 
     public GraphicsDevice getScreen() {
         GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-        GraphicsDevice screen;
         if (screenIndex == -1 || screenIndex >= screens.length) {
-            screen = screens[screens.length - 1];
-        } else {
-            screen = screens[screenIndex];
+            screenIndex = screens.length - 1;
         }
-        return screen;
+        return screens[screenIndex];
+    }
+
+    public void switchBlack() {
+        blackScreen = !blackScreen;
+        if (blackScreen) {
+            if (getContentPane().getComponentCount() > 0) {
+                getContentPane().remove(0);
+                repaint();
+            }
+        } else {
+            setSlideIndex(getSlideIndex());
+        }
     }
 }

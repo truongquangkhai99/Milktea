@@ -90,6 +90,9 @@ public class FullScreenListener implements KeyListener, MouseMotionListener, Mou
             case KeyEvent.VK_END:
                 frame.setSlideIndex(frame.getPresentation().getSlides().length - 1);
                 break;
+            case KeyEvent.VK_COLON:
+                frame.switchBlack();
+                break;
         }
         // Prevent the event to go in the underling platform app which would lost the focus
         ke.consume();
@@ -111,9 +114,9 @@ public class FullScreenListener implements KeyListener, MouseMotionListener, Mou
 
     @Override
     public void mouseClicked(MouseEvent me) {
-        if (me.getButton() == MouseEvent.BUTTON1) {
+        if (me.getButton() == MouseEvent.BUTTON1 || me.getButton() == 5) {
             frame.setSlideIndex(frame.getSlideIndex() + 1);
-        } else if (me.getButton() == MouseEvent.BUTTON2) {
+        } else if (me.getButton() == MouseEvent.BUTTON3 || me.getButton() == 4) {
             frame.setSlideIndex(frame.getSlideIndex() - 1);
         }
     }

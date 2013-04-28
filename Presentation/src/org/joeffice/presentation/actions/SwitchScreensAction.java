@@ -15,52 +15,44 @@
  */
 package org.joeffice.presentation.actions;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import javax.swing.Action;
 import org.joeffice.desktop.ui.OfficeTopComponent;
-
+import org.joeffice.desktop.ui.OfficeUIUtils;
 import org.joeffice.presentation.FullScreenFrame;
 import org.joeffice.presentation.SlidesTopComponent;
-
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
 
-/**
- * Action that launch the presentation in full screen mode when invoked.
- *
- * @author Anthony Goubard - Japplis
- */
 @ActionID(
         category = "View/Office/Presentation",
-        id = "org.joeffice.presentation.actions.LaunchPresentationAction")
+        id = "org.joeffice.presentation.actions.SwitchScreenAction")
 @ActionRegistration(
-        iconBase = "org/joeffice/presentation/actions/picture_empty.png",
-        displayName = "#CTL_LaunchPresentationAction")
+        iconBase = "org/joeffice/presentation/actions/application_double.png",
+        displayName = "#CTL_SwitchScreenAction")
 @ActionReferences(value = {
-    @ActionReference(path = "Office/Presentation/Toolbar", position = 500),
-    @ActionReference(path = "Shortcuts", name = "F5")})
-@Messages("CTL_LaunchPresentationAction=Launch Presentation")
-public final class LaunchPresentationAction extends AbstractAction {
-
-    private FullScreenFrame presentationFrame;
+    @ActionReference(path = "Office/Presentation/Toolbar", position = 550)})
+@Messages("CTL_SwitchScreenAction=Switch Screens")
+public final class SwitchScreensAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
+        //LaunchPresentationAction launchPresentationAction = FileUtil.getConfigObject(
+        //    "Actions/View/Office/Presentation/org-joeffice-presentation-actions-LaunchPresentationAction.instance", LaunchPresentationAction.class);
+        //LaunchPresentationAction launchPresentationAction = (LaunchPresentationAction) OfficeUIUtils.getAction("View/Office/Presentation", "org-joeffice-presentation-actions-LaunchPresentationAction");
         SlidesTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
         if (currentTopComponent != null) {
-            XMLSlideShow currentPresentation = currentTopComponent.getPresentation();
-            FullScreenFrame presentationFrame = new FullScreenFrame();
-            currentTopComponent.setFullScreenFrame(presentationFrame);
-            presentationFrame.showSlides(currentPresentation);
+            FullScreenFrame presentationFrame = currentTopComponent.getFullScreenFrame();
+            if (presentationFrame != null) {
+                presentationFrame.nextScreen();
+            }
         }
-    }
-
-    public FullScreenFrame getPresentationFrame() {
-        return presentationFrame;
     }
 }

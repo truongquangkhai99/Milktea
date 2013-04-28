@@ -57,6 +57,7 @@ import org.openide.util.Utilities;
 public final class SlidesTopComponent extends OfficeTopComponent {
 
     private int selectedSlide;
+    private FullScreenFrame fullScreenFrame;
 
     public SlidesTopComponent() {
     }
@@ -118,6 +119,14 @@ public final class SlidesTopComponent extends OfficeTopComponent {
             slidesLayout.show(mainComponent, String.valueOf(selectedSlide));
         }
         firePropertyChange("slideChanged", oldSlide, selectedSlide);
+    }
+
+    public FullScreenFrame getFullScreenFrame() {
+        return fullScreenFrame;
+    }
+
+    public void setFullScreenFrame(FullScreenFrame fullScreenFrame) {
+        this.fullScreenFrame = fullScreenFrame;
     }
 
     @Override
