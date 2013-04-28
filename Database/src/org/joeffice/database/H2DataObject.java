@@ -46,7 +46,7 @@ import org.openide.util.NbBundle.Messages;
         displayName = "#LBL_H2_LOADER",
         mimeType = "application/h2",
         extension = {"db"},
-        showInFileChooser = "LBL_H2_LOADER",
+        showInFileChooser = "#LBL_H2_LOADER",
         position = 170) // Netbeans Platform can't handle .h2.db as extension
 @DataObject.Registration(
         mimeType = "application/h2",
