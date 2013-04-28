@@ -29,8 +29,6 @@ public class AlignmentAction extends AbstractAction implements Presenter.Toolbar
 
     public final static String EXTENSION_POINT = "Office/Desktop/Alignment";
 
-    private JPopupMenu popup = new JPopupMenu();
-
     @Override
     public void actionPerformed(ActionEvent e) {
         // TODO click detect what to align
@@ -38,6 +36,7 @@ public class AlignmentAction extends AbstractAction implements Presenter.Toolbar
 
     @Override
     public Component getToolbarPresenter() {
+        JPopupMenu popup = new JPopupMenu();
         for (Action a : Utilities.actionsForPath(EXTENSION_POINT)) {
             popup.add(a);
         }
