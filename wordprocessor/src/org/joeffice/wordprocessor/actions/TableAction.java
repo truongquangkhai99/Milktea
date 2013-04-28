@@ -47,8 +47,6 @@ public final class TableAction extends AbstractAction implements Presenter.Toolb
 
     public final static String EXTENSION_POINT = "Menu/Edit/Gimme More/Word Processor/Table";
 
-    private JPopupMenu popup = new JPopupMenu();
-
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("test");
@@ -56,6 +54,7 @@ public final class TableAction extends AbstractAction implements Presenter.Toolb
 
     @Override
     public Component getToolbarPresenter() {
+        JPopupMenu popup = new JPopupMenu();
         for (Action a : Utilities.actionsForPath(EXTENSION_POINT)) {
             popup.add(a);
         }

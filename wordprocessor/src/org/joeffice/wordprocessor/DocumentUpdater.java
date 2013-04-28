@@ -244,7 +244,20 @@ public class DocumentUpdater implements DocumentListener {
             }
             runIndex++;
         }
+        if (offset == currentOffset) {
+            return createRun(paragraph);
+        }
         return null;
+    }
+
+    DocumentPosition createRun(XWPFParagraph paragraph) {
+        XWPFRun run = paragraph.createRun();
+        DocumentPosition position = new DocumentPosition();
+        position.run = run;
+        position.text = run.getCTR().addNewT();
+        position.offsetInText = 0;
+        position.positionInRun = 0;
+        return position;
     }
 
     DocumentPosition searchRun(XWPFRun run, int offset) throws BadLocationException {
