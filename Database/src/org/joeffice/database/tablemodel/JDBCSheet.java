@@ -48,6 +48,7 @@ public class JDBCSheet extends AbstractTableModel {
     private ResultSetMetaData columnsMetaData;
     private RowSet dataModel;
     private long offset = 0;
+    private String whereClause = "";
 
     public JDBCSheet(Connection conn, String tableName) {
         this.conn = conn;
@@ -56,7 +57,13 @@ public class JDBCSheet extends AbstractTableModel {
     }
 
     public void init() {
-        fillWithQuery("SELECT * FROM " + tableName + " LIMIT " + MAX_RESULTS + " OFFSET " + offset);
+        fillWithQuery("SELECT * FROM " + tableName + " " + whereClause + " LIMIT " + MAX_RESULTS + " OFFSET " + offset);
+    }
+
+    public void filter(String whereClause) {
+        this.whereClause = whereClause;
+        offset = 0;
+        init();
     }
 
     private void fillWithQuery(String query) {
@@ -89,28 +96,18 @@ public class JDBCSheet extends AbstractTableModel {
             case Types.LONGVARCHAR:
             case Types.NVARCHAR:
             case Types.LONGNVARCHAR:
-                dataValue = tableData.getString(columnIndex);
-                break;
             case Types.BIGINT:
             case Types.INTEGER:
             case Types.NUMERIC:
             case Types.ROWID:
             case Types.SMALLINT:
             case Types.TINYINT:
-                dataValue = tableData.getInt(columnIndex);
-                break;
             case Types.DECIMAL:
             case Types.DOUBLE:
-                dataValue = tableData.getDouble(columnIndex);
-                break;
             case Types.FLOAT:
-                dataValue = tableData.getFloat(columnIndex);
-                break;
             case Types.TIME:
-                dataValue = tableData.getTime(columnIndex);
-                break;
             case Types.TIMESTAMP:
-                dataValue = tableData.getTimestamp(columnIndex);
+                dataValue = tableData.getObject(columnIndex);
                 break;
             case Types.BLOB:
             case Types.CLOB:

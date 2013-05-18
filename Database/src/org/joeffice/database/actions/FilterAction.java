@@ -19,15 +19,13 @@ import java.awt.event.ActionEvent;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
-import javax.sql.RowSet;
-import javax.swing.*;
+import javax.swing.AbstractAction;
 
 import org.joeffice.database.FieldsPanel;
 import org.joeffice.database.JDBCTopComponent;
 import org.joeffice.database.tablemodel.JDBCSheet;
 import org.joeffice.database.tablemodel.TableMetaDataModel;
 import org.joeffice.desktop.ui.OfficeTopComponent;
-
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -36,22 +34,16 @@ import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
-/**
- * Action that adds a new entry to the database.
- * A dialog is display to the user to fill the data.
- *
- * @author Anthony Goubard - Japplis
- */
 @ActionID(
-        category = "Edit/Office/Database",
-        id = "org.joeffice.database.actions.AddEntryAction")
+        category = "View/Office/Database",
+        id = "org.joeffice.database.actions.FilterAction")
 @ActionRegistration(
-        iconBase = "org/joeffice/database/actions/table_add.png",
-        displayName = "#CTL_AddEntryAction")
+        iconBase = "org/joeffice/database/actions/table_lightning.png",
+        displayName = "#CTL_FilterAction")
 @ActionReferences(value = {
-    @ActionReference(path = "Office/Database/Toolbar", position = 1000)})
-@Messages("CTL_AddEntryAction=Add Entry...")
-public final class AddEntryAction extends AbstractAction {
+    @ActionReference(path = "Office/Database/Toolbar", position = 1100)})
+@Messages("CTL_FilterAction=Filter...")
+public final class FilterAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
@@ -60,11 +52,11 @@ public final class AddEntryAction extends AbstractAction {
             try {
                 Connection conn = currentTopComponent.getDatabaseConnection();
                 TableMetaDataModel metaData = new TableMetaDataModel(conn, currentTopComponent.getSelectedTableName());
-                String title = NbBundle.getMessage(getClass(), "CTL_AddEntryAction");
+                String title = NbBundle.getMessage(getClass(), "CTL_FilterAction");
                 Map<String, Object> fieldValues = FieldsPanel.askFields(metaData, title);
                 if (!fieldValues.isEmpty()) {
                     JDBCSheet sheet = currentTopComponent.getSelectedTableComponent().getSheet();
-                    addEntry(fieldValues, sheet);
+                    filterEntries(fieldValues, sheet);
                 }
             } catch (SQLException ex) {
                 Exceptions.printStackTrace(ex);
@@ -72,16 +64,21 @@ public final class AddEntryAction extends AbstractAction {
         }
     }
 
-    public void addEntry(Map<String, Object> fields, JDBCSheet sheet) throws SQLException {
-        RowSet dataModel = sheet.getDataModel();
-        dataModel.moveToInsertRow();
-        int columnIndex = 0;
-        for (String columnName : fields.keySet()) {
-            Object value = fields.get(columnName);
-            sheet.setColumnValue(columnIndex, value);
-            columnIndex++;
+    public void filterEntries(Map<String, Object> fields, JDBCSheet sheet) throws SQLException {
+        StringBuilder whereClause = new StringBuilder();
+        for (Map.Entry<String, Object> field : fields.entrySet()) {
+            Object value = field.getValue();
+            String columnName = field.getKey();
+            if (value instanceof Boolean && ((Boolean) value).booleanValue()) {
+                whereClause.append(" AND ").append(columnName).append(" = TRUE");
+            } else if (value instanceof String && !((String) value).isEmpty()) {
+                whereClause.append(" AND ").append(columnName).append(" like '%").append(value).append("%'");
+            }
         }
-        dataModel.insertRow();
-        sheet.init();
+        if (whereClause.length() > 0) {
+            whereClause.delete(0, 5);
+            whereClause.insert(0, "WHERE ");
+        }
+        sheet.filter(whereClause.toString());
     }
 }

@@ -22,12 +22,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-import org.joeffice.desktop.file.OfficeDataObject;
 
+import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.desktop.ui.OfficeUIUtils;
 
@@ -37,7 +35,6 @@ import org.openide.awt.ActionReference;
 import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.openide.util.Utilities;
 
 /**
  * Top component which displays the database data.

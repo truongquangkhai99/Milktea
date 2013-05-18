@@ -23,6 +23,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 
 import org.joeffice.database.tablemodel.JDBCSheet;
+import org.joeffice.spreadsheet.sheet.TableColumnAdjuster;
 import org.joeffice.spreadsheet.rows.RowTableFactory;
 
 import org.netbeans.swing.etable.ETable;
@@ -42,6 +43,13 @@ public class TableComponent extends JPanel {
         setLayout(new BorderLayout());
         sheet = new JDBCSheet(conn, tableName); // Table model
         databaseTable = new ETable(sheet);
+        if (sheet.getColumnCount() > 5) {
+            TableColumnAdjuster tca = new TableColumnAdjuster(databaseTable, 20);
+            databaseTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            tca.setOnlyAdjustLarger(true);
+            tca.setLeaveEmptyAsIs(true);
+            tca.adjustColumns();
+        }
 
         JScrollPane scrolling = RowTableFactory.attachRows(databaseTable, databaseTable);
 
