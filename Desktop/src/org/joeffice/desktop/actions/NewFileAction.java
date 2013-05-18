@@ -16,6 +16,7 @@
 package org.joeffice.desktop.actions;
 
 import java.awt.event.ActionEvent;
+import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,17 +25,21 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
+import org.joeffice.desktop.ui.OfficeUIUtils;
 
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.cookies.OpenCookie;
+import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
@@ -43,6 +48,7 @@ import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.NbPreferences;
+import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
@@ -58,7 +64,11 @@ import org.openide.windows.WindowManager;
 @ActionRegistration(
         iconBase = "org/joeffice/desktop/actions/add.png",
         displayName = "#CTL_NewFileAction")
-@ActionReference(path = "Menu/File", position = 90)
+@ActionReferences({
+    @ActionReference(path = "Menu/File", position = 90),
+    @ActionReference(path = "Toolbars/File", position = 90),
+    @ActionReference(path = "Shortcuts", name = "D-N")
+})
 @Messages({"CTL_NewFileAction=New File...",
     "MSG_ChooseExtension=Please choose or provide a file type",
     "CTL_Untitled=Untitled"})
@@ -71,11 +81,12 @@ public final class NewFileAction extends AbstractAction {
         int saveResult = newFileChooser.showSaveDialog(WindowManager.getDefault().getMainWindow());
         if (saveResult == JFileChooser.APPROVE_OPTION) {
             File savedFile = getSelectedFile(newFileChooser);
+
             FileObject template = getFileTemplate(savedFile);
             if (template == null) {
                 showChooseExtensionMessage();
                 actionPerformed(ae);
-            } else {
+            } else if (shouldCreateFile(savedFile)) {
                 try {
                     FileObject createdFile = createFileFromTemplate(template, savedFile);
                     open(createdFile);
@@ -142,6 +153,17 @@ public final class NewFileAction extends AbstractAction {
             savedFile = new File(savedFile.getAbsolutePath() + extension);
         }
         return savedFile;
+    }
+
+    @NbBundle.Messages({"MSG_OVERWRITE_FILE=Overwrite existing file?"})
+    public boolean shouldCreateFile(File newFile) {
+
+        if (newFile.exists()) {
+            String question = NbBundle.getMessage(NewFileAction.class, "MSG_OVERWRITE_FILE");
+            int answer = JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), question, question, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            return answer == JOptionPane.YES_OPTION;
+        }
+        return true;
     }
 
     public FileObject getFileTemplate(File savedFile) {

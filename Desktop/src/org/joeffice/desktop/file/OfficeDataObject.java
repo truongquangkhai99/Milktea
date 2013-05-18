@@ -115,9 +115,7 @@ public abstract class OfficeDataObject extends MultiDataObject implements SaveCo
                 Files.copy(secureSave.toPath(), currentFileStream);
             }
             boolean deleted = backup.delete();
-            System.out.println("backup deleted: " + deleted);
             boolean newDeleted = secureSave.delete();
-            System.out.println("secure save file deleted: " + newDeleted);
         }
         setModified(false);
     }
