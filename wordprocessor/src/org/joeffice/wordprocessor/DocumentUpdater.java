@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.event.DocumentEvent;
@@ -32,6 +33,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.*;
+import org.apache.xmlbeans.XmlCursor;
 import org.openide.util.Exceptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
@@ -52,12 +54,24 @@ public class DocumentUpdater implements DocumentListener {
     public void insertString(String text, int offset) {
         try {
             currentOffset = 0;
-            DocumentPosition position = searchPart(document.getBodyElements(), offset);
-            if (position != null) {
-                String oldText = position.text.getStringValue();
-                String newText = oldText.substring(0, position.offsetInText) + text
-                        + (position.offsetInText == oldText.length() ? "" : oldText.substring(position.offsetInText));
-                position.text.setStringValue(newText);
+            StringTokenizer stText = new StringTokenizer(text, "\n", true);
+            while (stText.hasMoreTokens()) {
+                String textPart = stText.nextToken();
+                DocumentPosition position = searchPart(document.getBodyElements(), offset);
+                if (position != null) {
+                    String oldText = position.text.getStringValue();
+                    String newText = oldText.substring(0, position.offsetInText) + text
+                            + (position.offsetInText == oldText.length() ? "" : oldText.substring(position.offsetInText));
+                    position.text.setStringValue(newText);
+                    if (textPart.endsWith("\n")) {
+                        XmlCursor cursor = position.run.getParagraph().getCTP().newCursor();
+                        cursor.toNextSibling();
+                        XWPFParagraph newParagraph = document.insertNewParagraph(cursor);
+                        newParagraph.setAlignment(position.run.getParagraph().getAlignment());
+                        newParagraph.getCTP().insertNewR(0).insertNewT(0);
+                        offset += textPart.length();
+                    }
+                }
             }
         } catch (BadLocationException ex) {
             Exceptions.printStackTrace(ex);
@@ -226,7 +240,7 @@ public class DocumentUpdater implements DocumentListener {
                 if (position != null) {
                     return position;
                 }
-                currentOffset++;
+                //currentOffset++;
             } else if (elem instanceof XWPFTable) {
                 searchTable((XWPFTable) elem, offset);
             }
@@ -255,8 +269,6 @@ public class DocumentUpdater implements DocumentListener {
         DocumentPosition position = new DocumentPosition();
         position.run = run;
         position.text = run.getCTR().addNewT();
-        position.offsetInText = 0;
-        position.positionInRun = 0;
         return position;
     }
 
@@ -267,8 +279,9 @@ public class DocumentUpdater implements DocumentListener {
         List<CTText> texts = run.getCTR().getTList();
         int textIndex = 0;
         for (CTText text : texts) {
-            int textLength = text.getStringValue().length();
-            if (currentOffset + textLength >= offset) {
+            String textValue = text.getStringValue();
+            int textLength = textValue.length();
+            if (currentOffset + textLength > offset || (currentOffset + textLength == offset && !textValue.endsWith("\n"))) {
                 DocumentPosition position = new DocumentPosition();
                 position.run = run;
                 position.text = text;
