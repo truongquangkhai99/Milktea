@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.spreadsheet.renderer;
+package org.joeffice.spreadsheet.cell;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 
-import org.joeffice.spreadsheet.POIUtils;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 
 /**
@@ -110,7 +109,7 @@ public class CellRenderer extends DefaultTableCellRenderer {
         CellStyle style = cell.getCellStyle();
 
         // Background neither the index or the color works for XSSF cells
-        Color backgroundColor = POIUtils.poiToAwtColor(style.getFillBackgroundColorColor());
+        Color backgroundColor = CellUtils.poiToAwtColor(style.getFillBackgroundColorColor());
         if (backgroundColor != null) {
             renderingComponent.setBackground(backgroundColor);
         } else {
@@ -134,7 +133,7 @@ public class CellRenderer extends DefaultTableCellRenderer {
                 // no underline in fonts
             }
             short fontColorIndex = xlsFont.getColor();
-            Color fontColor = POIUtils.shortToColor(fontColorIndex);
+            Color fontColor = CellUtils.shortToColor(fontColorIndex);
             if (fontColor != null) {
                 renderingComponent.setForeground(fontColor);
             } else {

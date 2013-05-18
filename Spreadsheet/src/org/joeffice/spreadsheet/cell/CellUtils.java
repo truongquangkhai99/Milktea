@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.spreadsheet;
+package org.joeffice.spreadsheet.cell;
 
 import java.awt.Color;
 import java.text.AttributedCharacterIterator;
@@ -31,14 +31,15 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.joeffice.desktop.ui.OfficeTopComponent;
-import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+import org.joeffice.spreadsheet.SpreadsheetTopComponent;
+import org.joeffice.spreadsheet.sheet.SheetTableModel;
 
 /**
  * Utility methods for Cell and Row manipulation.
  *
  * @author Anthony Goubard - Japplis
  */
-public class POIUtils {
+public class CellUtils {
 
     private final static NumberFormat NUMBER_FORMATTER = DecimalFormat.getInstance();
     private final static DateFormat DATE_FORMATTER = DateFormat.getDateInstance();
@@ -213,7 +214,7 @@ public class POIUtils {
         SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
         if (currentTopComponent != null) {
             JTable currentTable = currentTopComponent.getSelectedTable();
-            List<Cell> selectedCells = POIUtils.getSelectedCells(currentTable);
+            List<Cell> selectedCells = CellUtils.getSelectedCells(currentTable);
             return selectedCells;
         }
         return Collections.EMPTY_LIST;
@@ -227,7 +228,7 @@ public class POIUtils {
             return cells;
         }
         int rowIndexEnd = table.getSelectionModel().getMaxSelectionIndex();
-        int[] selectedColumns = POIUtils.getSelectedColumns(table, table.getSelectedRows());
+        int[] selectedColumns = CellUtils.getSelectedColumns(table, table.getSelectedRows());
         if (selectedColumns.length == 0 || selectedColumns[0] < 0) {
             return cells;
         }
@@ -238,7 +239,7 @@ public class POIUtils {
         for (int i = rowIndexStart; i <= rowIndexEnd; i++) {
             for (int j = colIndexStart; j <= colIndexEnd; j++) {
                 if (table.isCellSelected(i, j)) {
-                    Cell cell = POIUtils.getCell(false, sheet, i, j);
+                    Cell cell = CellUtils.getCell(false, sheet, i, j);
                     if (cell != null) {
                         cells.add(cell);
                     }

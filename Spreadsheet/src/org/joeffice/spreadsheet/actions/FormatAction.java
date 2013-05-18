@@ -27,9 +27,9 @@ import org.apache.poi.ss.usermodel.*;
 
 import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.desktop.ui.OfficeUIUtils;
-import org.joeffice.spreadsheet.POIUtils;
+import org.joeffice.spreadsheet.cell.CellUtils;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
-import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+import org.joeffice.spreadsheet.sheet.SheetTableModel;
 
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -62,7 +62,7 @@ public class FormatAction extends AbstractAction {
         if (currentTopComponent != null) {
             JTable currentTable = currentTopComponent.getSelectedTable();
             SheetTableModel tableModel = (SheetTableModel) currentTable.getModel();
-            List<Cell> selectedCells = POIUtils.getSelectedCells(currentTable);
+            List<Cell> selectedCells = CellUtils.getSelectedCells(currentTable);
             if (selectedCells.isEmpty()) {
                 return;
             }

@@ -16,6 +16,7 @@
 package org.joeffice.spreadsheet;
 
 
+import org.joeffice.spreadsheet.cell.CellUtils;
 import static java.awt.font.TextAttribute.*;
 import static org.joeffice.desktop.actions.ExtraTextAttribute.*;
 
@@ -55,7 +56,7 @@ public class TableStyleable implements Styleable {
         if (currentTopComponent != null) {
             JTable table = currentTopComponent.getSelectedTable();
 
-            List<Cell> selectedCells = POIUtils.getSelectedCells(table);
+            List<Cell> selectedCells = CellUtils.getSelectedCells(table);
             for (Cell cell : selectedCells) {
                 AttributedCharacterIterator attributesIterator = attributes.getIterator();
                 for (Attribute attribute : attributesIterator.getAllAttributeKeys()) {
@@ -159,7 +160,7 @@ public class TableStyleable implements Styleable {
         } else if (attribute == INDENTATION) {
             style.setIndention(((Number) attributeValue).shortValue());
         } else if (attribute == TEXT_TRANSFORM) {
-            String text = POIUtils.getFormattedText(cell);
+            String text = CellUtils.getFormattedText(cell);
             String transformedText = ((TextTransformer) attributeValue).transformText(text);
             cell.setCellValue(transformedText);
         }

@@ -22,9 +22,9 @@ import javax.swing.JTable;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.joeffice.desktop.ui.OfficeTopComponent;
-import org.joeffice.spreadsheet.POIUtils;
+import org.joeffice.spreadsheet.cell.CellUtils;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
-import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+import org.joeffice.spreadsheet.sheet.SheetTableModel;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
@@ -44,7 +44,7 @@ public final class DeleteCellsAction extends AbstractAction {
         if (currentTopComponent != null) {
             JTable currentTable = currentTopComponent.getSelectedTable();
             SheetTableModel tableModel = (SheetTableModel) currentTable.getModel();
-            List<Cell> selectedCells = POIUtils.getSelectedCells(currentTable);
+            List<Cell> selectedCells = CellUtils.getSelectedCells(currentTable);
             if (selectedCells.isEmpty()) {
                 return;
             }

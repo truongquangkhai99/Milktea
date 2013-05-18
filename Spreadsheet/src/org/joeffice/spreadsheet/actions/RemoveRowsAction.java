@@ -20,7 +20,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JTable;
 import org.joeffice.desktop.ui.OfficeTopComponent;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
-import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+import org.joeffice.spreadsheet.sheet.SheetTableModel;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;

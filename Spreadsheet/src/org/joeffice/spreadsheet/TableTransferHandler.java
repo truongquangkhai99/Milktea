@@ -15,6 +15,7 @@
  */
 package org.joeffice.spreadsheet;
 
+import org.joeffice.spreadsheet.cell.CellUtils;
 import static javax.swing.TransferHandler.MOVE;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -91,7 +92,7 @@ public class TableTransferHandler extends OfficeTransferHandler {
 
     protected String getSelectedText(JTable table) {
         int[] rows = table.getSelectedRows();
-        int[] columns = POIUtils.getSelectedColumns(table, rows);
+        int[] columns = CellUtils.getSelectedColumns(table, rows);
         if (rows.length ==0 || columns.length == 0) {
             return "";
         }
@@ -99,7 +100,7 @@ public class TableTransferHandler extends OfficeTransferHandler {
         for (int row : rows) {
             for (int column : columns) {
                 Cell cell = (Cell) table.getValueAt(row, column);
-                String cellText = POIUtils.getFormattedText(cell);
+                String cellText = CellUtils.getFormattedText(cell);
                 text.append(cellText);
                 text.append('\t');
             }

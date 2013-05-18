@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.spreadsheet.editor;
+package org.joeffice.spreadsheet.cell;
 
 import java.awt.Component;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import org.apache.poi.ss.usermodel.Cell;
-import org.joeffice.spreadsheet.POIUtils;
-import org.joeffice.spreadsheet.renderer.CellRenderer;
 
 /**
  * Editor for POI Cell objects.
@@ -42,7 +40,7 @@ public class CellEditor extends DefaultCellEditor implements TableCellEditor {
             JComponent defaultComponent = (JComponent) DEFAULT_EDITOR.
                     getTableCellEditorComponent(table, null, isSelected, row, column);
             Cell cell = (Cell) value;
-            ((JTextField) getComponent()).setText(POIUtils.getFormattedText(cell));
+            ((JTextField) getComponent()).setText(CellUtils.getFormattedText(cell));
             CellRenderer.decorateComponent(cell, (JComponent) getComponent(), defaultComponent);
         }
         return getComponent();

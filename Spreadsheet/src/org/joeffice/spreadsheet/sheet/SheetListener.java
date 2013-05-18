@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.spreadsheet.editor;
+package org.joeffice.spreadsheet.sheet;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+
 
 /**
+ * Listens to updates in the sheet to adapt the printable part.
  *
  * @author Anthony Goubard - Japplis
  */

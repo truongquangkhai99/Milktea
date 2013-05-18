@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.spreadsheet.renderer;
+package org.joeffice.spreadsheet.cell;
 
 import java.awt.*;
 import javax.swing.border.AbstractBorder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.joeffice.spreadsheet.POIUtils;
 
 /**
  * Border for POI Cells.
@@ -57,7 +56,7 @@ public class CellBorder extends AbstractBorder {
 
     private boolean applyBorderColor(Graphics2D g2, short border, short borderColor) {
         if (border != style.BORDER_NONE) {
-            Color awtBorderColor = POIUtils.shortToColor(borderColor);
+            Color awtBorderColor = CellUtils.shortToColor(borderColor);
             if (awtBorderColor == null) {
                 awtBorderColor = Color.BLACK;
             }

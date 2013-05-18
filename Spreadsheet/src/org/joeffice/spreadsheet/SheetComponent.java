@@ -33,12 +33,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.jdesktop.swingx.scrollpaneselector.ScrollPaneSelector;
 import org.joeffice.spreadsheet.actions.ClipboardAction;
-import org.joeffice.spreadsheet.editor.SheetListener;
+import org.joeffice.spreadsheet.sheet.SheetListener;
 
-import org.joeffice.spreadsheet.renderer.CellRenderer;
-import org.joeffice.spreadsheet.renderer.TableColumnAdjuster;
+import org.joeffice.spreadsheet.cell.CellRenderer;
+import org.joeffice.spreadsheet.sheet.TableColumnAdjuster;
 import org.joeffice.spreadsheet.rows.RowTableFactory;
-import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+import org.joeffice.spreadsheet.sheet.SheetTableModel;
 
 /**
  * Component that displays one sheet.
@@ -81,7 +81,7 @@ public class SheetComponent extends JPanel {
         JTable table = new SheetTable(sheetTableModel);
 
         table.setDefaultRenderer(Cell.class, new CellRenderer());
-        TableCellEditor editor = new org.joeffice.spreadsheet.editor.CellEditor();
+        TableCellEditor editor = new org.joeffice.spreadsheet.cell.CellEditor();
         table.setDefaultEditor(Cell.class, editor);
         int columnsCount = sheetTableModel.getColumnCount();
         for (int i = 0; i < columnsCount; i++) {

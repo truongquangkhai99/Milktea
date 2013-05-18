@@ -26,14 +26,14 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import org.joeffice.desktop.ui.OfficeTopComponent;
-import org.joeffice.spreadsheet.POIUtils;
+import org.joeffice.spreadsheet.cell.CellUtils;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
 import org.joeffice.spreadsheet.sequence.DateStringSequence;
 import org.joeffice.spreadsheet.sequence.IdentitySequence;
 import org.joeffice.spreadsheet.sequence.NumberSequence;
 import org.joeffice.spreadsheet.sequence.ResourceBundleSequence;
 import org.joeffice.spreadsheet.sequence.Sequence;
-import org.joeffice.spreadsheet.tablemodel.SheetTableModel;
+import org.joeffice.spreadsheet.sheet.SheetTableModel;
 
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -97,8 +97,8 @@ public class CompleteSequenceAction  extends AbstractAction {
         int lastColumn = selectedColumns[selectedColumns.length - 1];
         for (int i = firstRow; i <= lastRow; i++) {
             for (int j = firstColumn; j <= lastColumn; j++) {
-                Cell cell = POIUtils.getCell(true, sheet, i, j);
-                String text = POIUtils.getFormattedText(cell);
+                Cell cell = CellUtils.getCell(true, sheet, i, j);
+                String text = CellUtils.getFormattedText(cell);
                 if (text.trim().equals("")) {
                     if (completeRows && j == firstColumn) {
                         completeRows = false;
@@ -121,11 +121,11 @@ public class CompleteSequenceAction  extends AbstractAction {
         for (int i = from; i < to; i++) {
             Cell cell;
             if (completeRows) {
-                cell = POIUtils.getCell(false, sheet, columnOrRow, i);
+                cell = CellUtils.getCell(false, sheet, columnOrRow, i);
             } else {
-                cell = POIUtils.getCell(false, sheet, i, columnOrRow);
+                cell = CellUtils.getCell(false, sheet, i, columnOrRow);
             }
-            String text = POIUtils.getFormattedText(cell);
+            String text = CellUtils.getFormattedText(cell);
             previousValues.add(text);
         }
         return previousValues;

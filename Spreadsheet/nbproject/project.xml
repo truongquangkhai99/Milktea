@@ -139,6 +139,7 @@
             <public-packages>
                 <package>org.joeffice.spreadsheet</package>
                 <package>org.joeffice.spreadsheet.rows</package>
+                <package>org.joeffice.spreadsheet.sheet</package>
             </public-packages>
         </data>
     </configuration>

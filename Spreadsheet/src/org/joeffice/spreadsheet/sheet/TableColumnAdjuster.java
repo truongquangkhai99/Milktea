@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.spreadsheet.renderer;
+package org.joeffice.spreadsheet.sheet;
 
 import java.awt.*;
 import java.awt.event.*;

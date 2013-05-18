@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.joeffice.spreadsheet.tablemodel;
+package org.joeffice.spreadsheet.sheet;
 
 import javax.swing.table.AbstractTableModel;
 
 import org.apache.poi.ss.usermodel.*;
-import org.joeffice.spreadsheet.POIUtils;
+import org.joeffice.spreadsheet.cell.CellUtils;
 
 /**
  * The POI sheet table model.
@@ -89,7 +89,7 @@ public class SheetTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object newValue, int rowIndex, int columnIndex) {
-        Cell cell = POIUtils.getCell(true, sheet, rowIndex, columnIndex);
+        Cell cell = CellUtils.getCell(true, sheet, rowIndex, columnIndex);
 
         if (newValue instanceof Boolean) {
             cell.setCellValue((Boolean) newValue);
@@ -173,7 +173,7 @@ public class SheetTableModel extends AbstractTableModel {
             Row row = sheet.getRow(i);
             if (row != null) {
                 for (int j = row.getLastCellNum(); j > columnIndex; j--) {
-                    POIUtils.copyCellToColumn(row, row.getCell(j), j + 1);
+                    CellUtils.copyCellToColumn(row, row.getCell(j), j + 1);
                 }
                 row.createCell(columnIndex);
             }
