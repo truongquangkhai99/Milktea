@@ -23,6 +23,8 @@ public class ExtraTextAttribute extends AttributedCharacterIterator.Attribute {
 
     public final static ExtraTextAttribute TEXT_TRANSFORM = new ExtraTextAttribute("TextTransform");
 
+    public final static ExtraTextAttribute UI_ONLY = new ExtraTextAttribute("UIOnly");
+
     ExtraTextAttribute(String name) {
         super(name);
     }
