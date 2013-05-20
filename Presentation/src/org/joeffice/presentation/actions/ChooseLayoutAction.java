@@ -49,7 +49,7 @@ public final class ChooseLayoutAction extends AbstractAction {
             XMLSlideShow currentPresentation = currentTopComponent.getPresentation();
             int selectedSlide = currentTopComponent.getSelectedSlide();
             XSLFSlide slide = currentPresentation.getSlides()[selectedSlide];
-            // not possible to chnage the layout in Apache POI
+            // not possible to change the layout in Apache POI
         }
     }
 }
