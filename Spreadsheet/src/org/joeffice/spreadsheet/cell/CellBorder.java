@@ -55,12 +55,19 @@ public class CellBorder extends AbstractBorder {
     }
 
     private boolean applyBorderColor(Graphics2D g2, short border, short borderColor) {
-        if (border != style.BORDER_NONE) {
+        if (border != CellStyle.BORDER_NONE) {
             Color awtBorderColor = CellUtils.shortToColor(borderColor);
             if (awtBorderColor == null) {
                 awtBorderColor = Color.BLACK;
             }
             g2.setColor(awtBorderColor);
+            if (border == CellStyle.BORDER_THIN) {
+                g2.setStroke(new BasicStroke(0.5F));
+            } else if (border == CellStyle.BORDER_THICK) {
+                g2.setStroke(new BasicStroke(2.0F));
+            } else {
+                g2.setStroke(new BasicStroke(1.0F));
+            }
             return true;
         }
         return false;

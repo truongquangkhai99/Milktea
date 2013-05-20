@@ -16,39 +16,37 @@
 package org.joeffice.spreadsheet.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
-import javax.swing.AbstractAction;
+import java.awt.event.ActionListener;
 import javax.swing.JTable;
-
-import org.apache.poi.ss.usermodel.Cell;
 import org.joeffice.desktop.ui.OfficeTopComponent;
-import org.joeffice.spreadsheet.cell.CellUtils;
 import org.joeffice.spreadsheet.SpreadsheetTopComponent;
-import org.joeffice.spreadsheet.sheet.SheetTableModel;
-
+import org.joeffice.spreadsheet.sheet.TableColumnAdjuster;
 import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 @ActionID(
         category = "Edit/Office/Spreadsheet",
-        id = "org.joeffice.spreadsheet.actions.DeleteCellsAction")
+        id = "org.joeffice.spreadsheet.actions.ColumnFitWidthAction")
 @ActionRegistration(
-        displayName = "#CTL_DeleteCellsAction")
-@Messages("CTL_DeleteCellsAction=Delete Cells")
-public final class DeleteCellsAction extends AbstractAction {
+        iconBase = "org/joeffice/spreadsheet/actions/table_go.png",
+        displayName = "#CTL_ColumnFitWidthAction")
+@ActionReferences(value = {
+    @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet", position = 1300)})
+@Messages("CTL_ColumnFitWidthAction=Fit width to text")
+public final class ColumnFitWidthAction implements ActionListener {
 
     @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void actionPerformed(ActionEvent e) {
         SpreadsheetTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SpreadsheetTopComponent.class);
         if (currentTopComponent != null) {
             JTable currentTable = currentTopComponent.getSelectedTable();
-            SheetTableModel tableModel = (SheetTableModel) currentTable.getModel();
-            List<Cell> selectedCells = CellUtils.getSelectedCells(currentTable);
-            for (Cell cell : selectedCells) {
-                cell.setCellValue("");
-                tableModel.fireTableCellUpdated(cell.getRowIndex(), cell.getColumnIndex());
-            }
+            TableColumnAdjuster tca = new TableColumnAdjuster(currentTable, 5);
+            tca.setOnlyAdjustLarger(true);
+            tca.setLeaveEmptyAsIs(true);
+            tca.adjustColumns();
         }
     }
 }

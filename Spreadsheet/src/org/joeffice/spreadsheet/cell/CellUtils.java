@@ -221,6 +221,10 @@ public class CellUtils {
     }
 
     public static List<Cell> getSelectedCells(JTable table) {
+        return getSelectedCells(table, false);
+    }
+
+    public static List<Cell> getSelectedCells(JTable table, boolean createIfAbsent) {
         List<Cell> cells = new ArrayList<>();
         Sheet sheet = ((SheetTableModel) table.getModel()).getSheet();
         int rowIndexStart = table.getSelectedRow();
@@ -239,7 +243,7 @@ public class CellUtils {
         for (int i = rowIndexStart; i <= rowIndexEnd; i++) {
             for (int j = colIndexStart; j <= colIndexEnd; j++) {
                 if (table.isCellSelected(i, j)) {
-                    Cell cell = CellUtils.getCell(false, sheet, i, j);
+                    Cell cell = getCell(createIfAbsent, sheet, i, j);
                     if (cell != null) {
                         cells.add(cell);
                     }
