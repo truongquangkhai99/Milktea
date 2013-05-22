@@ -43,7 +43,7 @@ import org.openide.util.NbBundle.Messages;
 @ActionReferences(value = {
     @ActionReference(path = "Office/Spreadsheet/Toolbar", position = 500),
     @ActionReference(path = "Office/Spreadsheet/Tabs/Popup"),
-    @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet")})
+    @ActionReference(path = "Menu/Edit/Gimme More/Spreadsheet", position = 200)})
 @Messages({"CTL_InsertSheetAction=Insert sheet",
         "MSG_AskSheetName=Enter the sheet name:",
         "MSG_DefaultSheetName=Page"})
