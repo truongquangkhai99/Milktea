@@ -62,15 +62,6 @@ public class DocumentUpdater implements DocumentListener {
                     String newText = oldText.substring(0, position.offsetInText) + textPart
                             + (position.offsetInText == oldText.length() ? "" : oldText.substring(position.offsetInText));
                     position.text.setStringValue(newText);
-                    /*if (textPart.endsWith("\n")) {
-                        XmlCursor cursor = position.run.getParagraph().getCTP().newCursor();
-                        cursor.toNextSibling();
-                        XWPFParagraph newParagraph = document.insertNewParagraph(cursor);
-                        newParagraph.setAlignment(position.run.getParagraph().getAlignment());
-                        newParagraph.getCTP().insertNewR(0).insertNewT(0);
-                        XWPFRun run = newParagraph.createRun();
-                        run.setText("");
-                    }*/
                     offset += textPart.length();
                 } else {
                     XWPFParagraph paragraph = (XWPFParagraph) document.getBodyElements().get(document.getBodyElements().size() - 1);
@@ -212,30 +203,6 @@ public class DocumentUpdater implements DocumentListener {
     public void changedUpdate(DocumentEvent de) {
         Element root = de.getDocument().getDefaultRootElement();
         processDocumentEventChange(de, root);
-//        ElementIterator iter = new ElementIterator(de.getDocument());
-//        for (Element elem = iter.first(); elem != null; elem = iter.next()) {
-//            DocumentEvent.ElementChange change = de.getChange(elem);
-//            if (change != null) {
-//                Element[] removedElems = change.getChildrenRemoved();
-//                for (int i = removedElems.length - 1; i>=0; i--) {
-//                    remove(removedElems[i].getStartOffset(), removedElems[i].getEndOffset());
-//                }
-//                for (Element addedElem : change.getChildrenAdded()) {
-//                    try {
-//                        currentOffset = 0;
-//                        DocumentPosition pos = searchPart(document.getBodyElements(), addedElem.getStartOffset());
-//                        if (pos != null) {
-//                            String text = doc.getText(addedElem.getStartOffset(), addedElem.getEndOffset() - addedElem.getStartOffset());
-//                            XWPFRun run = pos.run.getParagraph().createRun();
-//                            run.setText(text);
-//                            applyAttributes(run, addedElem.getAttributes());
-//                        }
-//                    } catch (BadLocationException ex) {
-//                        Exceptions.printStackTrace(ex);
-//                    }
-//                }
-//            }
-//        }
     }
 
     private void processDocumentEventChange(DocumentEvent de, Element root) {
@@ -313,14 +280,11 @@ public class DocumentUpdater implements DocumentListener {
 
     DocumentPosition searchPart(List<IBodyElement> content, int offset) throws BadLocationException {
         for (IBodyElement elem : content) {
-//        for (int i = content.size() - 1; i >= 0; i--) {
-//            IBodyElement elem = content.get(i);
             if (elem instanceof XWPFParagraph) {
                 DocumentPosition position = searchParagraph((XWPFParagraph) elem, offset);
                 if (position != null) {
                     return position;
                 }
-                //currentOffset++;
             } else if (elem instanceof XWPFTable) {
                 searchTable((XWPFTable) elem, offset);
             }
