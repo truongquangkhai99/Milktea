@@ -162,7 +162,9 @@ public class SimpleActionsFactory {
                 if (paragraph.getOption() == JOptionPane.OK_OPTION) {
                     DocxDocument doc = (DocxDocument) edit.getDocument();
                     AttributeSet attr = paragraph.getAttributes();
-                    doc.setParagraphAttributes(edit.getSelectionStart(), edit.getSelectionEnd() - edit.getSelectionStart(), attr, false);
+                    int selectionStart = Math.min(edit.getSelectionStart(), edit.getSelectionEnd());
+                    int selectionLength = Math.abs(edit.getSelectionEnd() - selectionStart);
+                    doc.setParagraphAttributes(selectionStart, selectionLength, attr, false);
                 }
             }
         };

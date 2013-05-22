@@ -82,12 +82,12 @@ public class RichTextTransferHandler extends OfficeTransferHandler {
     @Override
     protected Transferable createTransferable(JComponent c) {
         JTextComponent textField = (JTextComponent) c;
-        int selectionStart = textField.getSelectionStart();
-        int selectionLength = textField.getSelectionEnd() - selectionStart;
         if (asTextOnly) {
             String text = textField.getSelectedText();
             return new StringSelection(text);
         } else {
+            int selectionStart = Math.min(textField.getSelectionStart(), textField.getSelectionEnd());
+            int selectionLength = Math.abs(textField.getSelectionEnd() - selectionStart);
             return new TransferableRichText(textField.getDocument(), selectionStart, selectionLength);
         }
     }
@@ -98,7 +98,9 @@ public class RichTextTransferHandler extends OfficeTransferHandler {
         if (action == MOVE) {
             JTextComponent textField = (JTextComponent) comp;
             try {
-                textField.getDocument().remove(textField.getSelectionStart(), textField.getSelectionEnd() - textField.getSelectionStart());
+                int selectionStart = Math.min(textField.getSelectionStart(), textField.getSelectionEnd());
+                int selectionLength = Math.abs(textField.getSelectionEnd() - selectionStart);
+                textField.getDocument().remove(selectionStart, selectionLength);
             } catch (BadLocationException ex) {
                 Exceptions.printStackTrace(ex);
             }

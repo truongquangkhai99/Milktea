@@ -19,18 +19,17 @@ import static javax.swing.text.StyleConstants.*;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
+import javax.swing.text.Document;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.*;
 import org.apache.xmlbeans.XmlCursor;
@@ -60,17 +59,22 @@ public class DocumentUpdater implements DocumentListener {
                 DocumentPosition position = searchPart(document.getBodyElements(), offset);
                 if (position != null) {
                     String oldText = position.text.getStringValue();
-                    String newText = oldText.substring(0, position.offsetInText) + text
+                    String newText = oldText.substring(0, position.offsetInText) + textPart
                             + (position.offsetInText == oldText.length() ? "" : oldText.substring(position.offsetInText));
                     position.text.setStringValue(newText);
-                    if (textPart.endsWith("\n")) {
+                    /*if (textPart.endsWith("\n")) {
                         XmlCursor cursor = position.run.getParagraph().getCTP().newCursor();
                         cursor.toNextSibling();
                         XWPFParagraph newParagraph = document.insertNewParagraph(cursor);
                         newParagraph.setAlignment(position.run.getParagraph().getAlignment());
                         newParagraph.getCTP().insertNewR(0).insertNewT(0);
-                        offset += textPart.length();
-                    }
+                        XWPFRun run = newParagraph.createRun();
+                        run.setText("");
+                    }*/
+                    offset += textPart.length();
+                } else {
+                    XWPFParagraph paragraph = (XWPFParagraph) document.getBodyElements().get(document.getBodyElements().size() - 1);
+                    paragraph.createRun().setText(textPart);
                 }
             }
         } catch (BadLocationException ex) {
@@ -85,9 +89,9 @@ public class DocumentUpdater implements DocumentListener {
             if (position != null) {
                 int width = image.getIconWidth();
                 int height = image.getIconHeight();
-                ByteArrayOutputStream output=new ByteArrayOutputStream();
-                BufferedImage bi=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                bi.getGraphics().drawImage(image.getImage(),0,0,null);
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                bi.getGraphics().drawImage(image.getImage(), 0, 0, null);
                 ImageIO.write(bi, "png", output);
                 byte[] imageData = output.toByteArray();
                 InputStream imageDataStream = new ByteArrayInputStream(imageData);
@@ -140,7 +144,7 @@ public class DocumentUpdater implements DocumentListener {
     private void deleteInBetween(DocumentPosition startPosition, DocumentPosition endPosition) {
         XWPFDocument doc = startPosition.run.getParagraph().getDocument();
         boolean deletePart = false;
-        for (int elemIndex = 0; elemIndex  < doc.getBodyElements().size(); elemIndex++) {
+        for (int elemIndex = 0; elemIndex < doc.getBodyElements().size(); elemIndex++) {
             IBodyElement elem = doc.getBodyElements().get(elemIndex);
             if (!deletePart && startPosition.run.getParagraph() != elem) {
                 // Skip
@@ -175,7 +179,7 @@ public class DocumentUpdater implements DocumentListener {
                 deleteRun = true;
             }
         }
-        if (position.run.getCTR().getTList().isEmpty()) {
+        if (position.run.getCTR().getTList().isEmpty() && !position.run.getParagraph().getRuns().isEmpty()) {
             position.run.getParagraph().removeRun(position.positionInParagraph);
         }
     }
@@ -206,13 +210,87 @@ public class DocumentUpdater implements DocumentListener {
 
     @Override
     public void changedUpdate(DocumentEvent de) {
+        Element root = de.getDocument().getDefaultRootElement();
+        processDocumentEventChange(de, root);
+//        ElementIterator iter = new ElementIterator(de.getDocument());
+//        for (Element elem = iter.first(); elem != null; elem = iter.next()) {
+//            DocumentEvent.ElementChange change = de.getChange(elem);
+//            if (change != null) {
+//                Element[] removedElems = change.getChildrenRemoved();
+//                for (int i = removedElems.length - 1; i>=0; i--) {
+//                    remove(removedElems[i].getStartOffset(), removedElems[i].getEndOffset());
+//                }
+//                for (Element addedElem : change.getChildrenAdded()) {
+//                    try {
+//                        currentOffset = 0;
+//                        DocumentPosition pos = searchPart(document.getBodyElements(), addedElem.getStartOffset());
+//                        if (pos != null) {
+//                            String text = doc.getText(addedElem.getStartOffset(), addedElem.getEndOffset() - addedElem.getStartOffset());
+//                            XWPFRun run = pos.run.getParagraph().createRun();
+//                            run.setText(text);
+//                            applyAttributes(run, addedElem.getAttributes());
+//                        }
+//                    } catch (BadLocationException ex) {
+//                        Exceptions.printStackTrace(ex);
+//                    }
+//                }
+//            }
+//        }
+    }
+
+    private void processDocumentEventChange(DocumentEvent de, Element root) {
+        int start = de.getOffset();
+        int length = de.getLength();
+        DocumentEvent.ElementChange change = de.getChange(root);
+        if (change != null) {
+            applyChangeToXWPF(change, root);
+        }
+
+        for (int i = 0; i < root.getElementCount(); i++) {
+            Element child = root.getElement(i);
+            if (child.getStartOffset() <= start && child.getEndOffset() >= start + length) {
+                processDocumentEventChange(de, child);
+            }
+        }
+    }
+
+    private void applyChangeToXWPF(DocumentEvent.ElementChange change, Element root) {
+        Document doc = root.getDocument();
+
+        Element[] removedElements = change.getChildrenRemoved();
+        Element[] addedElements = change.getChildrenAdded();
+        System.out.println(root + " removed=" + removedElements.length + " added=" + addedElements.length);
+
+        for (int i = removedElements.length - 1; i >= 0; i--) {
+            int start = removedElements[i].getStartOffset();
+            int length = removedElements[i].getEndOffset() - removedElements[i].getStartOffset();
+            remove(start, length);
+        }
+        for (Element addedElem : addedElements) {
+            try {
+                currentOffset = 0;
+                DocumentPosition pos = searchPart(document.getBodyElements(), addedElem.getStartOffset());
+                if (pos != null) {
+                    String text = doc.getText(addedElem.getStartOffset(), addedElem.getEndOffset() - addedElem.getStartOffset());
+                    XWPFRun run = pos.run.getParagraph().createRun();
+                    run.setText(text);
+                    applyAttributes(run, addedElem.getAttributes());
+                }
+            } catch (BadLocationException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+
+    }
+
+    public void changedUpdateOriginal(DocumentEvent de) {
         DefaultStyledDocument doc = (DefaultStyledDocument) de.getDocument();
         ElementIterator iter = new ElementIterator(de.getDocument());
         for (Element elem = iter.first(); elem != null; elem = iter.next()) {
             DocumentEvent.ElementChange change = de.getChange(elem);
             if (change != null) {
                 Element[] removedElems = change.getChildrenRemoved();
-                for (int i = removedElems.length - 1; i>=0; i--) {
+                for (int i = removedElems.length - 1; i >= 0; i--) {
                     remove(removedElems[i].getStartOffset(), removedElems[i].getEndOffset());
                 }
                 for (Element addedElem : change.getChildrenAdded()) {
@@ -235,6 +313,8 @@ public class DocumentUpdater implements DocumentListener {
 
     DocumentPosition searchPart(List<IBodyElement> content, int offset) throws BadLocationException {
         for (IBodyElement elem : content) {
+//        for (int i = content.size() - 1; i >= 0; i--) {
+//            IBodyElement elem = content.get(i);
             if (elem instanceof XWPFParagraph) {
                 DocumentPosition position = searchParagraph((XWPFParagraph) elem, offset);
                 if (position != null) {
@@ -258,9 +338,6 @@ public class DocumentUpdater implements DocumentListener {
             }
             runIndex++;
         }
-        if (offset == currentOffset) {
-            return createRun(paragraph);
-        }
         return null;
     }
 
@@ -281,7 +358,7 @@ public class DocumentUpdater implements DocumentListener {
         for (CTText text : texts) {
             String textValue = text.getStringValue();
             int textLength = textValue.length();
-            if (currentOffset + textLength > offset || (currentOffset + textLength == offset && !textValue.endsWith("\n"))) {
+            if (currentOffset + textLength >= offset) {// || (currentOffset + textLength == offset && !textValue.endsWith("\n"))) {
                 DocumentPosition position = new DocumentPosition();
                 position.run = run;
                 position.text = text;
@@ -365,5 +442,41 @@ public class DocumentUpdater implements DocumentListener {
         private int offsetInText;
         private int positionInRun; // index of the CTText
         private int positionInParagraph; // index of the run
+    }
+
+    public static void main(String[] args) {
+        try {
+            JFrame f = new JFrame();
+            f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+            JTextPane pane = new JTextPane();
+            DocxEditorKit kit = new DocxEditorKit();
+            pane.setEditorKit(kit);
+            String templateFilePath = "C:/WORK/joeffice/DocxTemplate.docx";
+            String templateChangedFilePath = "C:/WORK/joeffice/DocxTemplateChanged.docx";
+            kit.read(new FileInputStream(templateFilePath), pane.getDocument(), 0);
+            XWPFDocument poiDocument = (XWPFDocument) pane.getDocument().getProperty("XWPFDocument");
+
+            pane.getDocument().addDocumentListener(new DocumentUpdater(poiDocument));
+            JScrollPane scrollPane = new JScrollPane(pane);
+            f.add(scrollPane);
+
+            StyledDocument doc = (StyledDocument) pane.getDocument();
+            doc.insertString(0, "aaa\nbbb\nccc", null);
+
+            SimpleAttributeSet attrs = new SimpleAttributeSet();
+            StyleConstants.setBold(attrs, true);
+            doc.setCharacterAttributes(4, 3, attrs, false);
+
+            poiDocument.write(new FileOutputStream(templateChangedFilePath));
+
+            f.setSize(300, 300);
+            f.setLocationRelativeTo(null);
+            f.setVisible(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
     }
 }

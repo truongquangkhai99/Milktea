@@ -31,6 +31,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.joeffice.desktop.actions.EditorStyleable;
 import org.joeffice.desktop.file.OfficeDataObject;
 import org.joeffice.desktop.ui.OfficeTopComponent;
+import org.joeffice.desktop.ui.TextUndoManager;
 
 import org.netbeans.api.settings.ConvertAsProperties;
 // import org.netbeans.modules.spellchecker.api.Spellchecker;
@@ -63,6 +64,7 @@ import org.openide.util.NbBundle.Messages;
 })
 public final class WordProcessorTopComponent extends OfficeTopComponent implements DocumentListener {
 
+    private TextUndoManager undoRedo = new TextUndoManager();
     private EditorStyleable styleable;
 
     public WordProcessorTopComponent() {
@@ -97,8 +99,7 @@ public final class WordProcessorTopComponent extends OfficeTopComponent implemen
         try (FileInputStream docxIS = new FileInputStream(docxFile)) {
             JTextPane wordProcessor = (JTextPane) getMainComponent();
             wordProcessor.getEditorKit().read(docxIS, wordProcessor.getDocument(), 0);
-            Document document = wordProcessor.getDocument();
-            XWPFDocument poiDocument = (XWPFDocument) document.getProperty("XWPFDocument");
+            XWPFDocument poiDocument = (XWPFDocument) wordProcessor.getDocument().getProperty("XWPFDocument");
             return poiDocument;
         } catch (IOException | BadLocationException ex) {
             throw ex;
@@ -110,7 +111,7 @@ public final class WordProcessorTopComponent extends OfficeTopComponent implemen
         JTextPane editor = ((JTextPane) getMainComponent());
         Document document = editor.getDocument();
         document.addDocumentListener(this);
-        document.addUndoableEditListener((UndoRedo.Manager) getUndoRedo());
+        document.addUndoableEditListener(undoRedo);
         document.addDocumentListener(new DocumentUpdater(getPOIDocument()));
 
         // Doesn't do anything (yet)
@@ -137,6 +138,11 @@ public final class WordProcessorTopComponent extends OfficeTopComponent implemen
     protected void componentDeactivated() {
         getServices().remove(styleable);
         super.componentDeactivated();
+    }
+
+    @Override
+    public UndoRedo getUndoRedo() {
+        return undoRedo;
     }
 
     public XWPFDocument getPOIDocument() {

@@ -41,6 +41,12 @@ import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
+/**
+ * Top component which displays the tree structure.
+ *
+ * @author Anthony Goubard
+ * @author Stanislav Lapitsky
+ */
 @ConvertAsProperties(
         dtd = "-//org.joeffice.wordprocessor//DocumentTree//EN",
         autostore = false)
@@ -59,12 +65,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
     "CTL_DocumentTreeTopComponent=DocumentTree Window",
     "HINT_DocumentTreeTopComponent=This is a DocumentTree window"
 })
-/**
- * Top component which displays the tree structure.
- *
- * @author Anthony Goubard
- * @author Stanislav Lapitsky
- */
 public final class DocumentTreeTopComponent extends TopComponent {
 
     JTree trDocument = new JTree() {
