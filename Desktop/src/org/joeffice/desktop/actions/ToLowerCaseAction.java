@@ -26,6 +26,11 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Transformation that set selected text to lower case.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office",
         id = "org.joeffice.desktop.actions.ToLowerCaseAction")

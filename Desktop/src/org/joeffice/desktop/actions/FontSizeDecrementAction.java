@@ -23,6 +23,11 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Action to decrease the size of the font.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office",
         id = "org.joeffice.desktop.actions.FontSizeDecrementAction")

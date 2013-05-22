@@ -51,8 +51,8 @@ public class EditorStyleable implements Styleable {
     @Override
     public void setFontAttributes(AttributedString attributes) {
         StyledDocument document = textPane.getStyledDocument();
-        int startSelection = textPane.getSelectionStart();
-        int selectionLength = textPane.getSelectionEnd() - startSelection;
+        int selectionStart = Math.min(textPane.getSelectionStart(), textPane.getSelectionEnd());
+        int selectionLength = Math.abs(textPane.getSelectionEnd() - selectionStart);
 
         AttributedString currentAttributes = getCommonFontAttributes();
 
@@ -71,10 +71,10 @@ public class EditorStyleable implements Styleable {
             }
         }
 
-        document.setCharacterAttributes(startSelection, selectionLength, editorAttributes, false);
+        document.setCharacterAttributes(selectionStart, selectionLength, editorAttributes, false);
         if (changeParagraph) {
             cleanCharacterAttributes(editorAttributes);
-            document.setParagraphAttributes(startSelection, selectionLength, editorAttributes, false);
+            document.setParagraphAttributes(selectionStart, selectionLength, editorAttributes, false);
         }
     }
 

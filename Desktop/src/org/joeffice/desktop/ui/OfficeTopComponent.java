@@ -127,7 +127,11 @@ public abstract class OfficeTopComponent extends CloneableTopComponent {
                 Component actionComponent = ((Presenter.Toolbar) action).getToolbarPresenter();
                 toolbar.add(actionComponent);
             } else {
-                toolbar.add(action);
+                JButton newButton = toolbar.add(action);
+                if (newButton.getToolTipText() == null) {
+                    String label = (String) action.getValue("displayName");
+                    newButton.setToolTipText(label);
+                }
             }
         }
         return toolbar;

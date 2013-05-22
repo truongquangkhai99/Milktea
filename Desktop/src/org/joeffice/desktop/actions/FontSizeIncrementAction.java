@@ -24,6 +24,11 @@ import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
 // Not implemented yet in document updater or in editor styleable
+/**
+ * Action to increase the size of the font.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office",
         id = "org.joeffice.desktop.actions.FontSizeIncrementAction")
