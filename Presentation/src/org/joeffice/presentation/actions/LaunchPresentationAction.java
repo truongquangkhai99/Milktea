@@ -47,8 +47,6 @@ import org.openide.util.NbBundle.Messages;
 @Messages("CTL_LaunchPresentationAction=Launch Presentation")
 public final class LaunchPresentationAction extends AbstractAction {
 
-    private FullScreenFrame presentationFrame;
-
     @Override
     public void actionPerformed(ActionEvent ae) {
         SlidesTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(SlidesTopComponent.class);
@@ -58,9 +56,5 @@ public final class LaunchPresentationAction extends AbstractAction {
             currentTopComponent.setFullScreenFrame(presentationFrame);
             presentationFrame.showSlides(currentPresentation);
         }
-    }
-
-    public FullScreenFrame getPresentationFrame() {
-        return presentationFrame;
     }
 }

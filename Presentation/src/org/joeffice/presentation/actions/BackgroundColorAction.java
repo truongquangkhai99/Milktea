@@ -30,6 +30,12 @@ import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.WindowManager;
 
+/**
+ * Set the background color of the slide.
+ * Do not use as POI throws an exception. 
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office/Presentation",
         id = "org.joeffice.presentation.actions.BackgroundColorAction")

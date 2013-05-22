@@ -31,6 +31,11 @@ import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Action to go to the next screen for the full screen presentation.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "View/Office/Presentation",
         id = "org.joeffice.presentation.actions.SwitchScreenAction")
