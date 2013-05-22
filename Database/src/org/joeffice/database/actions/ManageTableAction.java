@@ -34,17 +34,16 @@ import org.openide.windows.WindowManager;
 
 /**
  * Opens a new top component in the editor that shows the structure of the database.
- * 
+ *
  * @author Anthony Goubard - Japplis
  */
 @ActionID(
         category = "Edit/Office/Database",
         id = "org.joeffice.database.ManageTableAction")
 @ActionRegistration(
-        iconBase = "org/joeffice/database/actions/database_gear.png",
+        iconBase = "org/joeffice/database/actions/database_key.png",
         displayName = "#CTL_ManageTableAction")
 @ActionReferences({
-    @ActionReference(path = "Menu/Tools", position = 1460),
     @ActionReference(path = "Loaders/application/h2/Actions", position = 160)
 })
 @Messages("CTL_ManageTableAction=Manage table")

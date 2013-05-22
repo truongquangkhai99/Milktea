@@ -34,6 +34,12 @@ import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Action that filters viewed entries of the database.
+ * A dialog is display to the user to fill the data to filter for.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "View/Office/Database",
         id = "org.joeffice.database.actions.FilterAction")

@@ -34,7 +34,7 @@ import org.openide.DialogDisplayer;
  */
 public class FieldsPanel extends JPanel {
 
-    private final static int LIMIT_FOR_SCROLLPANE = 15;
+    public final static int LIMIT_FOR_SCROLLPANE = 15;
     private final static String COMPONENTS_KEY = "Components";
 
     private TableMetaDataModel metaData;
