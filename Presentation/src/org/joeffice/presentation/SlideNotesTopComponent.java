@@ -43,7 +43,7 @@ import org.openide.util.NbBundle.Messages;
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "commonpalette", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.presentation.SlideNotesTopComponent")
-@ActionReference(path = "Menu/Window", position = 450)
+@ActionReference(path = "Menu/Window", position = 720)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_SlideNotesAction",
         preferredID = "SlideNotesTopComponent")

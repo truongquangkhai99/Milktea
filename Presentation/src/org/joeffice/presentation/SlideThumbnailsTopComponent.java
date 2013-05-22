@@ -47,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "commonpalette", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.presentation.SlideThumbnailsTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
+@ActionReference(path = "Menu/Window", position = 710)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_SlideThumbnailsAction",
         preferredID = "SlideThumbnailsTopComponent")
