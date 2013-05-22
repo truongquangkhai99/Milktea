@@ -59,13 +59,13 @@ import org.openide.util.Utilities;
 )
 @TopComponent.Registration(mode = "palette", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.desktop.ui.FontListTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
+//@ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_FontListAction",
     preferredID="FontListTopComponent"
 )
 @Messages({
-    "CTL_FontListAction=FontList",
+    "CTL_FontListAction=Fonts",
     "CTL_FontListTopComponent=Fonts",
     "HINT_FontListTopComponent=This is a Font window"
 })

@@ -37,7 +37,8 @@
     </folder>
     <file name="GoTo_hidden"/>
     <folder name="Help">
-      <file name="org-joeffice-desktop-WelcomeTopComponent.shadow_hidden"/>
+      <file name="netbeans-kb.url_hidden"/>
+            <file name="org-joeffice-desktop-WelcomeTopComponent.shadow_hidden"/>
       <file name="org-netbeans-modules-autoupdate-ui-actions-CheckForUpdatesAction.shadow_hidden"/>
       <file name="shortcuts.xml_hidden"/>
     </folder>
