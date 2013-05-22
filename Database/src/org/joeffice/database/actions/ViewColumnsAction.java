@@ -45,9 +45,6 @@ import org.openide.util.NbBundle.Messages;
     "MSG_AllColumns=All columns"})
 public final class ViewColumnsAction implements ActionListener {
 
-    private JCheckBox allComlumns;
-    private List<JCheckBox> columnCheckboxes;
-
     @Override
     public void actionPerformed(ActionEvent e) {
         JDBCTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(JDBCTopComponent.class);
@@ -55,56 +52,5 @@ public final class ViewColumnsAction implements ActionListener {
             ETable table = (ETable) currentTopComponent.getSelectedTableComponent().getDataTable();
             table.showColumnSelectionDialog();
         }
-        /*Object dialogResult = askColumns();
-        if (dialogResult == DialogDescriptor.OK_OPTION) {
-            JDBCTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(JDBCTopComponent.class);
-            currentTopComponent.getSelectedTableComponent();
-        }*/
     }
-
-    /*public Object askColumns() {
-        String title = NbBundle.getMessage(getClass(), "CTL_ViewColumnsAction");
-        JPanel choicePanel = new JPanel();
-        choicePanel.setLayout(new BoxLayout(choicePanel, BoxLayout.Y_AXIS));
-        String allColumnsText = NbBundle.getMessage(getClass(), "MSG_AllColumns");
-        allComlumns = new JCheckBox(allColumnsText);
-        choicePanel.add(allComlumns);
-        choicePanel.add(new JSeparator());
-        columnCheckboxes = new ArrayList<>();
-        for (String columnName : getColumnNames()) {
-            JCheckBox columnCheckbox = new JCheckBox(columnName);
-            columnCheckboxes.add(columnCheckbox);
-            choicePanel.add(columnCheckbox);
-        }
-
-        DialogDescriptor descriptor;
-        if (columnCheckboxes.isEmpty()) {
-            return DialogDescriptor.CANCEL_OPTION;
-        } else if (columnCheckboxes.size() > FieldsPanel.LIMIT_FOR_SCROLLPANE) {
-            descriptor = new DialogDescriptor(new JScrollPane(choicePanel), title);
-        } else {
-            descriptor = new DialogDescriptor(choicePanel, title);
-        }
-        Object dialogResult = DialogDisplayer.getDefault().notify(descriptor);
-        return dialogResult;
-    }
-
-    private List<String> getColumnNames() {
-        List<String> columnNames = new ArrayList<>();
-        JDBCTopComponent currentTopComponent = OfficeTopComponent.getSelectedComponent(JDBCTopComponent.class);
-        if (currentTopComponent != null) {
-            try {
-                Connection conn = currentTopComponent.getDatabaseConnection();
-                TableMetaDataModel metaData = new TableMetaDataModel(conn, currentTopComponent.getSelectedTableName());
-                for (int i = 0; i < metaData.getColumnCount(); i++) {
-                    String columnName = (String) metaData.getValueAt(0, i);
-                    String labelText = OfficeUIUtils.toDisplayable(columnName);
-                    columnNames.add(labelText);
-                }
-            } catch (SQLException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-        return columnNames;
-    }*/
 }
