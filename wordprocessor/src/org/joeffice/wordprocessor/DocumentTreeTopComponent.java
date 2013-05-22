@@ -56,7 +56,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "rightSlidingSide", openAtStartup = false)
 @ActionID(category = "Window", id = "org.joeffice.wordprocessor.DocumentTreeTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
+//@ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_DocumentTreeAction",
         preferredID = "DocumentTreeTopComponent")

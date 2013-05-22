@@ -41,7 +41,7 @@ import org.openide.util.actions.Presenter;
 @ActionRegistration(
         iconBase = "org/joeffice/wordprocessor/actions/table.png",
         displayName = "#CTL_TableAction")
-@ActionReference(path = "Office/Word Processor/Toolbar", position = 300, separatorBefore = 290)
+@ActionReference(path = "Office/Word Processor/Toolbar", position = 400, separatorBefore = 390)
 @Messages("CTL_TableAction=Table")
 public final class TableAction extends AbstractAction implements Presenter.Toolbar {
 

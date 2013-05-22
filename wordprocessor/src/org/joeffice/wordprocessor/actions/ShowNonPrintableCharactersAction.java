@@ -43,7 +43,7 @@ import org.openide.util.actions.BooleanStateAction;
         iconBase = "org/joeffice/wordprocessor/actions/pilcrow.png",
         displayName = "#CTL_ShowNonPrintableCharactersAction")
 @ActionReferences({
-    @ActionReference(path = "Menu/Edit/Gimme More/Word Processor", position = 700),
+    @ActionReference(path = "Menu/Edit/Gimme More/Word Processor", position = 800),
     @ActionReference(path = "Office/Word Processor/Toolbar", position = 300)})
 @Messages("CTL_ShowNonPrintableCharactersAction=Show Non Printable Characters")
 public final class ShowNonPrintableCharactersAction extends BooleanStateAction implements PropertyChangeListener {
