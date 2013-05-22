@@ -21,6 +21,9 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import org.jdesktop.swingx.JXList;
 
+/**
+ * Test class for the JXList and filtering feature.
+ */
 public class FilterJXList {
 
     public static void showDemo(JComponent demo, String title) {
