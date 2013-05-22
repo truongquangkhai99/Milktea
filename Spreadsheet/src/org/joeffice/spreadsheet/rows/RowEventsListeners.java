@@ -116,5 +116,8 @@ public class RowEventsListeners implements PropertyChangeListener, ListSelection
         if (tme.getType() == TableModelEvent.DELETE) {
             ((DefaultTableModel) rowTable.getModel()).removeRow(row);
         }
+        if (tme.getType() == TableModelEvent.UPDATE) {
+            ((DefaultTableModel) rowTable.getModel()).fireTableStructureChanged();
+        }
     }
 }

@@ -30,6 +30,11 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Action that deletes the content of the selected cells.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "Edit/Office/Spreadsheet",
         id = "org.joeffice.spreadsheet.actions.DeleteCellsAction")

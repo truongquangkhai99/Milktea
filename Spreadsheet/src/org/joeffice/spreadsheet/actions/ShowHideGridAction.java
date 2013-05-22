@@ -34,6 +34,11 @@ import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.BooleanStateAction;
 
+/**
+ * Action to show or hide the grid.
+ *
+ * @author Anthony Goubard - Japplis
+ */
 @ActionID(
         category = "View/Office/Spreadsheet",
         id = "org.joeffice.spreadsheet.actions.ShowHideGridAction")
