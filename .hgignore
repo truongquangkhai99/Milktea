@@ -7,3 +7,5 @@
 ^test$
 ^tools/build-applet\.xml$
 ^tools/src/org/joeffice/applet$
+^tools/tests/Database - 1 item\.trace\.db\.h2\.db$
+^tools/tests/Database - 1 item\.trace\.db$
